@@ -1,0 +1,153 @@
+<h2>Registration Form — Layout du stepper</h2>
+<p class="subtitle">Quelle disposition pour les 3 étapes + confirmation ?</p>
+
+<div class="cards">
+
+  <!-- Option A -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#0f172a;border-radius:8px;padding:20px;font-family:sans-serif;color:#e2e8f0;min-height:260px">
+        <!-- Stepper horizontal -->
+        <div style="display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:24px">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="width:32px;height:32px;border-radius:50%;background:#3b82f6;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700">1</div>
+            <span style="font-size:10px;color:#94a3b8">Personnel</span>
+          </div>
+          <div style="flex:1;height:2px;background:#3b82f6;margin:0 4px;margin-bottom:16px"></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="width:32px;height:32px;border-radius:50%;background:#1e293b;border:2px solid #334155;display:flex;align-items:center;justify-content:center;font-size:13px;color:#64748b">2</div>
+            <span style="font-size:10px;color:#64748b">Entreprise</span>
+          </div>
+          <div style="flex:1;height:2px;background:#334155;margin:0 4px;margin-bottom:16px"></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="width:32px;height:32px;border-radius:50%;background:#1e293b;border:2px solid #334155;display:flex;align-items:center;justify-content:center;font-size:13px;color:#64748b">3</div>
+            <span style="font-size:10px;color:#64748b">Banque</span>
+          </div>
+          <div style="flex:1;height:2px;background:#334155;margin:0 4px;margin-bottom:16px"></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="width:32px;height:32px;border-radius:50%;background:#1e293b;border:2px solid #334155;display:flex;align-items:center;justify-content:center;font-size:13px;color:#64748b">✓</div>
+            <span style="font-size:10px;color:#64748b">Confirmation</span>
+          </div>
+        </div>
+        <!-- Form content -->
+        <div style="background:#1e293b;border-radius:6px;padding:16px">
+          <div style="font-size:12px;font-weight:600;color:#60a5fa;margin-bottom:12px">Étape 1 — Informations personnelles</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div style="background:#0f172a;border-radius:4px;height:28px;border:1px solid #334155"></div>
+            <div style="background:#0f172a;border-radius:4px;height:28px;border:1px solid #334155"></div>
+            <div style="background:#0f172a;border-radius:4px;height:28px;border:1px solid #334155;grid-column:span 2"></div>
+            <div style="background:#0f172a;border-radius:4px;height:28px;border:1px solid #334155"></div>
+            <div style="background:#0f172a;border-radius:4px;height:28px;border:1px solid #334155"></div>
+          </div>
+        </div>
+        <!-- Nav buttons -->
+        <div style="display:flex;justify-content:flex-end;margin-top:12px;gap:8px">
+          <div style="padding:6px 16px;background:#334155;border-radius:4px;font-size:11px;color:#94a3b8">Annuler</div>
+          <div style="padding:6px 16px;background:#3b82f6;border-radius:4px;font-size:11px;color:#fff">Suivant →</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Stepper horizontal (pleine page)</h3>
+      <p>Barre de progression en haut, formulaire centré en dessous. Même structure que la page login — panneau unique, fond sombre.</p>
+    </div>
+  </div>
+
+  <!-- Option B -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#0f172a;border-radius:8px;padding:20px;font-family:sans-serif;color:#e2e8f0;min-height:260px;display:flex;gap:16px">
+        <!-- Left sidebar -->
+        <div style="width:120px;flex-shrink:0;background:#1e293b;border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:16px">
+          <div style="font-size:11px;font-weight:700;color:#60a5fa;margin-bottom:4px">Inscription</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="width:22px;height:22px;border-radius:50%;background:#3b82f6;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">1</div>
+              <span style="font-size:10px;color:#e2e8f0;font-weight:600">Personnel</span>
+            </div>
+            <div style="width:2px;height:12px;background:#334155;margin-left:10px"></div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="width:22px;height:22px;border-radius:50%;background:#1e293b;border:2px solid #334155;display:flex;align-items:center;justify-content:center;font-size:10px;color:#64748b;flex-shrink:0">2</div>
+              <span style="font-size:10px;color:#64748b">Entreprise</span>
+            </div>
+            <div style="width:2px;height:12px;background:#334155;margin-left:10px"></div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;align-items:center;gap:8px">
+                <div style="width:22px;height:22px;border-radius:50%;background:#1e293b;border:2px solid #334155;display:flex;align-items:center;justify-content:center;font-size:10px;color:#64748b;flex-shrink:0">3</div>
+                <span style="font-size:10px;color:#64748b">Banque</span>
+              </div>
+            </div>
+            <div style="width:2px;height:12px;background:#334155;margin-left:10px"></div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="width:22px;height:22px;border-radius:50%;background:#1e293b;border:2px solid #334155;display:flex;align-items:center;justify-content:center;font-size:10px;color:#64748b;flex-shrink:0">✓</div>
+              <span style="font-size:10px;color:#64748b">Confirmation</span>
+            </div>
+          </div>
+        </div>
+        <!-- Right content -->
+        <div style="flex:1;background:#1e293b;border-radius:6px;padding:16px">
+          <div style="font-size:12px;font-weight:600;color:#60a5fa;margin-bottom:12px">Informations personnelles</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div style="background:#0f172a;border-radius:4px;height:26px;border:1px solid #334155"></div>
+            <div style="background:#0f172a;border-radius:4px;height:26px;border:1px solid #334155"></div>
+            <div style="background:#0f172a;border-radius:4px;height:26px;border:1px solid #334155;grid-column:span 2"></div>
+            <div style="background:#0f172a;border-radius:4px;height:26px;border:1px solid #334155"></div>
+            <div style="background:#0f172a;border-radius:4px;height:26px;border:1px solid #334155"></div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;margin-top:10px;gap:8px">
+            <div style="padding:5px 14px;background:#334155;border-radius:4px;font-size:10px;color:#94a3b8">Annuler</div>
+            <div style="padding:5px 14px;background:#3b82f6;border-radius:4px;font-size:10px;color:#fff">Suivant →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Stepper vertical (sidebar gauche)</h3>
+      <p>Navigation verticale fixe à gauche, formulaire à droite. Même layout que MainLayout — familier pour l'utilisateur.</p>
+    </div>
+  </div>
+
+  <!-- Option C -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#0f172a;border-radius:8px;padding:20px;font-family:sans-serif;color:#e2e8f0;min-height:260px">
+        <!-- Split: left brand + right form -->
+        <div style="display:flex;gap:0;height:220px;border-radius:6px;overflow:hidden">
+          <!-- Left brand panel -->
+          <div style="width:38%;background:linear-gradient(160deg,#1e3a5f,#1e293b);padding:16px;display:flex;flex-direction:column;justify-content:space-between">
+            <div>
+              <div style="font-size:12px;font-weight:700;color:#60a5fa;margin-bottom:8px">Facturation</div>
+              <div style="font-size:10px;color:#94a3b8;line-height:1.4">Créez votre compte professionnel</div>
+            </div>
+            <!-- Steps as pills -->
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="background:#3b82f6;border-radius:4px;padding:4px 8px;font-size:9px;color:#fff;font-weight:600">● Personnel</div>
+              <div style="background:#1e293b;border-radius:4px;padding:4px 8px;font-size:9px;color:#64748b">○ Entreprise</div>
+              <div style="background:#1e293b;border-radius:4px;padding:4px 8px;font-size:9px;color:#64748b">○ Banque</div>
+              <div style="background:#1e293b;border-radius:4px;padding:4px 8px;font-size:9px;color:#64748b">○ Confirmation</div>
+            </div>
+          </div>
+          <!-- Right form -->
+          <div style="flex:1;background:#1e293b;padding:16px">
+            <div style="font-size:11px;font-weight:600;color:#60a5fa;margin-bottom:10px">Étape 1 / 3</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+              <div style="background:#0f172a;border-radius:4px;height:24px;border:1px solid #334155"></div>
+              <div style="background:#0f172a;border-radius:4px;height:24px;border:1px solid #334155"></div>
+              <div style="background:#0f172a;border-radius:4px;height:24px;border:1px solid #334155;grid-column:span 2"></div>
+              <div style="background:#0f172a;border-radius:4px;height:24px;border:1px solid #334155"></div>
+              <div style="background:#0f172a;border-radius:4px;height:24px;border:1px solid #334155"></div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;margin-top:10px">
+              <div style="padding:5px 14px;background:#3b82f6;border-radius:4px;font-size:10px;color:#fff">Suivant →</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Split screen (comme la page login)</h3>
+      <p>Panneau gauche avec brand + étapes verticales, panneau droit avec le formulaire. Cohérent avec le design actuel de la page login.</p>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,233 @@
+<div class="sp-page">
+
+  <!-- PAGE HEADER -->
+  <div class="sp-header">
+    <div class="sp-header__info">
+      <h1 class="sp-header__title">{{ 'SUPPLIERS.TITLE' | translate }}</h1>
+      <p class="sp-header__sub">{{ 'SUPPLIERS.SUBTITLE' | translate }}</p>
+    </div>
+    <div class="sp-header__actions">
+      <div class="sp-search-wrapper">
+        <span class="material-symbols-outlined sp-search-icon">search</span>
+        <input
+          class="sp-search"
+          type="text"
+          [placeholder]="'SUPPLIERS.SEARCH_PLACEHOLDER' | translate"
+          [ngModel]="searchQuery()"
+          (ngModelChange)="onSearchChange($event)"
+        />
+      </div>
+      <a routerLink="/supplier/create" class="sp-btn sp-btn--primary">
+        <span class="material-symbols-outlined">add_business</span>
+        {{ 'SUPPLIERS.NEW_SUPPLIER' | translate }}
+      </a>
+    </div>
+  </div>
+
+  <!-- KPI STRIP — 4 cartes -->
+  <div class="sp-kpi-strip">
+    <div class="sp-kpi sp-kpi--green">
+      <p class="sp-kpi__label">{{ 'SUPPLIERS.KPI_TOTAL' | translate }}</p>
+      <p class="sp-kpi__value">
+        @if (loading()) { <span class="sp-kpi__skeleton"></span> }
+        @else {
+          {{ totalSuppliers().toLocaleString('fr-FR') }}
+          <span class="sp-kpi__trend material-symbols-outlined">trending_up</span>
+        }
+      </p>
+    </div>
+    <div class="sp-kpi sp-kpi--amber">
+      <p class="sp-kpi__label">{{ 'SUPPLIERS.KPI_BALANCE' | translate }}</p>
+      <p class="sp-kpi__value">
+        @if (loading()) { <span class="sp-kpi__skeleton"></span> }
+        @else { {{ formatAmount(openBalanceTotal()) }} }
+      </p>
+    </div>
+    <div class="sp-kpi sp-kpi--red">
+      <p class="sp-kpi__label">{{ 'SUPPLIERS.KPI_OVERDUE' | translate }}</p>
+      <p class="sp-kpi__value sp-kpi__value--danger">
+        @if (loading()) { <span class="sp-kpi__skeleton"></span> }
+        @else { {{ formatAmount(overdueTotal()) }} }
+      </p>
+    </div>
+    <div class="sp-kpi sp-kpi--blue">
+      <p class="sp-kpi__label">{{ 'SUPPLIERS.KPI_NEW' | translate }}</p>
+      <p class="sp-kpi__value">
+        {{ nouveaux30j() }}
+        <span class="sp-kpi__trend material-symbols-outlined">trending_up</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- CARD : filter tabs + table + pagination -->
+  <div class="sp-card">
+
+    <!-- Filter tabs -->
+    <div class="sp-filter-bar">
+      <div class="sp-filter-bar__tabs">
+        <button type="button" class="sp-tab" [class.sp-tab--active]="activeTab() === 'all'"
+          (click)="setTab('all')">
+          {{ 'SUPPLIERS.TAB_ALL' | translate }}
+        </button>
+        <button type="button" class="sp-tab" [class.sp-tab--active]="activeTab() === 'overdue'"
+          (click)="setTab('overdue')">
+          {{ 'SUPPLIERS.TAB_OVERDUE' | translate }}
+        </button>
+        <button type="button" class="sp-tab" [class.sp-tab--active]="activeTab() === 'high-priority'"
+          (click)="setTab('high-priority')">
+          {{ 'SUPPLIERS.TAB_HIGH_PRIORITY' | translate }}
+        </button>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="sp-table-wrapper">
+      <table class="sp-table">
+        <thead>
+          <tr>
+            <th class="sp-th">{{ 'SUPPLIERS.COL_NAME' | translate }}</th>
+            <th class="sp-th">{{ 'SUPPLIERS.COL_CATEGORY' | translate }}</th>
+            <th class="sp-th sp-th--right">{{ 'SUPPLIERS.COL_BALANCE' | translate }}</th>
+            <th class="sp-th">{{ 'SUPPLIERS.COL_CURRENCY' | translate }}</th>
+            <th class="sp-th">{{ 'SUPPLIERS.COL_LAST_INVOICE' | translate }}</th>
+            <th class="sp-th sp-th--center">{{ 'SUPPLIERS.COL_ACTIONS' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          @if (loading()) {
+            @for (_ of [1,2,3,4]; track $index) {
+              <tr class="sp-tr sp-tr--skeleton">
+                <td class="sp-td"><span class="sp-skeleton sp-skeleton--wide"></span></td>
+                <td class="sp-td"><span class="sp-skeleton sp-skeleton--short"></span></td>
+                <td class="sp-td"><span class="sp-skeleton sp-skeleton--short"></span></td>
+                <td class="sp-td"><span class="sp-skeleton sp-skeleton--short"></span></td>
+                <td class="sp-td"><span class="sp-skeleton sp-skeleton--short"></span></td>
+                <td class="sp-td"></td>
+              </tr>
+            }
+          } @else if (error()) {
+            <tr>
+              <td colspan="6" class="sp-td sp-state">
+                <span class="material-symbols-outlined sp-state__icon sp-state__icon--error">error</span>
+                <p class="sp-state__msg">{{ error() }}</p>
+              </td>
+            </tr>
+          } @else if (pagedSuppliers().length === 0) {
+            <tr>
+              <td colspan="6" class="sp-td sp-state">
+                <span class="material-symbols-outlined sp-state__icon">inventory_2</span>
+                <p class="sp-state__msg">{{ 'SUPPLIERS.EMPTY' | translate }}</p>
+              </td>
+            </tr>
+          } @else {
+            @for (supplier of pagedSuppliers(); track supplier.id) {
+              <tr class="sp-tr">
+
+                <td class="sp-td">
+                  <div class="sp-company">
+                    <div class="sp-avatar">{{ initials(supplier.companyName) }}</div>
+                    <div>
+                      <p class="sp-company__name">{{ supplier.companyName }}</p>
+                      <p class="sp-company__ref">{{ supplier.reference }}</p>
+                    </div>
+                  </div>
+                </td>
+
+                <td class="sp-td">
+                  <span class="sp-badge sp-badge--category">{{ supplier.category }}</span>
+                </td>
+
+                <td class="sp-td sp-td--amount">{{ formatAmount(supplier.openBalance) }}</td>
+
+                <td class="sp-td sp-td--muted">{{ supplier.financial.currency }}</td>
+
+                <td class="sp-td sp-td--muted sp-td--date">{{ formatDate(supplier.lastInvoiceDate) }}</td>
+
+                <td class="sp-td sp-td--center">
+                  <div class="sp-action-wrap">
+                    <button type="button" class="sp-row-action"
+                      (click)="toggleMenu(supplier.id, $event)">
+                      <span class="material-symbols-outlined">more_horiz</span>
+                    </button>
+                  </div>
+                </td>
+
+              </tr>
+            }
+          }
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PAGINATION -->
+    @if (!loading() && !error() && filteredSuppliers().length > 0) {
+      <div class="sp-pagination">
+        <span class="sp-pagination__info">
+          {{ 'SUPPLIERS.PAGE_INFO' | translate: { start: pageStart(), end: pageEnd(), total: filteredSuppliers().length } }}
+        </span>
+        <div class="sp-pagination__controls">
+          <button type="button" class="sp-page-btn"
+            [disabled]="currentPage() === 1"
+            (click)="goToPage(currentPage() - 1)">
+            <span class="material-symbols-outlined">chevron_left</span>
+          </button>
+
+          @for (p of visiblePages(); track $index) {
+            @if (p === '...') {
+              <span class="sp-page-ellipsis">…</span>
+            } @else {
+              <button type="button" class="sp-page-btn"
+                [class.sp-page-btn--active]="p === currentPage()"
+                (click)="goToPage(+p)">{{ p }}</button>
+            }
+          }
+
+          <button type="button" class="sp-page-btn"
+            [disabled]="currentPage() === totalPages()"
+            (click)="goToPage(currentPage() + 1)">
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+        </div>
+      </div>
+    }
+
+  </div>
+
+  <!-- Floating action menu — position:fixed pour échapper au overflow -->
+  @if (openMenuId() !== null && menuAnchorRect() !== null) {
+    @if (confirmDeleteId() === openMenuId()) {
+      <div class="sp-menu" style="position:fixed"
+           [style.top.px]="menuAnchorRect()!.top"
+           [style.right.px]="menuAnchorRect()!.right"
+           (click)="$event.stopPropagation()">
+        <p class="sp-menu__confirm-text">
+          <span class="material-symbols-outlined">warning</span>
+          Supprimer ce fournisseur ?
+        </p>
+        <div class="sp-menu__confirm-btns">
+          <button class="sp-menu__cancel-btn" (click)="confirmDeleteId.set(null)">Annuler</button>
+          <button class="sp-menu__delete-btn" (click)="deleteSupplier(openMenuId()!, $event)">Supprimer</button>
+        </div>
+      </div>
+    } @else {
+      <div class="sp-menu" style="position:fixed"
+           [style.top.px]="menuAnchorRect()!.top"
+           [style.right.px]="menuAnchorRect()!.right"
+           (click)="$event.stopPropagation()">
+        <button class="sp-menu__item" (click)="editSupplier(openMenuId()!)">
+          <span class="material-symbols-outlined">edit</span>
+          Modifier
+        </button>
+        <div class="sp-menu__sep"></div>
+        <button class="sp-menu__item sp-menu__item--danger"
+          (click)="confirmDelete(openMenuId()!, $event)">
+          <span class="material-symbols-outlined">delete</span>
+          Supprimer
+        </button>
+      </div>
+    }
+  }
+
+</div>

@@ -1,0 +1,62 @@
+<header class="app-header">
+
+  <!-- BRAND -->
+  <div class="app-header__left">
+    <a routerLink="/" class="app-header__brand">
+      <span class="app-header__logomark">
+        <span class="material-symbols-outlined">receipt_long</span>
+      </span>
+      <span class="app-header__wordmark">{{ 'HEADER.BRAND' | translate }}</span>
+    </a>
+  </div>
+
+  <!-- RIGHT ACTIONS -->
+  <div class="app-header__right">
+
+    <!-- Language toggle -->
+    <button class="app-header__lang-btn" type="button" (click)="toggleLang()">
+      @if (langService.currentLang() === 'fr') {
+      <span class="app-header__lang-flag">🇬🇧</span>
+      <span class="app-header__lang-code">EN</span>
+      } @else {
+      <span class="app-header__lang-flag">🇫🇷</span>
+      <span class="app-header__lang-code">FR</span>
+      }
+    </button>
+
+    @if (isLoggedIn()) {
+
+    <!-- Icon buttons -->
+    <button class="app-header__icon-btn" type="button" aria-label="Notifications">
+      <span class="material-symbols-outlined">notifications</span>
+      <span class="app-header__notif-dot"></span>
+    </button>
+
+    <button class="app-header__icon-btn" type="button" aria-label="Paramètres">
+      <span class="material-symbols-outlined">settings</span>
+    </button>
+
+    <!-- Separator -->
+    <span class="app-header__sep" aria-hidden="true"></span>
+
+    <!-- User area -->
+    <div class="app-header__user">
+      <div class="app-header__avatar" [attr.title]="'Mon compte'">
+        {{ userInitial() }}
+      </div>
+      <button class="app-header__logout" type="button" (click)="logout()">
+        {{ 'HEADER.LOGOUT' | translate }}
+      </button>
+    </div>
+
+    } @else {
+    <a routerLink="/login" routerLinkActive="app-header__link--active" class="app-header__link">
+      {{ 'HEADER.LOGIN' | translate }}
+    </a>
+    <a routerLink="/register" class="app-header__btn-register">
+      {{ 'HEADER.REGISTER' | translate }}
+    </a>
+    }
+
+  </div>
+</header>

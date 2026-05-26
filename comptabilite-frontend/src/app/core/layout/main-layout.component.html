@@ -1,0 +1,76 @@
+<div class="layout-body">
+
+  <!-- SIDEBAR (desktop only) -->
+  <aside class="layout-sidebar">
+    <nav class="layout-nav">
+
+      <div class="layout-nav__group-label">{{ 'NAV.SALES' | translate }}</div>
+      <a routerLink="/dashboard-vente" routerLinkActive="layout-nav__link--active" class="layout-nav__link">
+        <span class="material-symbols-outlined">dashboard</span>
+        <span>{{ 'NAV.DASHBOARD' | translate }}</span>
+      </a>
+      <a routerLink="/invoices" routerLinkActive="layout-nav__link--active" class="layout-nav__link">
+        <span class="material-symbols-outlined">description</span>
+        <span>{{ 'NAV.INVOICES' | translate }}</span>
+      </a>
+      <a routerLink="/customers" routerLinkActive="layout-nav__link--active" class="layout-nav__link">
+        <span class="material-symbols-outlined">group</span>
+        <span>{{ 'NAV.CUSTOMERS' | translate }}</span>
+      </a>
+
+      <div class="layout-nav__group-label">{{ 'NAV.PURCHASES' | translate }}</div>
+      <a routerLink="/dashboard-achat" routerLinkActive="layout-nav__link--active" class="layout-nav__link">
+        <span class="material-symbols-outlined">dashboard</span>
+        <span>{{ 'NAV.DASHBOARD' | translate }}</span>
+      </a>
+      <a routerLink="/purchase-invoices" routerLinkActive="layout-nav__link--active" class="layout-nav__link">
+        <span class="material-symbols-outlined">receipt_long</span>
+        <span>{{ 'NAV.BILLS' | translate }}</span>
+      </a>
+      <a routerLink="/suppliers" routerLinkActive="layout-nav__link--active" class="layout-nav__link">
+        <span class="material-symbols-outlined">precision_manufacturing</span>
+        <span>{{ 'NAV.SUPPLIERS' | translate }}</span>
+      </a>
+
+      <div class="layout-nav__group-label">{{ 'NAV.GENERAL' | translate }}</div>
+      <a routerLink="/reports" routerLinkActive="layout-nav__link--active" class="layout-nav__link">
+        <span class="material-symbols-outlined">assessment</span>
+        <span>{{ 'NAV.REPORTS' | translate }}</span>
+      </a>
+      <a routerLink="/settings" routerLinkActive="layout-nav__link--active" class="layout-nav__link">
+        <span class="material-symbols-outlined">settings</span>
+        <span>{{ 'NAV.SETTINGS' | translate }}</span>
+      </a>
+
+    </nav>
+
+    <div class="layout-sidebar__footer">
+      <p class="layout-sidebar__footer-brand">{{ 'NAV.ACCOUNTING_SUITE' | translate }}</p>
+      <p class="layout-sidebar__footer-copy">{{ 'NAV.FOOTER_COPY' | translate }}</p>
+    </div>
+  </aside>
+
+  <main class="layout-main">
+    <router-outlet />
+  </main>
+
+</div>
+
+<nav class="layout-bottom-nav">
+  <a routerLink="/dashboard-vente" routerLinkActive="layout-bottom-nav__item--active" class="layout-bottom-nav__item">
+    <span class="material-symbols-outlined">dashboard</span>
+    <span>{{ 'NAV.DASHBOARD' | translate }}</span>
+  </a>
+  <a routerLink="/invoices" routerLinkActive="layout-bottom-nav__item--active" class="layout-bottom-nav__item">
+    <span class="material-symbols-outlined">description</span>
+    <span>{{ 'NAV.INVOICES' | translate }}</span>
+  </a>
+  <a routerLink="/customers" routerLinkActive="layout-bottom-nav__item--active" class="layout-bottom-nav__item">
+    <span class="material-symbols-outlined">group</span>
+    <span>{{ 'NAV.CUSTOMERS' | translate }}</span>
+  </a>
+  <a routerLink="/settings" routerLinkActive="layout-bottom-nav__item--active" class="layout-bottom-nav__item">
+    <span class="material-symbols-outlined">settings</span>
+    <span>{{ 'NAV.MORE' | translate }}</span>
+  </a>
+</nav>

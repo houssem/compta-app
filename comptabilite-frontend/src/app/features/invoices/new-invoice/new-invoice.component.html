@@ -1,0 +1,522 @@
+<div class="ni-page">
+
+  <!-- STICKY TOPBAR -->
+  <header class="ni-topbar">
+    <nav class="ni-breadcrumb">
+      <a routerLink="/invoices" class="ni-breadcrumb__link">{{ 'INVOICES.TITLE' | translate }}</a>
+      <span class="material-symbols-outlined ni-breadcrumb__sep">chevron_right</span>
+      <span class="ni-breadcrumb__current">
+        {{ editMode() ? ('NEW_INVOICE.EDIT_TITLE' | translate) : ('NEW_INVOICE.TITLE' | translate) }}
+      </span>
+    </nav>
+    <div class="ni-topbar__actions">
+      @if (saveError()) {
+        <span class="ni-topbar__error">
+          <span class="material-symbols-outlined">error</span>
+          {{ saveError() }}
+        </span>
+      }
+      <button type="button" class="ni-btn ni-btn--ghost" routerLink="/invoices" [disabled]="saving()">
+        {{ 'NEW_CLIENT.CANCEL' | translate }}
+      </button>
+      <button type="button" class="ni-btn ni-btn--primary" (click)="save()" [disabled]="saving()">
+        @if (saving()) {
+          <span class="material-symbols-outlined ni-spin">progress_activity</span>
+          Enregistrement…
+        } @else {
+          <span class="material-symbols-outlined">save</span>
+          {{ editMode() ? ('NEW_INVOICE.UPDATE' | translate) : ('NEW_INVOICE.SAVE' | translate) }}
+        }
+      </button>
+    </div>
+  </header>
+
+  <!-- PAGE HERO -->
+  <div class="ni-hero">
+    <h1 class="ni-hero__title">
+      {{ editMode() ? ('NEW_INVOICE.EDIT_TITLE' | translate) : ('NEW_INVOICE.TITLE' | translate) }}
+    </h1>
+    <p class="ni-hero__sub">
+      {{ editMode() ? 'Modifiez les informations de la facture ci-dessous.' : 'Renseignez les informations ci-dessous pour générer une facture professionnelle.' }}
+    </p>
+  </div>
+
+  <!-- TWO-COLUMN BODY -->
+  <div class="ni-body">
+
+    <!-- FORM (left column) -->
+    <div class="ni-form-col">
+
+      <!-- 01 — Informations générales -->
+      <section class="ni-section ni-anim-1">
+        <div class="ni-section__head">
+          <span class="ni-section__num">01</span>
+          <div class="ni-section__icon-wrap">
+            <span class="material-symbols-outlined">receipt_long</span>
+          </div>
+          <div class="ni-section__meta">
+            <h2 class="ni-section__title">{{ 'NEW_INVOICE.SECTION_GENERAL' | translate }}</h2>
+            <p class="ni-section__desc">Identification et paramètres de la facture</p>
+          </div>
+        </div>
+        <div class="ni-section__body">
+          <div class="ni-grid ni-grid--4">
+
+            <!-- Client -->
+            <div class="ni-field ni-field--span2">
+              <label class="ni-label">
+                {{ 'NEW_INVOICE.CLIENT_NAME' | translate }}
+                <span class="ni-required">*</span>
+              </label>
+              <button
+                type="button"
+                class="ni-cs-trigger"
+                [class.ni-cs-trigger--error]="clientError()"
+                (click)="openClientModal()"
+              >
+                @if (selectedClient(); as client) {
+                  <div class="ni-cs-trigger__avatar">{{ getInitials(client.companyName) }}</div>
+                  <div class="ni-cs-trigger__info">
+                    <span class="ni-cs-trigger__name">{{ client.companyName }}</span>
+                    <span class="ni-cs-trigger__sub">{{ client.contacts[0].fullName }} · {{ client.contacts[0].email }}</span>
+                  </div>
+                  <span class="material-symbols-outlined ni-cs-trigger__edit">edit</span>
+                  <span class="ni-cs-trigger__sep"></span>
+                  <button type="button" class="ni-cs-trigger__clear" (click)="clearClient($event)">
+                    <span class="material-symbols-outlined">close</span>
+                  </button>
+                } @else {
+                  <span class="material-symbols-outlined ni-cs-trigger__icon">person_search</span>
+                  <span class="ni-cs-trigger__placeholder">{{ 'NEW_INVOICE.CLIENT_PLACEHOLDER' | translate }}</span>
+                  <span class="material-symbols-outlined ni-cs-trigger__arrow">arrow_forward</span>
+                }
+              </button>
+              @if (clientError()) {
+                <p class="ni-field-error">
+                  <span class="material-symbols-outlined">error</span>
+                  Veuillez sélectionner un client.
+                </p>
+              }
+            </div>
+
+            <!-- Invoice number -->
+            <div class="ni-field ni-field--span2">
+              <label class="ni-label">{{ 'NEW_INVOICE.INVOICE_NUMBER' | translate }}</label>
+              <input class="ni-input ni-input--readonly" type="text" readonly [value]="invoiceNumber()" />
+            </div>
+
+            <!-- Issue date -->
+            <div class="ni-field">
+              <label class="ni-label">
+                {{ 'NEW_INVOICE.ISSUE_DATE' | translate }}
+                <span class="ni-required">*</span>
+              </label>
+              <input
+                class="ni-input"
+                [class.ni-input--error]="issueDateError()"
+                type="date"
+                [ngModel]="issueDate()"
+                (ngModelChange)="issueDate.set($event)"
+              />
+              @if (issueDateError()) {
+                <p class="ni-field-error">
+                  <span class="material-symbols-outlined">error</span>
+                  La date d'émission est requise.
+                </p>
+              }
+            </div>
+
+            <!-- Due date -->
+            <div class="ni-field">
+              <label class="ni-label">
+                {{ 'NEW_INVOICE.DUE_DATE' | translate }}
+                <span class="ni-required">*</span>
+              </label>
+              <input
+                class="ni-input"
+                [class.ni-input--error]="dueDateError()"
+                type="date"
+                [ngModel]="dueDate()"
+                (ngModelChange)="dueDate.set($event)"
+              />
+              @if (dueDateError()) {
+                <p class="ni-field-error">
+                  <span class="material-symbols-outlined">error</span>
+                  La date d'échéance est requise.
+                </p>
+              }
+            </div>
+
+            <!-- Currency -->
+            <div class="ni-field">
+              <label class="ni-label">{{ 'NEW_INVOICE.CURRENCY' | translate }}</label>
+              <select class="ni-select" [ngModel]="currency()" (ngModelChange)="currency.set($event)">
+                @if (configLoading()) {
+                  <option value="">Chargement…</option>
+                } @else {
+                  @for (c of currencies; track c.value) {
+                    <option [value]="c.value">{{ c.label }}</option>
+                  }
+                }
+              </select>
+            </div>
+
+            <!-- Language -->
+            <div class="ni-field">
+              <label class="ni-label">{{ 'NEW_INVOICE.LANGUAGE' | translate }}</label>
+              <select class="ni-select" [ngModel]="language()" (ngModelChange)="language.set($event)">
+                @if (configLoading()) {
+                  <option value="">Chargement…</option>
+                } @else {
+                  @for (l of languages; track l.value) {
+                    <option [value]="l.value">{{ l.label }}</option>
+                  }
+                }
+              </select>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- 02 — Lignes de facture -->
+      <section class="ni-section ni-anim-2" [class.ni-section--error]="noItemsError()">
+        <div class="ni-section__head">
+          <span class="ni-section__num">02</span>
+          <div class="ni-section__icon-wrap">
+            <span class="material-symbols-outlined">list_alt</span>
+          </div>
+          <div class="ni-section__meta">
+            <h2 class="ni-section__title">
+              {{ 'NEW_INVOICE.LINE_ITEMS' | translate }}
+              <span class="ni-required">*</span>
+            </h2>
+            <p class="ni-section__desc">Produits et services à facturer</p>
+          </div>
+          @if (lineItems().length > 0) {
+            <button type="button" class="ni-btn-add" (click)="addItem()">
+              <span class="material-symbols-outlined">add_circle</span>
+              {{ 'NEW_INVOICE.ADD_ITEM' | translate }}
+            </button>
+          }
+        </div>
+
+        @if (lineItems().length === 0) {
+          <!-- Empty state -->
+          <div class="ni-items-empty" [class.ni-items-empty--error]="noItemsError()">
+            <div class="ni-items-empty__icon-wrap">
+              <span class="material-symbols-outlined">receipt_long</span>
+            </div>
+            <p class="ni-items-empty__title">Aucune ligne de facturation</p>
+            <p class="ni-items-empty__sub">Ajoutez les produits ou services à facturer.</p>
+            @if (noItemsError()) {
+              <p class="ni-field-error ni-field-error--center">
+                <span class="material-symbols-outlined">error</span>
+                Au moins une ligne est requise.
+              </p>
+            }
+            <button type="button" class="ni-btn ni-btn--outline" (click)="addItem()">
+              <span class="material-symbols-outlined">add</span>
+              {{ 'NEW_INVOICE.ADD_ITEM' | translate }}
+            </button>
+          </div>
+        } @else {
+          <!-- Table -->
+          <div class="ni-section__body ni-section__body--flush">
+            <div class="ni-table-wrapper">
+              <table class="ni-table">
+                <thead>
+                  <tr>
+                    <th class="ni-th ni-th--drag"></th>
+                    <th class="ni-th">{{ 'NEW_INVOICE.COL_DESCRIPTION' | translate }} <span class="ni-required">*</span></th>
+                    <th class="ni-th ni-th--num">{{ 'NEW_INVOICE.COL_QTY' | translate }}</th>
+                    <th class="ni-th ni-th--num">{{ 'NEW_INVOICE.COL_PRICE' | translate }}</th>
+                    <th class="ni-th ni-th--num">{{ 'NEW_INVOICE.COL_DISC' | translate }}</th>
+                    <th class="ni-th ni-th--num">{{ 'NEW_INVOICE.COL_VAT' | translate }}</th>
+                    <th class="ni-th ni-th--num">{{ 'NEW_INVOICE.COL_TOTAL' | translate }}</th>
+                    <th class="ni-th ni-th--action"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (item of lineItems(); track item.id) {
+                    <tr class="ni-tr">
+                      <td class="ni-td ni-td--drag">
+                        <span class="material-symbols-outlined ni-drag-handle">drag_indicator</span>
+                      </td>
+                      <td class="ni-td">
+                        <input
+                          class="ni-cell-input"
+                          [class.ni-cell-input--error]="itemDescError(item)"
+                          type="text"
+                          [placeholder]="'NEW_INVOICE.ITEM_PLACEHOLDER' | translate"
+                          [ngModel]="item.description"
+                          (ngModelChange)="updateItem(item.id, 'description', $event)"
+                        />
+                      </td>
+                      <td class="ni-td ni-td--num">
+                        <input
+                          class="ni-cell-input ni-cell-input--num"
+                          [class.ni-cell-input--error]="itemQtyError(item)"
+                          type="number"
+                          min="1"
+                          [ngModel]="item.qty"
+                          (ngModelChange)="updateItem(item.id, 'qty', +$event)"
+                        />
+                      </td>
+                      <td class="ni-td ni-td--num">
+                        <input
+                          class="ni-cell-input ni-cell-input--num"
+                          [class.ni-cell-input--error]="itemPriceError(item)"
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          [ngModel]="item.priceHT"
+                          (ngModelChange)="updateItem(item.id, 'priceHT', +$event)"
+                        />
+                      </td>
+                      <td class="ni-td ni-td--num">
+                        <input
+                          class="ni-cell-input ni-cell-input--num"
+                          type="number"
+                          min="0"
+                          max="100"
+                          [ngModel]="item.discPct"
+                          (ngModelChange)="updateItem(item.id, 'discPct', +$event)"
+                        />
+                      </td>
+                      <td class="ni-td ni-td--num">
+                        <select
+                          class="ni-cell-select"
+                          [ngModel]="item.vatPct"
+                          (ngModelChange)="updateItem(item.id, 'vatPct', +$event)"
+                        >
+                          @for (rate of vatRates; track rate) {
+                            <option [value]="rate">{{ rate }}%</option>
+                          }
+                        </select>
+                      </td>
+                      <td class="ni-td ni-td--num ni-td--total">{{ formatAmount(lineTotal(item)) }}</td>
+                      <td class="ni-td ni-td--action">
+                        <button type="button" class="ni-btn-remove" (click)="removeItem(item.id)">
+                          <span class="material-symbols-outlined">delete</span>
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        }
+      </section>
+
+      <!-- 03 — Notes & Conditions -->
+      <section class="ni-section ni-anim-3">
+        <div class="ni-section__head">
+          <span class="ni-section__num">03</span>
+          <div class="ni-section__icon-wrap">
+            <span class="material-symbols-outlined">notes</span>
+          </div>
+          <div class="ni-section__meta">
+            <h2 class="ni-section__title">Notes &amp; Conditions</h2>
+            <p class="ni-section__desc">Informations complémentaires et mentions légales</p>
+          </div>
+        </div>
+        <div class="ni-section__body">
+          <div class="ni-grid ni-grid--2">
+            <div class="ni-field">
+              <label class="ni-label">{{ 'NEW_INVOICE.INTERNAL_NOTES' | translate }}</label>
+              <textarea
+                class="ni-textarea"
+                [placeholder]="'NEW_INVOICE.NOTES_PLACEHOLDER' | translate"
+                rows="4"
+                [ngModel]="internalNotes()"
+                (ngModelChange)="internalNotes.set($event)"
+              ></textarea>
+            </div>
+            <div class="ni-field">
+              <label class="ni-label">{{ 'NEW_INVOICE.TERMS' | translate }}</label>
+              <textarea
+                class="ni-textarea"
+                rows="4"
+                [ngModel]="termsAndConditions()"
+                (ngModelChange)="termsAndConditions.set($event)"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /ni-form-col -->
+
+    <!-- SUMMARY SIDEBAR -->
+    <aside class="ni-summary ni-anim-4">
+
+      <div class="ni-summary__head">
+        <div class="ni-section__icon-wrap">
+          <span class="material-symbols-outlined">calculate</span>
+        </div>
+        <h2 class="ni-summary__title">{{ 'NEW_INVOICE.SUMMARY' | translate }}</h2>
+      </div>
+
+      <div class="ni-summary__totals">
+        <div class="ni-summary__row">
+          <span class="ni-summary__label">{{ 'NEW_INVOICE.TOTAL_HT' | translate }}</span>
+          <span class="ni-summary__value">{{ formatAmount(totalHT()) }}</span>
+        </div>
+
+        <div class="ni-summary__vat-block">
+          <p class="ni-summary__vat-label">{{ 'NEW_INVOICE.VAT_BREAKDOWN' | translate }}</p>
+          @for (vat of vatBreakdown(); track vat.rate) {
+            <div class="ni-summary__row ni-summary__row--sub">
+              <span class="ni-summary__label">TVA {{ vat.rate }}%</span>
+              <span class="ni-summary__value">{{ formatAmount(vat.amount) }}</span>
+            </div>
+          }
+          @if (vatBreakdown().length === 0) {
+            <p class="ni-summary__vat-none">—</p>
+          }
+        </div>
+
+        <div class="ni-summary__ttc-bar"></div>
+
+        <div class="ni-summary__ttc-row">
+          <span class="ni-summary__ttc-label">Total<br><small>TTC</small></span>
+          <span class="ni-summary__ttc-amount">{{ formatAmount(totalTTC()) }}</span>
+        </div>
+      </div>
+
+      @if (saveError()) {
+        <p class="ni-summary__error">
+          <span class="material-symbols-outlined">error</span>
+          {{ saveError() }}
+        </p>
+      }
+
+      <div class="ni-summary__actions">
+        <button type="button" class="ni-btn ni-btn--primary ni-btn--full" (click)="save()" [disabled]="saving()">
+          @if (saving()) {
+            <span class="material-symbols-outlined ni-spin">progress_activity</span>
+            Enregistrement…
+          } @else {
+            <span class="material-symbols-outlined">save</span>
+            {{ 'NEW_INVOICE.SAVE' | translate }}
+          }
+        </button>
+        <button type="button" class="ni-btn ni-btn--outline ni-btn--full" (click)="sendByEmail()" [disabled]="saving()">
+          <span class="material-symbols-outlined">send</span>
+          {{ 'NEW_INVOICE.SEND_EMAIL' | translate }}
+        </button>
+        <button type="button" class="ni-btn ni-btn--ghost ni-btn--full" (click)="preview()">
+          <span class="material-symbols-outlined">visibility</span>
+          {{ 'NEW_INVOICE.PREVIEW' | translate }}
+        </button>
+      </div>
+
+      <!-- Smart Tip -->
+      <div class="ni-tip">
+        <div class="ni-tip__header">
+          <span class="material-symbols-outlined">lightbulb</span>
+          <span class="ni-tip__title">{{ 'NEW_INVOICE.TIP_TITLE' | translate }}</span>
+        </div>
+        <p class="ni-tip__body">{{ 'NEW_INVOICE.TIP_BODY' | translate }}</p>
+        <button type="button" class="ni-tip__action">{{ 'NEW_INVOICE.TIP_APPLY' | translate }}</button>
+      </div>
+
+    </aside>
+
+  </div><!-- /ni-body -->
+
+  <!-- CLIENT SELECTION MODAL -->
+  @if (clientModalOpen()) {
+    <div class="ni-modal-backdrop" (click)="closeClientModal()">
+      <div class="ni-modal" (click)="$event.stopPropagation()">
+
+        <div class="ni-modal__header">
+          <div class="ni-modal__header-left">
+            <div class="ni-modal__icon-wrap">
+              <span class="material-symbols-outlined">group</span>
+            </div>
+            <div>
+              <h2 class="ni-modal__title">Sélectionner un client</h2>
+              <p class="ni-modal__sub">{{ allClients().length }} client{{ allClients().length > 1 ? 's' : '' }} disponible{{ allClients().length > 1 ? 's' : '' }}</p>
+            </div>
+          </div>
+          <button type="button" class="ni-modal__close" (click)="closeClientModal()">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <div class="ni-modal__search">
+          <span class="material-symbols-outlined ni-modal__search-icon">search</span>
+          <input
+            class="ni-modal__search-input"
+            type="text"
+            placeholder="Rechercher par nom, contact ou email…"
+            [ngModel]="clientSearch()"
+            (ngModelChange)="clientSearch.set($event)"
+          />
+          @if (clientSearch()) {
+            <button type="button" class="ni-modal__search-clear" (click)="clientSearch.set('')">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          }
+        </div>
+
+        <div class="ni-modal__body">
+          @if (filteredClientOptions().length === 0) {
+            <div class="ni-modal__empty">
+              <span class="material-symbols-outlined">group_off</span>
+              <p>Aucun client ne correspond à votre recherche.</p>
+            </div>
+          } @else {
+            <ul class="ni-modal__list">
+              @for (client of filteredClientOptions(); track client.id) {
+                <li
+                  class="ni-modal__item"
+                  [class.ni-modal__item--selected]="selectedClient()?.id === client.id"
+                  (click)="selectClient(client)"
+                >
+                  <div class="ni-modal__item-avatar">{{ getInitials(client.companyName) }}</div>
+                  <div class="ni-modal__item-body">
+                    <div class="ni-modal__item-top">
+                      <span class="ni-modal__item-name">{{ client.companyName }}</span>
+                      <span class="ni-modal__item-currency">{{ client.financial.currency }}</span>
+                    </div>
+                    <div class="ni-modal__item-bottom">
+                      <span class="material-symbols-outlined">person</span>
+                      <span>{{ client.contacts[0].fullName }}</span>
+                      <span class="ni-modal__item-dot">·</span>
+                      <span class="material-symbols-outlined">mail</span>
+                      <span>{{ client.contacts[0].email }}</span>
+                      @if (client.billingAddress.city) {
+                        <span class="ni-modal__item-dot">·</span>
+                        <span class="material-symbols-outlined">location_on</span>
+                        <span>{{ client.billingAddress.city }}</span>
+                      }
+                    </div>
+                  </div>
+                  @if (selectedClient()?.id === client.id) {
+                    <span class="material-symbols-outlined ni-modal__item-check">check_circle</span>
+                  } @else {
+                    <span class="material-symbols-outlined ni-modal__item-arrow">chevron_right</span>
+                  }
+                </li>
+              }
+            </ul>
+          }
+        </div>
+
+        <div class="ni-modal__footer">
+          <a routerLink="/client/create" class="ni-modal__footer-link">
+            <span class="material-symbols-outlined">person_add</span>
+            Créer un nouveau client
+          </a>
+          <button type="button" class="ni-btn ni-btn--ghost" (click)="closeClientModal()">Fermer</button>
+        </div>
+
+      </div>
+    </div>
+  }
+
+</div>

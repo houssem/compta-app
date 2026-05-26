@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary": "#ffffff",
+                    "border-subtle": "#E2E8F0",
+                    "on-error": "#ffffff",
+                    "inverse-primary": "#a7c8ff",
+                    "surface-variant": "#e2e2e7",
+                    "on-secondary-fixed": "#0d1c2e",
+                    "on-primary-fixed": "#001b3c",
+                    "inverse-on-surface": "#f1f0f5",
+                    "on-secondary-container": "#57657a",
+                    "tertiary-fixed": "#ffdbca",
+                    "on-tertiary-fixed": "#341100",
+                    "on-error-container": "#93000a",
+                    "surface-bright": "#f9f9fe",
+                    "status-canceled": "#334155",
+                    "status-draft": "#94A3B8",
+                    "secondary-container": "#d5e3fc",
+                    "on-primary": "#ffffff",
+                    "on-primary-container": "#799dd6",
+                    "tertiary": "#381300",
+                    "surface-container-highest": "#e2e2e7",
+                    "on-secondary-fixed-variant": "#3a485b",
+                    "surface-container": "#eeedf2",
+                    "surface-muted": "#F8FAFC",
+                    "on-primary-fixed-variant": "#1f477b",
+                    "on-background": "#1a1c1f",
+                    "status-sent": "#3B82F6",
+                    "secondary": "#515f74",
+                    "status-overdue": "#EF4444",
+                    "surface-dim": "#dad9de",
+                    "tertiary-fixed-dim": "#ffb690",
+                    "outline-variant": "#c3c6d1",
+                    "outline": "#737780",
+                    "on-tertiary-container": "#d8885c",
+                    "error-container": "#ffdad6",
+                    "inverse-surface": "#2f3034",
+                    "primary-fixed-dim": "#a7c8ff",
+                    "on-secondary": "#ffffff",
+                    "on-surface-variant": "#43474f",
+                    "error": "#ba1a1a",
+                    "surface-tint": "#3a5f94",
+                    "on-tertiary-fixed-variant": "#723610",
+                    "secondary-fixed": "#d5e3fc",
+                    "primary": "#001e40",
+                    "secondary-fixed-dim": "#b9c7df",
+                    "status-paid": "#10B981",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed": "#d5e3ff",
+                    "on-surface": "#1a1c1f",
+                    "background": "#f9f9fe",
+                    "surface": "#f9f9fe",
+                    "surface-container-high": "#e8e8ed",
+                    "status-pending": "#F59E0B",
+                    "surface-container-low": "#f4f3f8",
+                    "tertiary-container": "#592300",
+                    "primary-container": "#003366"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "margin-desktop": "32px",
+                    "gutter": "24px",
+                    "table-row-height": "48px",
+                    "margin-mobile": "16px",
+                    "unit": "4px",
+                    "input-height": "40px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Inter"],
+                    "display-kpi": ["Inter"],
+                    "body-sm-tabular": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "display-kpi": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-sm-tabular": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-background">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest dark:bg-inverse-surface border-b border-border-subtle dark:border-outline-variant w-full h-14 flex justify-between items-center px-gutter sticky top-0 z-50 transition-colors duration-200">
+<div class="flex items-center gap-8">
+<span class="text-headline-md font-headline-md font-bold text-primary dark:text-primary-fixed-dim">Precision Ledger</span>
+<nav class="hidden md:flex gap-6">
+<a class="text-body-md font-body-md text-primary dark:text-primary-fixed-dim font-bold border-b-2 border-primary transition-colors duration-200" href="#">Features</a>
+<a class="text-body-md font-body-md text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-variant transition-colors duration-200" href="#">Pricing</a>
+<a class="text-body-md font-body-md text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-variant transition-colors duration-200" href="#">About</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-body-md font-body-md px-4 py-2 text-primary hover:bg-surface-container-low transition-colors">Login</button>
+<button class="text-body-md font-body-md px-4 py-2 bg-primary text-on-primary rounded-lg hover:opacity-90 transition-opacity">Register</button>
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant">settings</span>
+</div>
+</header>
+<main class="max-w-[1440px] mx-auto px-margin-desktop space-y-24 py-16">
+<!-- Hero Section -->
+<section class="grid lg:grid-cols-2 gap-12 items-center">
+<div class="space-y-8">
+<div class="space-y-4">
+<span class="text-label-caps font-label-caps text-primary uppercase tracking-widest">Invoicing Suite v2.0</span>
+<h1 class="text-display-kpi font-display-kpi text-primary leading-tight">
+                        Simplifiez votre facturation, maîtrisez votre trésorerie
+                    </h1>
+<p class="text-body-lg font-body-lg text-on-surface-variant max-w-xl">
+                        Émettez des factures professionnelles en quelques secondes. Automatisez vos relances de paiement et suivez vos flux de trésorerie en temps réel avec une précision chirurgicale.
+                    </p>
+</div>
+<div class="flex gap-4">
+<button class="bg-primary text-on-primary text-body-lg font-headline-md px-8 py-4 rounded-lg shadow-sm hover:brightness-110 transition-all">
+                        Démarrer gratuitement
+                    </button>
+<button class="border border-border-subtle text-primary text-body-lg font-headline-md px-8 py-4 rounded-lg hover:bg-surface-container-low transition-all">
+                        Voir la démo
+                    </button>
+</div>
+<div class="flex items-center gap-4 pt-4">
+<div class="flex -space-x-2">
+<img alt="User" class="w-10 h-10 rounded-full border-2 border-white" data-alt="A professional studio headshot of a female entrepreneur with a confident smile, wearing business casual attire. The background is a clean, minimalist corporate office with soft, high-key lighting that creates a bright and trustworthy light-mode aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcSRJySgZrUMYTVsJYTjRgojGkyztGMKAk_m_zWkb3dK28UCvWq0Dq4iizFQ-nwrV1g_-jFU-xNu3Y8fjUvefZ5Bqv7Oo3V87ry75KN5ItKMtLIa67zYwy_XguhtrGO5ank3zYSP1uI54QJsVFvNDm8PaPyBLuFEY0bIQR2pQoAfxgm2iAhnAiNMsptaeJx1kUWKLJvKY0MGavUSCWk8Lhn4Hhf6EL1VZ2206RDS75yurv2snTUXVhLD1JTwLInvYWK_yzlxzkhoiy"/>
+<img alt="User" class="w-10 h-10 rounded-full border-2 border-white" data-alt="A professional close-up of a diverse male executive in a modern workspace. He is looking at the camera with a friendly and reliable expression. The lighting is crisp and clear, emphasizing a clean corporate atmosphere with a palette of soft whites and professional blues." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHgrD2nX7-tSdHcET97JqI-HqByorgmBHnyK6FHE6t01RWB_8ZUNVqujz6ch2E-VyqmNaUaKvV5sJs89TJZgWVT-3Y7Q0ixLmtP3AsZp3iDSvqS2OHfdk3t5tlD8l0oTap7LhaMvv6FpyKImJNcYVO1IBsqYytZAbHetpd49q9FtSyLTjjjwb7ISD2fTQnKZZPqmxzPbizLCBtwtYf2aoeWI9BE_VYGhTjwNBpFLIF3jy_BNUVB-_0qGAg4utKxuwTbTW3tC7DDCCL"/>
+<img alt="User" class="w-10 h-10 rounded-full border-2 border-white" data-alt="A high-quality portrait of a smiling businesswoman in a contemporary bright office setting. The image uses a light-mode color scheme with clean lines and soft shadows, reflecting an authoritative and efficient brand personality suitable for a professional finance application." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUc_Jkg2PYHWzGJIBFLk_5YP84TMBrdSMKZpzvYXtDczNMJDMpdgVC9GnsFgPchVtT1cqdggjgpsy38S0UOiBlm1L0Zk2NwCZ7oHe19HGH66-ItqjGM57dyZAYs8ykFIjuze2SD4GrXt8F2NnDCR-kk4QWUesnbJPpVtRCcn0UmAfQR7GTpBvvk6AG87N1tjc4jVIQxvrZBJTWQjjLNDu93t2YFV3b18l8Acd76bqqa_zeWNDzJ6-Mu5_Fy2EXe5YICUeqok6lK_mP"/>
+</div>
+<span class="text-body-md font-body-md text-on-surface-variant">Utilisé par <strong>+500 entreprises</strong> en France</span>
+</div>
+</div>
+<div class="relative group">
+<div class="absolute -inset-1 bg-gradient-to-r from-primary to-on-primary-container rounded-xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+<div class="relative bg-surface-container-lowest border border-border-subtle p-4 rounded-xl shadow-lg overflow-hidden">
+<!-- Dashboard Mockup (Semantic Shell) -->
+<div class="bg-surface-muted rounded-lg border border-border-subtle p-6 space-y-6">
+<div class="flex justify-between items-end">
+<div>
+<p class="text-label-caps font-label-caps text-on-surface-variant">CHIFFRE D'AFFAIRES (MENSUEL)</p>
+<h3 class="text-display-kpi font-display-kpi text-status-paid">€42,850.00</h3>
+</div>
+<div class="h-16 w-32 flex items-end gap-1">
+<div class="w-full bg-status-paid opacity-20 h-2/3 rounded-t-sm"></div>
+<div class="w-full bg-status-paid opacity-40 h-3/4 rounded-t-sm"></div>
+<div class="w-full bg-status-paid h-full rounded-t-sm"></div>
+<div class="w-full bg-status-paid opacity-60 h-4/5 rounded-t-sm"></div>
+</div>
+</div>
+<div class="border-t border-border-subtle pt-4">
+<table class="w-full text-left">
+<thead class="bg-surface-muted">
+<tr class="h-10">
+<th class="text-label-caps font-label-caps px-4">Client</th>
+<th class="text-label-caps font-label-caps px-4">État</th>
+<th class="text-label-caps font-label-caps px-4 text-right">Montant</th>
+</tr>
+</thead>
+<tbody class="text-body-sm-tabular font-body-sm-tabular">
+<tr class="h-12 border-b border-border-subtle">
+<td class="px-4">TechSolutions SAS</td>
+<td class="px-4"><span class="px-2 py-1 bg-status-paid/10 text-status-paid rounded-lg text-[10px] font-bold">PAYÉ</span></td>
+<td class="px-4 text-right">€1,250.00</td>
+</tr>
+<tr class="h-12 border-b border-border-subtle">
+<td class="px-4">Design Studio Paris</td>
+<td class="px-4"><span class="px-2 py-1 bg-status-sent/10 text-status-sent rounded-lg text-[10px] font-bold">ENVOYÉ</span></td>
+<td class="px-4 text-right">€4,800.00</td>
+</tr>
+<tr class="h-12">
+<td class="px-4">Global Logistics</td>
+<td class="px-4"><span class="px-2 py-1 bg-status-overdue/10 text-status-overdue rounded-lg text-[10px] font-bold">RETARD</span></td>
+<td class="px-4 text-right">€2,100.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Trust Signals / Logos -->
+<section class="py-8 border-y border-border-subtle flex flex-wrap justify-between items-center opacity-50 grayscale gap-8">
+<span class="text-headline-md font-bold">STRIPE</span>
+<span class="text-headline-md font-bold">PAYPAL</span>
+<span class="text-headline-md font-bold">REVOLUT</span>
+<span class="text-headline-md font-bold">HSBC</span>
+<span class="text-headline-md font-bold">SAGE</span>
+</section>
+<!-- Features Bento Grid -->
+<section class="space-y-12">
+<div class="text-center space-y-4">
+<h2 class="text-headline-lg font-headline-lg text-primary">Fonctionnalités avancées pour la finance</h2>
+<p class="text-body-lg font-body-lg text-on-surface-variant max-w-2xl mx-auto">Conçu pour les professionnels qui exigent une fiabilité absolue et un gain de temps maximal.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Feature 1 -->
+<div class="bg-surface-container-lowest p-8 border border-border-subtle rounded-xl flex flex-col gap-6">
+<div class="w-12 h-12 bg-primary-container/10 flex items-center justify-center rounded-lg">
+<span class="material-symbols-outlined text-primary text-3xl">bolt</span>
+</div>
+<div class="space-y-2">
+<h4 class="text-headline-md font-headline-md text-primary">Facturation Instantanée</h4>
+<p class="text-body-md font-body-md text-on-surface-variant leading-relaxed">
+                            Créez et envoyez des factures conformes aux normes fiscales en moins de 60 secondes. Pré-remplissage automatique des données clients récurrents.
+                        </p>
+</div>
+</div>
+<!-- Feature 2 -->
+<div class="bg-surface-container-lowest p-8 border border-border-subtle rounded-xl flex flex-col gap-6 md:col-span-1">
+<div class="w-12 h-12 bg-status-overdue/10 flex items-center justify-center rounded-lg">
+<span class="material-symbols-outlined text-status-overdue text-3xl">notifications_active</span>
+</div>
+<div class="space-y-2">
+<h4 class="text-headline-md font-headline-md text-primary">Relances automatiques</h4>
+<p class="text-body-md font-body-md text-on-surface-variant leading-relaxed">
+                            Configurez des séquences de relance intelligentes. Notre système envoie des rappels polis mais fermes à J-3, J+1 et J+7 de l'échéance.
+                        </p>
+</div>
+</div>
+<!-- Feature 3 -->
+<div class="bg-surface-container-lowest p-8 border border-border-subtle rounded-xl flex flex-col gap-6">
+<div class="w-12 h-12 bg-status-paid/10 flex items-center justify-center rounded-lg">
+<span class="material-symbols-outlined text-status-paid text-3xl">account_balance_wallet</span>
+</div>
+<div class="space-y-2">
+<h4 class="text-headline-md font-headline-md text-primary">Paiements Intégrés</h4>
+<p class="text-body-md font-body-md text-on-surface-variant leading-relaxed">
+                            Acceptez les cartes bancaires et virements instantanés directement via vos factures grâce à nos intégrations Stripe et PayPal.
+                        </p>
+</div>
+</div>
+</div>
+</section>
+<!-- KPI Highlight -->
+<section class="bg-primary p-12 rounded-2xl grid md:grid-cols-4 gap-8">
+<div class="space-y-2">
+<p class="text-label-caps font-label-caps text-on-primary/60">TEMPS GAGNÉ</p>
+<h4 class="text-display-kpi font-display-kpi text-on-primary">12h <span class="text-headline-md">/ mois</span></h4>
+</div>
+<div class="space-y-2">
+<p class="text-label-caps font-label-caps text-on-primary/60">RÉDUCTION IMPAYÉS</p>
+<h4 class="text-display-kpi font-display-kpi text-on-primary">-34%</h4>
+</div>
+<div class="space-y-2">
+<p class="text-label-caps font-label-caps text-on-primary/60">CONFORMITÉ</p>
+<h4 class="text-display-kpi font-display-kpi text-on-primary">100%</h4>
+</div>
+<div class="space-y-2">
+<p class="text-label-caps font-label-caps text-on-primary/60">DISPONIBILITÉ</p>
+<h4 class="text-display-kpi font-display-kpi text-on-primary">99.9%</h4>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-high dark:bg-inverse-surface mt-24 py-16">
+<div class="max-w-[1440px] mx-auto px-margin-desktop grid grid-cols-1 md:grid-cols-4 gap-12">
+<div class="col-span-1 md:col-span-2 space-y-6">
+<h3 class="text-headline-lg font-headline-lg text-primary">Precision Ledger</h3>
+<p class="text-body-md font-body-md text-on-surface-variant max-w-sm">
+                    La suite comptable de référence pour les entreprises à forte croissance. Précision, rapidité et sécurité bancaire.
+                </p>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-primary cursor-pointer">Notebook</span>
+<span class="material-symbols-outlined text-primary cursor-pointer">language</span>
+<span class="material-symbols-outlined text-primary cursor-pointer">public</span>
+</div>
+</div>
+<div class="space-y-6">
+<h5 class="text-label-caps font-label-caps text-primary">Produit</h5>
+<ul class="space-y-4 text-body-md font-body-md text-on-surface-variant">
+<li><a class="hover:text-primary" href="#">Fonctionnalités</a></li>
+<li><a class="hover:text-primary" href="#">Tarifs</a></li>
+<li><a class="hover:text-primary" href="#">Sécurité</a></li>
+<li><a class="hover:text-primary" href="#">API</a></li>
+</ul>
+</div>
+<div class="space-y-6">
+<h5 class="text-label-caps font-label-caps text-primary">Contact</h5>
+<ul class="space-y-4 text-body-md font-body-md text-on-surface-variant">
+<li>support@precision-ledger.com</li>
+<li>+33 1 23 45 67 89</li>
+<li>12 Rue de la Finance, Paris</li>
+</ul>
+</div>
+</div>
+<div class="max-w-[1440px] mx-auto px-margin-desktop mt-12 pt-8 border-t border-border-subtle flex flex-col md:flex-row justify-between items-center gap-4 text-label-caps font-label-caps text-on-surface-variant opacity-60">
+<p>© 2024 Precision Ledger. Tous droits réservés.</p>
+<div class="flex gap-8">
+<a href="#">Conditions</a>
+<a href="#">Confidentialité</a>
+<a href="#">Cookies</a>
+</div>
+</div>
+</footer>
+</body></html>

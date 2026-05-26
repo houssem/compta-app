@@ -1,0 +1,170 @@
+<main class="page-main">
+
+  <section class="hero">
+    <div class="hero__left">
+      <p class="hero__eyebrow">{{ 'HOME.EYEBROW' | translate }}</p>
+      <h1 class="hero__headline" [innerHTML]="'HOME.HEADLINE' | translate"></h1>
+      <p class="hero__subline">{{ 'HOME.SUBLINE' | translate }}</p>
+
+      <div class="hero__cta">
+        <a routerLink="/dashboard" class="btn-primary">{{ 'HOME.CTA_START' | translate }}</a>
+        <button class="btn-secondary" type="button">{{ 'HOME.CTA_DEMO' | translate }}</button>
+      </div>
+
+      <div class="hero__social-proof">
+        <div class="avatar-stack">
+          <img src="https://i.pravatar.cc/80?img=47" alt="Utilisateur">
+          <img src="https://i.pravatar.cc/80?img=12" alt="Utilisateur">
+          <img src="https://i.pravatar.cc/80?img=29" alt="Utilisateur">
+        </div>
+        <p class="hero__social-proof-text" [innerHTML]="'HOME.SOCIAL_PROOF' | translate"></p>
+      </div>
+    </div>
+
+    <div class="mockup-wrapper">
+      <div class="mockup-glow"></div>
+      <div class="mockup-card">
+        <div class="mockup-inner">
+          <div class="mockup-kpi-row">
+            <div>
+              <p class="mockup-kpi-label">Chiffre d'affaires (mensuel)</p>
+              <p class="mockup-kpi-value">€42&nbsp;850,00</p>
+            </div>
+            <div class="mockup-mini-chart">
+              <span style="height:55%"></span>
+              <span style="height:68%"></span>
+              <span style="height:100%"></span>
+              <span style="height:80%"></span>
+            </div>
+          </div>
+          <div class="mockup-divider"></div>
+          <table class="mockup-table">
+            <thead>
+              <tr><th>Client</th><th>État</th><th>Montant</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>TechSolutions SAS</td>
+                <td><span class="badge badge-paid">Payé</span></td>
+                <td>€1 250,00</td>
+              </tr>
+              <tr>
+                <td>Design Studio Paris</td>
+                <td><span class="badge badge-sent">Envoyé</span></td>
+                <td>€4 800,00</td>
+              </tr>
+              <tr>
+                <td>Global Logistics</td>
+                <td><span class="badge badge-overdue">Retard</span></td>
+                <td>€2 100,00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="trust-band">
+    <span class="trust-brand">STRIPE</span>
+    <span class="trust-brand">PAYPAL</span>
+    <span class="trust-brand">REVOLUT</span>
+    <span class="trust-brand">HSBC</span>
+    <span class="trust-brand">SAGE</span>
+  </div>
+
+  <section class="features-section" id="features">
+    <div class="section-header">
+      <h2>{{ 'HOME.FEATURES_TITLE' | translate }}</h2>
+      <p>{{ 'HOME.FEATURES_SUB' | translate }}</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon feature-icon--blue">
+          <span class="material-symbols-outlined">bolt</span>
+        </div>
+        <div>
+          <h4>{{ 'HOME.FEAT1_TITLE' | translate }}</h4>
+          <p>{{ 'HOME.FEAT1_BODY' | translate }}</p>
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon feature-icon--red">
+          <span class="material-symbols-outlined">notifications_active</span>
+        </div>
+        <div>
+          <h4>{{ 'HOME.FEAT2_TITLE' | translate }}</h4>
+          <p>{{ 'HOME.FEAT2_BODY' | translate }}</p>
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon feature-icon--green">
+          <span class="material-symbols-outlined">account_balance_wallet</span>
+        </div>
+        <div>
+          <h4>{{ 'HOME.FEAT3_TITLE' | translate }}</h4>
+          <p>{{ 'HOME.FEAT3_BODY' | translate }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats-banner">
+    <div class="stat-item">
+      <p>{{ 'HOME.STAT_TIME_SAVED' | translate }}</p>
+      <h4><span class="stat-value-lg">12h</span><span class="stat-value-unit"> / mois</span></h4>
+    </div>
+    <div class="stat-item">
+      <p>{{ 'HOME.STAT_LATE_REDUCTION' | translate }}</p>
+      <h4><span class="stat-value-lg">−34%</span></h4>
+    </div>
+    <div class="stat-item">
+      <p>{{ 'HOME.STAT_COMPLIANCE' | translate }}</p>
+      <h4><span class="stat-value-lg">100%</span></h4>
+    </div>
+    <div class="stat-item">
+      <p>{{ 'HOME.STAT_UPTIME' | translate }}</p>
+      <h4><span class="stat-value-lg">99.9%</span></h4>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <h3>Facturation</h3>
+      <p>{{ 'HOME.FOOTER_DESC' | translate }}</p>
+      <div class="footer-icons">
+        <span class="material-symbols-outlined">menu_book</span>
+        <span class="material-symbols-outlined">language</span>
+        <span class="material-symbols-outlined">public</span>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h5>{{ 'HOME.FOOTER_PRODUCT' | translate }}</h5>
+      <ul>
+        <li><a href="#">{{ 'HOME.FOOTER_FEATURES' | translate }}</a></li>
+        <li><a href="#">{{ 'HOME.FOOTER_PRICING' | translate }}</a></li>
+        <li><a href="#">{{ 'HOME.FOOTER_SECURITY' | translate }}</a></li>
+        <li><a href="#">{{ 'HOME.FOOTER_API' | translate }}</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>{{ 'HOME.FOOTER_CONTACT' | translate }}</h5>
+      <ul>
+        <li>support&#64;facturation.dev</li>
+        <li>+33 1 23 45 67 89</li>
+        <li>12 Rue de la Finance, Paris</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>{{ 'HOME.FOOTER_RIGHTS' | translate }}</p>
+    <div class="footer-bottom-links">
+      <a href="#">{{ 'HOME.FOOTER_TERMS' | translate }}</a>
+      <a href="#">{{ 'HOME.FOOTER_PRIVACY' | translate }}</a>
+      <a href="#">{{ 'HOME.FOOTER_COOKIES' | translate }}</a>
+    </div>
+  </div>
+</footer>

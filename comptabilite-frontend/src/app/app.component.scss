@@ -1,0 +1,10 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+// The routed component (home, login, main-layout) renders as a sibling of
+// <router-outlet> inside this flex container. Each component manages its
+// own overflow independently via :host styles.

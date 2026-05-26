@@ -1,0 +1,182 @@
+<div class="pinv-page">
+
+  <!-- PAGE HEADER -->
+  <div class="pinv-header">
+    <div class="pinv-header__info">
+      <h1 class="pinv-header__title">Factures d'achat</h1>
+      <p class="pinv-header__sub">Gérez vos factures fournisseurs</p>
+    </div>
+    <div class="pinv-header__actions">
+      <a routerLink="/purchase-invoice/create" class="pinv-btn pinv-btn--primary">
+        <span class="material-symbols-outlined">add</span>
+        Nouvelle facture
+      </a>
+      <button type="button" class="pinv-btn pinv-btn--outline">
+        <span class="material-symbols-outlined">upload</span>
+        Importer facture
+      </button>
+    </div>
+  </div>
+
+  <!-- TABLE CARD -->
+  <div class="pinv-card">
+    <div class="pinv-table-header">
+      <h2 class="pinv-table-title">Liste des factures d'achat</h2>
+      <div class="pinv-table-controls">
+        <div class="pinv-search-wrapper">
+          <span class="material-symbols-outlined pinv-search-icon">search</span>
+          <input
+            class="pinv-search"
+            type="text"
+            placeholder="Rechercher par fournisseur ou code…"
+            [ngModel]="searchQuery()"
+            (ngModelChange)="onSearchChange($event)"
+          />
+        </div>
+        <select
+          class="pinv-filter-select"
+          [ngModel]="statusFilter()"
+          (ngModelChange)="onStatusChange($event)"
+        >
+          @for (opt of statusOptions; track opt.value) {
+            <option [value]="opt.value">{{ opt.label }}</option>
+          }
+        </select>
+        <button type="button" class="pinv-btn-ghost">
+          <span class="material-symbols-outlined">download</span>
+          Exporter
+        </button>
+      </div>
+    </div>
+
+    <div class="pinv-table-wrapper">
+      <table class="pinv-table">
+        <thead>
+          <tr>
+            <th class="pinv-th">Fournisseur</th>
+            <th class="pinv-th">Code facture</th>
+            <th class="pinv-th">Date facture</th>
+            <th class="pinv-th pinv-th--right">Montant TTC</th>
+            <th class="pinv-th">Statut</th>
+            <th class="pinv-th pinv-th--center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (loading()) {
+            @for (_ of [1,2,3]; track $index) {
+              <tr class="pinv-tr">
+                <td class="pinv-td"><span class="pinv-skel pinv-skel--wide"></span></td>
+                <td class="pinv-td"><span class="pinv-skel"></span></td>
+                <td class="pinv-td"><span class="pinv-skel"></span></td>
+                <td class="pinv-td"><span class="pinv-skel pinv-skel--short"></span></td>
+                <td class="pinv-td"><span class="pinv-skel pinv-skel--badge"></span></td>
+                <td class="pinv-td"></td>
+              </tr>
+            }
+          } @else if (error()) {
+            <tr>
+              <td colspan="6" class="pinv-td pinv-state">
+                <span class="material-symbols-outlined pinv-state__icon pinv-state__icon--error">error</span>
+                <p class="pinv-state__msg">{{ error() }}</p>
+              </td>
+            </tr>
+          } @else if (pagedInvoices().length === 0) {
+            <tr>
+              <td colspan="6" class="pinv-td pinv-state">
+                <span class="material-symbols-outlined pinv-state__icon">receipt_long</span>
+                <p class="pinv-state__msg">Aucune facture d'achat trouvée.</p>
+              </td>
+            </tr>
+          } @else {
+            @for (inv of pagedInvoices(); track inv.dbId) {
+              <tr class="pinv-tr">
+                <td class="pinv-td">
+                  <div class="pinv-supplier">
+                    <span class="pinv-avatar" [style.background]="inv.avatarColor">{{ inv.initial }}</span>
+                    <span class="pinv-supplier__name">{{ inv.supplier }}</span>
+                  </div>
+                </td>
+                <td class="pinv-td pinv-td--code">{{ inv.id }}</td>
+                <td class="pinv-td pinv-td--date">{{ inv.dateFacture }}</td>
+                <td class="pinv-td pinv-td--amount">{{ formatAmount(inv.montantTTC, inv.currency) }}</td>
+                <td class="pinv-td">
+                  <span [class]="'pinv-badge pinv-badge--' + badgeClassMap[inv.statut]">{{ inv.statut }}</span>
+                </td>
+                <td class="pinv-td pinv-td--center">
+                  <div class="pinv-action-wrap">
+                    <button
+                      type="button"
+                      class="pinv-row-action"
+                      [class.pinv-row-action--active]="openMenuId() === inv.dbId"
+                      (click)="toggleMenu(inv.dbId, $event)"
+                      title="Actions"
+                    >
+                      <span class="material-symbols-outlined">more_vert</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PAGINATION -->
+    <div class="pinv-pagination" [style.visibility]="(!loading() && !error() && filteredInvoices().length > 0) ? 'visible' : 'hidden'">
+      <span class="pinv-pagination__info">
+        {{ (currentPage()-1)*pageSize+1 }}–{{ pageEnd() }} sur {{ filteredInvoices().length }}
+      </span>
+      <div class="pinv-pagination__controls">
+        <button type="button" class="pinv-page-btn" [disabled]="currentPage() === 1" (click)="goToPage(currentPage() - 1)">
+          <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+        @for (p of pages(); track p) {
+          <button
+            type="button"
+            class="pinv-page-btn"
+            [class.pinv-page-btn--active]="p === currentPage()"
+            (click)="goToPage(p)"
+          >{{ p }}</button>
+        }
+        <button type="button" class="pinv-page-btn" [disabled]="currentPage() === totalPages()" (click)="goToPage(currentPage() + 1)">
+          <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOATING CONTEXT MENU -->
+  @if (openMenuId() !== null && menuAnchorRect() !== null) {
+    @if (confirmDeleteId() === openMenuId()) {
+      <div class="pinv-menu" style="position:fixed"
+           [style.top.px]="menuAnchorRect()!.top"
+           [style.right.px]="menuAnchorRect()!.right"
+           (click)="$event.stopPropagation()">
+        <div class="pinv-menu__confirm">
+          <p class="pinv-menu__confirm-text">Supprimer cette facture&nbsp;?</p>
+          <div class="pinv-menu__confirm-actions">
+            <button class="pinv-menu__confirm-cancel" (click)="cancelDelete($event)">Annuler</button>
+            <button class="pinv-menu__confirm-ok" (click)="deleteInvoice(openMenuId()!, $event)">Supprimer</button>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <div class="pinv-menu" style="position:fixed"
+           [style.top.px]="menuAnchorRect()!.top"
+           [style.right.px]="menuAnchorRect()!.right"
+           (click)="$event.stopPropagation()">
+        <button class="pinv-menu__item" (click)="editInvoice(openMenuId()!)">
+          <span class="material-symbols-outlined">edit</span>
+          Modifier
+        </button>
+        <div class="pinv-menu__sep"></div>
+        <button class="pinv-menu__item pinv-menu__item--danger" (click)="confirmDelete(openMenuId()!, $event)">
+          <span class="material-symbols-outlined">delete</span>
+          Supprimer
+        </button>
+      </div>
+    }
+  }
+
+</div>

@@ -1,0 +1,335 @@
+<div class="ns-page" [formGroup]="form">
+
+  <!-- STICKY TOPBAR -->
+  <header class="ns-topbar">
+    <nav class="ns-breadcrumb">
+      <a routerLink="/suppliers" class="ns-breadcrumb__link">{{ 'NEW_SUPPLIER.BREADCRUMB' | translate }}</a>
+      <span class="material-symbols-outlined ns-breadcrumb__sep">chevron_right</span>
+      <span class="ns-breadcrumb__current">{{ 'NEW_SUPPLIER.BREADCRUMB_CURRENT' | translate }}</span>
+    </nav>
+    <div class="ns-topbar__actions">
+      @if (errorMsg()) {
+        <span class="ns-error-inline">
+          <span class="material-symbols-outlined">error</span>
+          {{ errorMsg() }}
+        </span>
+      }
+      <button type="button" class="ns-btn ns-btn--ghost" (click)="cancel()" [disabled]="loading()">
+        {{ 'NEW_SUPPLIER.CANCEL' | translate }}
+      </button>
+      <button type="button" class="ns-btn ns-btn--primary" (click)="save()" [disabled]="loading()">
+        @if (loading()) {
+          <span class="material-symbols-outlined ns-spin">progress_activity</span>
+        } @else {
+          <span class="material-symbols-outlined">save</span>
+        }
+        {{ loading() ? ('NEW_SUPPLIER.SAVING' | translate) : ('NEW_SUPPLIER.SAVE' | translate) }}
+      </button>
+    </div>
+  </header>
+
+  <!-- PAGE HERO -->
+  <div class="ns-hero">
+    <h1 class="ns-hero__title">
+      {{ (editMode() ? 'NEW_SUPPLIER.EDIT_TITLE' : 'NEW_SUPPLIER.TITLE') | translate }}
+    </h1>
+    <p class="ns-hero__sub">
+      {{ (editMode() ? 'NEW_SUPPLIER.EDIT_SUB' : 'NEW_SUPPLIER.CREATE_SUB') | translate }}
+    </p>
+  </div>
+
+  <!-- FORM SECTIONS -->
+  <div class="ns-form">
+
+    <!-- 01 — Informations générales -->
+    <section class="ns-section ns-anim-1">
+      <div class="ns-section__head">
+        <span class="ns-section__num">01</span>
+        <div class="ns-section__icon-wrap">
+          <span class="material-symbols-outlined">store</span>
+        </div>
+        <div class="ns-section__meta">
+          <h2 class="ns-section__title">{{ 'NEW_SUPPLIER.SECTION_GENERAL' | translate }}</h2>
+          <p class="ns-section__desc">Identité légale, présence en ligne et catégorie</p>
+        </div>
+      </div>
+      <div class="ns-section__body">
+
+        <div class="ns-grid ns-grid--2">
+          <div class="ns-field">
+            <label class="ns-label" for="companyName">
+              {{ 'NEW_SUPPLIER.COMPANY_NAME' | translate }}
+              <span class="ns-required">*</span>
+            </label>
+            <input id="companyName" class="ns-input" type="text"
+              [class.ns-input--error]="f['companyName'].invalid && f['companyName'].touched"
+              [placeholder]="'NEW_SUPPLIER.COMPANY_PLACEHOLDER' | translate"
+              formControlName="companyName" />
+            @if (f['companyName'].invalid && f['companyName'].touched) {
+              <p class="ns-field-error">
+                <span class="material-symbols-outlined">error</span>
+                Le nom de la société est requis.
+              </p>
+            }
+          </div>
+
+          <div class="ns-field">
+            <label class="ns-label" for="category">
+              {{ 'NEW_SUPPLIER.CATEGORY' | translate }}
+              <span class="ns-required">*</span>
+            </label>
+            <select id="category" class="ns-select"
+              [class.ns-select--error]="f['category'].invalid && f['category'].touched"
+              formControlName="category">
+              <option value="">{{ 'NEW_SUPPLIER.CATEGORY_PLACEHOLDER' | translate }}</option>
+              @for (cat of categories; track cat) {
+                <option [value]="cat">{{ cat }}</option>
+              }
+            </select>
+            @if (f['category'].invalid && f['category'].touched) {
+              <p class="ns-field-error">
+                <span class="material-symbols-outlined">error</span>
+                La catégorie est requise.
+              </p>
+            }
+          </div>
+        </div>
+
+        <div class="ns-grid ns-grid--2">
+          <div class="ns-field">
+            <label class="ns-label" for="website">{{ 'NEW_SUPPLIER.WEBSITE' | translate }}</label>
+            <div class="ns-input-icon-wrap">
+              <span class="material-symbols-outlined ns-input-icon">language</span>
+              <input id="website" class="ns-input ns-input--icon" type="url"
+                placeholder="https://www.fournisseur.com"
+                [class.ns-input--error]="f['website'].invalid && f['website'].touched"
+                formControlName="website" />
+            </div>
+            @if (f['website'].hasError('invalidUrl') && f['website'].touched) {
+              <p class="ns-field-error">
+                <span class="material-symbols-outlined">error</span>
+                L'URL doit commencer par https:// ou http://
+              </p>
+            }
+          </div>
+          <div></div>
+        </div>
+
+        <!-- Champs spécifiques Tunisie -->
+        @if (isTunisian()) {
+          <div class="ns-grid ns-grid--2">
+            <div class="ns-field">
+              <label class="ns-label" for="rneNumber">Numéro RNE</label>
+              <input id="rneNumber" class="ns-input" type="text"
+                placeholder="ex : TN-2023-B123456"
+                formControlName="rneNumber" />
+            </div>
+            <div class="ns-field">
+              <label class="ns-label" for="regimeFiscal">Régime fiscal</label>
+              <select id="regimeFiscal" class="ns-select" formControlName="regimeFiscal">
+                <option value="REEL">Réel</option>
+                <option value="FORFAITAIRE">Forfaitaire</option>
+              </select>
+            </div>
+          </div>
+        }
+
+        <div class="ns-grid ns-grid--2">
+          <div class="ns-field">
+            <label class="ns-label" for="taxId">
+              {{ isTunisian() ? 'Matricule fiscal' : 'Numéro fiscal' }}
+            </label>
+            <input id="taxId" class="ns-input" type="text"
+              [placeholder]="isTunisian() ? 'ex : 1234567A/P/000' : 'ex : FR 12 345 678 901'"
+              formControlName="taxId" />
+          </div>
+
+          <div class="ns-field ns-field--checkbox">
+            <label class="ns-label">Assujetti TVA</label>
+            <label class="ns-toggle">
+              <input type="checkbox" formControlName="assujettiTva" />
+              <span class="ns-toggle__track"></span>
+              <span class="ns-toggle__label">{{ f['assujettiTva'].value ? 'Oui' : 'Non' }}</span>
+            </label>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 02 — Contact principal -->
+    <section class="ns-section ns-anim-2">
+      <div class="ns-section__head">
+        <span class="ns-section__num">02</span>
+        <div class="ns-section__icon-wrap">
+          <span class="material-symbols-outlined">person</span>
+        </div>
+        <div class="ns-section__meta">
+          <h2 class="ns-section__title">{{ 'NEW_SUPPLIER.SECTION_CONTACT' | translate }}</h2>
+          <p class="ns-section__desc">Interlocuteur principal pour les commandes et factures</p>
+        </div>
+      </div>
+      <div class="ns-section__body">
+        <div class="ns-grid ns-grid--3">
+
+          <div class="ns-field">
+            <label class="ns-label" for="fullName">{{ 'NEW_SUPPLIER.FULL_NAME' | translate }}</label>
+            <input id="fullName" class="ns-input" type="text"
+              [placeholder]="isTunisian() ? 'Ahmed Ben Salem' : 'Jean Dupont'"
+              formControlName="fullName" />
+          </div>
+
+          <div class="ns-field">
+            <label class="ns-label" for="email">{{ 'NEW_SUPPLIER.EMAIL' | translate }}</label>
+            <input id="email" class="ns-input" type="email" placeholder="contact@fournisseur.com"
+              [class.ns-input--error]="f['email'].invalid && f['email'].touched"
+              formControlName="email" />
+            @if (f['email'].hasError('email') && f['email'].touched) {
+              <p class="ns-field-error">
+                <span class="material-symbols-outlined">error</span>
+                L'adresse e-mail n'est pas valide.
+              </p>
+            }
+          </div>
+
+          <div class="ns-field">
+            <label class="ns-label" for="phone">{{ 'NEW_SUPPLIER.PHONE' | translate }}</label>
+            <input id="phone" class="ns-input" type="tel"
+              [placeholder]="isTunisian() ? '+216 71 000 000' : '+33 1 00 00 00 00'"
+              [class.ns-input--error]="f['phone'].invalid && f['phone'].touched"
+              formControlName="phone" />
+            @if (f['phone'].hasError('invalidPhone') && f['phone'].touched) {
+              <p class="ns-field-error">
+                <span class="material-symbols-outlined">error</span>
+                Le numéro de téléphone est invalide.
+              </p>
+            }
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 — Adresse -->
+    <section class="ns-section ns-anim-3">
+      <div class="ns-section__head">
+        <span class="ns-section__num">03</span>
+        <div class="ns-section__icon-wrap">
+          <span class="material-symbols-outlined">location_on</span>
+        </div>
+        <div class="ns-section__meta">
+          <h2 class="ns-section__title">{{ 'NEW_SUPPLIER.SECTION_ADDRESS' | translate }}</h2>
+          <p class="ns-section__desc">Adresse du siège ou de l'entrepôt principal</p>
+        </div>
+      </div>
+      <div class="ns-section__body">
+
+        <!-- Pays en premier -->
+        <div class="ns-grid ns-grid--2">
+          <div class="ns-field">
+            <label class="ns-label" for="country">{{ 'NEW_SUPPLIER.COUNTRY' | translate }}</label>
+            <select id="country" class="ns-select" formControlName="country">
+              @for (c of countries; track c.value) {
+                <option [value]="c.value">{{ c.label }}</option>
+              }
+            </select>
+          </div>
+          <div></div>
+        </div>
+
+        <div class="ns-grid ns-grid--1">
+          <div class="ns-field">
+            <label class="ns-label" for="street">{{ 'NEW_SUPPLIER.STREET' | translate }}</label>
+            <textarea id="street" class="ns-textarea" rows="2"
+              [placeholder]="isTunisian() ? 'Zone Industrielle, Rue de la Manufacture' : 'Rue de la Paix, Industrial District'"
+              formControlName="street"></textarea>
+          </div>
+        </div>
+
+        <div class="ns-grid ns-grid--2">
+          <div class="ns-field">
+            <label class="ns-label" for="city">{{ 'NEW_SUPPLIER.CITY' | translate }}</label>
+            <input id="city" class="ns-input" type="text"
+              [placeholder]="isTunisian() ? 'Tunis, Sfax, Sousse…' : 'Paris, Lyon, Berlin…'"
+              formControlName="city" />
+          </div>
+
+          <div class="ns-field">
+            <label class="ns-label" for="postalCode">{{ 'NEW_SUPPLIER.POSTAL_CODE' | translate }}</label>
+            <input id="postalCode" class="ns-input" type="text"
+              [placeholder]="isTunisian() ? '1000' : '75008'"
+              formControlName="postalCode" />
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 04 — Détails financiers -->
+    <section class="ns-section ns-anim-4">
+      <div class="ns-section__head">
+        <span class="ns-section__num">04</span>
+        <div class="ns-section__icon-wrap">
+          <span class="material-symbols-outlined">account_balance</span>
+        </div>
+        <div class="ns-section__meta">
+          <h2 class="ns-section__title">{{ 'NEW_SUPPLIER.SECTION_FINANCIAL' | translate }}</h2>
+          <p class="ns-section__desc">Paramètres de paiement</p>
+        </div>
+      </div>
+      <div class="ns-section__body">
+        <div class="ns-grid ns-grid--2">
+
+          <div class="ns-field">
+            <label class="ns-label" for="currency">{{ 'NEW_SUPPLIER.CURRENCY' | translate }}</label>
+            <select id="currency" class="ns-select" formControlName="currency">
+              @for (c of currencies; track c.value) {
+                <option [value]="c.value">{{ c.label }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="ns-field">
+            <label class="ns-label" for="paymentTerms">{{ 'NEW_SUPPLIER.PAYMENT_TERMS' | translate }}</label>
+            <select id="paymentTerms" class="ns-select" formControlName="paymentTerms">
+              @for (t of paymentTerms; track t.value) {
+                <option [value]="t.value">{{ t.label }}</option>
+              }
+            </select>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /ns-form -->
+
+  <!-- FOOTER ACTIONS -->
+  <footer class="ns-footer ns-anim-5">
+    @if (formSubmitted() && form.invalid) {
+      <p class="ns-footer__error">
+        <span class="material-symbols-outlined">error</span>
+        Veuillez corriger les erreurs avant d'enregistrer.
+      </p>
+    } @else if (errorMsg()) {
+      <p class="ns-footer__error">
+        <span class="material-symbols-outlined">error</span>
+        {{ errorMsg() }}
+      </p>
+    }
+    <div class="ns-footer__btns">
+      <button type="button" class="ns-btn ns-btn--ghost ns-btn--lg" (click)="cancel()" [disabled]="loading()">
+        {{ 'NEW_SUPPLIER.CANCEL' | translate }}
+      </button>
+      <button type="button" class="ns-btn ns-btn--primary ns-btn--lg" (click)="save()" [disabled]="loading()">
+        @if (loading()) {
+          <span class="material-symbols-outlined ns-spin">progress_activity</span>
+        } @else {
+          <span class="material-symbols-outlined">save</span>
+        }
+        {{ loading() ? ('NEW_SUPPLIER.SAVING' | translate) : ('NEW_SUPPLIER.SAVE' | translate) }}
+      </button>
+    </div>
+  </footer>
+
+</div>

@@ -1,0 +1,266 @@
+<h2>Détail des 4 étapes — Option A retenue</h2>
+<p class="subtitle">Voici le rendu de chaque étape avec les champs réels. Valide le contenu avant l'implémentation.</p>
+
+<style>
+.step-preview {
+  background: #0f172a;
+  border-radius: 10px;
+  padding: 24px;
+  font-family: 'Inter', sans-serif;
+  color: #e2e8f0;
+  margin-bottom: 28px;
+  border: 1px solid #1e293b;
+}
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28px;
+  gap: 0;
+}
+.step-dot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  position: relative;
+}
+.step-dot .circle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+}
+.step-dot .circle.active { background: #3b82f6; color: #fff; }
+.step-dot .circle.done { background: #22c55e; color: #fff; }
+.step-dot .circle.pending { background: #1e293b; border: 2px solid #334155; color: #64748b; }
+.step-dot span { font-size: 10px; color: #94a3b8; white-space: nowrap; }
+.step-dot span.active-label { color: #60a5fa; font-weight: 600; }
+.step-line { flex: 1; height: 2px; margin: 0 6px; margin-bottom: 18px; }
+.step-line.done-line { background: #22c55e; }
+.step-line.pending-line { background: #334155; }
+
+.form-card {
+  background: #1e293b;
+  border-radius: 8px;
+  padding: 20px 24px;
+  max-width: 640px;
+  margin: 0 auto;
+}
+.form-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin-bottom: 4px;
+}
+.form-sub {
+  font-size: 11px;
+  color: #64748b;
+  margin-bottom: 18px;
+}
+.form-grid {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.g2 { grid-template-columns: 1fr 1fr; }
+.g1 { grid-template-columns: 1fr; }
+.g3 { grid-template-columns: 1fr 1fr 1fr; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field label { font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; }
+.field .input-mock {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 5px;
+  height: 32px;
+  padding: 0 10px;
+  font-size: 11px;
+  color: #475569;
+  display: flex;
+  align-items: center;
+}
+.field .input-mock.with-icon { padding-left: 28px; position: relative; }
+.upload-zone {
+  background: #0f172a;
+  border: 2px dashed #334155;
+  border-radius: 6px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 11px;
+  color: #475569;
+}
+.form-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #1e293b;
+}
+.btn { padding: 7px 18px; border-radius: 5px; font-size: 11px; font-weight: 600; }
+.btn-ghost { background: #1e293b; color: #94a3b8; }
+.btn-primary { background: #3b82f6; color: #fff; }
+.btn-success { background: #22c55e; color: #fff; }
+.required { color: #ef4444; margin-left: 2px; }
+.span2 { grid-column: span 2; }
+.span3 { grid-column: span 3; }
+.tag { display: inline-block; background: #0f172a; border: 1px solid #3b82f6; border-radius: 12px; padding: 2px 10px; font-size: 10px; color: #60a5fa; margin-bottom: 8px; }
+
+/* Confirmation */
+.confirm-section { margin-bottom: 16px; }
+.confirm-title { font-size: 11px; font-weight: 700; color: #60a5fa; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+.confirm-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #1e293b; }
+.confirm-row:last-child { border-bottom: none; }
+.confirm-key { font-size: 11px; color: #64748b; }
+.confirm-val { font-size: 11px; color: #e2e8f0; font-weight: 500; }
+.info-banner {
+  background: #0f2d1a;
+  border: 1px solid #22c55e;
+  border-radius: 6px;
+  padding: 12px 14px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-top: 14px;
+}
+.info-icon { font-size: 16px; color: #22c55e; margin-top: 1px; }
+.info-text { font-size: 11px; color: #86efac; line-height: 1.5; }
+</style>
+
+<!-- STEP 1 -->
+<div class="step-preview">
+  <div class="tag">Étape 1 / 3</div>
+  <div class="stepper">
+    <div class="step-dot"><div class="circle active">1</div><span class="active-label">Personnel</span></div>
+    <div class="step-line pending-line"></div>
+    <div class="step-dot"><div class="circle pending">2</div><span>Entreprise</span></div>
+    <div class="step-line pending-line"></div>
+    <div class="step-dot"><div class="circle pending">3</div><span>Banque</span></div>
+    <div class="step-line pending-line"></div>
+    <div class="step-dot"><div class="circle pending">✓</div><span>Confirmation</span></div>
+  </div>
+  <div class="form-card">
+    <div class="form-title">Informations personnelles</div>
+    <div class="form-sub">Vos coordonnées pour accéder à votre espace</div>
+    <div class="form-grid g2">
+      <div class="field"><label>Nom complet <span class="required">*</span></label><div class="input-mock">Jean Dupont</div></div>
+      <div class="field"><label>Email <span class="required">*</span></label><div class="input-mock">jean@entreprise.com</div></div>
+      <div class="field"><label>Mot de passe <span class="required">*</span></label><div class="input-mock">••••••••••</div></div>
+      <div class="field"><label>Confirmer mot de passe <span class="required">*</span></label><div class="input-mock">••••••••••</div></div>
+    </div>
+    <div class="form-nav">
+      <div class="btn btn-ghost">Annuler</div>
+      <div class="btn btn-primary">Suivant →</div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 2 -->
+<div class="step-preview">
+  <div class="tag">Étape 2 / 3</div>
+  <div class="stepper">
+    <div class="step-dot"><div class="circle done">✓</div><span>Personnel</span></div>
+    <div class="step-line done-line"></div>
+    <div class="step-dot"><div class="circle active">2</div><span class="active-label">Entreprise</span></div>
+    <div class="step-line pending-line"></div>
+    <div class="step-dot"><div class="circle pending">3</div><span>Banque</span></div>
+    <div class="step-line pending-line"></div>
+    <div class="step-dot"><div class="circle pending">✓</div><span>Confirmation</span></div>
+  </div>
+  <div class="form-card">
+    <div class="form-title">Informations entreprise</div>
+    <div class="form-sub">Les détails de votre société pour vos factures</div>
+    <div class="form-grid g2">
+      <div class="field"><label>Raison sociale <span class="required">*</span></label><div class="input-mock">Acme Corp SAS</div></div>
+      <div class="field"><label>N° TVA / SIRET</label><div class="input-mock">FR 12 345 678 901</div></div>
+      <div class="field span2"><label>Secteur d'activité <span class="required">*</span></label><div class="input-mock">▾ Sélectionner…</div></div>
+      <div class="field"><label>N° de rue</label><div class="input-mock">12</div></div>
+      <div class="field"><label>Nom de rue <span class="required">*</span></label><div class="input-mock">Rue de la Paix</div></div>
+      <div class="field"><label>Ville <span class="required">*</span></label><div class="input-mock">Paris</div></div>
+      <div class="field"><label>Code postal <span class="required">*</span></label><div class="input-mock">75001</div></div>
+      <div class="field span2"><label>Pays <span class="required">*</span></label><div class="input-mock">▾ France</div></div>
+      <div class="field span2"><label>Logo de l'entreprise</label><div class="upload-zone">⬆ Glisser-déposer ou cliquer pour choisir (PNG, JPG, SVG — max 2 Mo)</div></div>
+    </div>
+    <div class="form-nav">
+      <div class="btn btn-ghost">← Précédent</div>
+      <div class="btn btn-primary">Suivant →</div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 3 -->
+<div class="step-preview">
+  <div class="tag">Étape 3 / 3</div>
+  <div class="stepper">
+    <div class="step-dot"><div class="circle done">✓</div><span>Personnel</span></div>
+    <div class="step-line done-line"></div>
+    <div class="step-dot"><div class="circle done">✓</div><span>Entreprise</span></div>
+    <div class="step-line done-line"></div>
+    <div class="step-dot"><div class="circle active">3</div><span class="active-label">Banque</span></div>
+    <div class="step-line pending-line"></div>
+    <div class="step-dot"><div class="circle pending">✓</div><span>Confirmation</span></div>
+  </div>
+  <div class="form-card">
+    <div class="form-title">Coordonnées bancaires</div>
+    <div class="form-sub">Optionnel — nécessaire pour les virements</div>
+    <div class="form-grid g2">
+      <div class="field"><label>Titulaire du compte <span class="required">*</span></label><div class="input-mock">Jean Dupont</div></div>
+      <div class="field"><label>Nom de la banque <span class="required">*</span></label><div class="input-mock">BNP Paribas</div></div>
+      <div class="field span2"><label>IBAN <span class="required">*</span></label><div class="input-mock">FR76 3000 6000 0112 3456 7890 189</div></div>
+      <div class="field"><label>SWIFT / BIC <span class="required">*</span></label><div class="input-mock">BNPAFRPPXXX</div></div>
+    </div>
+    <div class="form-nav">
+      <div class="btn btn-ghost">← Précédent</div>
+      <div class="btn btn-success">Soumettre →</div>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRMATION -->
+<div class="step-preview">
+  <div class="tag">Confirmation</div>
+  <div class="stepper">
+    <div class="step-dot"><div class="circle done">✓</div><span>Personnel</span></div>
+    <div class="step-line done-line"></div>
+    <div class="step-dot"><div class="circle done">✓</div><span>Entreprise</span></div>
+    <div class="step-line done-line"></div>
+    <div class="step-dot"><div class="circle done">✓</div><span>Banque</span></div>
+    <div class="step-line done-line"></div>
+    <div class="step-dot"><div class="circle done">✓</div><span class="active-label">Confirmation</span></div>
+  </div>
+  <div class="form-card">
+    <div class="form-title">Récapitulatif de votre inscription</div>
+    <div class="form-sub">Vérifiez vos informations avant la validation</div>
+    <div class="confirm-section">
+      <div class="confirm-title">Personnel</div>
+      <div class="confirm-row"><span class="confirm-key">Nom complet</span><span class="confirm-val">Jean Dupont</span></div>
+      <div class="confirm-row"><span class="confirm-key">Email</span><span class="confirm-val">jean@entreprise.com</span></div>
+    </div>
+    <div class="confirm-section">
+      <div class="confirm-title">Entreprise</div>
+      <div class="confirm-row"><span class="confirm-key">Raison sociale</span><span class="confirm-val">Acme Corp SAS</span></div>
+      <div class="confirm-row"><span class="confirm-key">Secteur</span><span class="confirm-val">Technologie</span></div>
+      <div class="confirm-row"><span class="confirm-key">Adresse</span><span class="confirm-val">12 Rue de la Paix, 75001 Paris</span></div>
+    </div>
+    <div class="confirm-section">
+      <div class="confirm-title">Banque</div>
+      <div class="confirm-row"><span class="confirm-key">Banque</span><span class="confirm-val">BNP Paribas</span></div>
+      <div class="confirm-row"><span class="confirm-key">IBAN</span><span class="confirm-val">FR76 3000 •••• •••• •••• 189</span></div>
+    </div>
+    <div class="info-banner">
+      <span class="info-icon">ℹ</span>
+      <div class="info-text">Votre demande d'inscription a bien été soumise. Elle sera examinée par notre équipe dans les <strong>24 à 48h</strong>. Vous recevrez un email de confirmation à <strong>jean@entreprise.com</strong> dès que votre compte sera approuvé.</div>
+    </div>
+    <div class="form-nav">
+      <div></div>
+      <div class="btn btn-ghost">← Retour à l'accueil</div>
+    </div>
+  </div>
+</div>
