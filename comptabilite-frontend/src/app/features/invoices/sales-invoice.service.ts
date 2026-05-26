@@ -10,23 +10,23 @@ export class InvoiceService {
   private http = inject(HttpClient)
 
   getAll(): Observable<ApiInvoice[]> {
-    return this.http.get<ApiInvoice[]>('/api/invoices')
+    return this.http.get<ApiInvoice[]>('/api/sales-invoices')
   }
 
   getById(id: string): Observable<StoredInvoice> {
-    return this.http.get<StoredInvoice>(`/api/invoices/${id}`)
+    return this.http.get<StoredInvoice>(`/api/sales-invoices/${id}`)
   }
 
   create(payload: CreateInvoicePayload): Observable<StoredInvoice> {
-    return this.http.post<StoredInvoice>('/api/invoices', payload)
+    return this.http.post<StoredInvoice>('/api/sales-invoices', payload)
   }
 
   update(id: string, payload: CreateInvoicePayload): Observable<StoredInvoice> {
-    return this.http.put<StoredInvoice>(`/api/invoices/${id}`, payload)
+    return this.http.put<StoredInvoice>(`/api/sales-invoices/${id}`, payload)
   }
 
   delete(id: string): Observable<void> {
-    return this.http.delete<void>(`/api/invoices/${id}`)
+    return this.http.delete<void>(`/api/sales-invoices/${id}`)
   }
 
   getLanguages(): Observable<Language[]> {

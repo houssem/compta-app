@@ -37,7 +37,7 @@ export const COUNTRIES: Country[] = [
 ]
 
 export const CURRENCIES: Currency[] = [
-  { id: 1, value: 'TND', label: 'TND', symbol: 'د.ت' },
+  { id: 1, value: 'TND', label: 'TND', symbol: 'DT' },
   { id: 2, value: 'EUR', label: 'EUR – Euro', symbol: '€' },
   { id: 3, value: 'USD', label: 'USD – Dollar américain', symbol: '$' },
   { id: 4, value: 'GBP', label: 'GBP – Livre sterling', symbol: '£' },

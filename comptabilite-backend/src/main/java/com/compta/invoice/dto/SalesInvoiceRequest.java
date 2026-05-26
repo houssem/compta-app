@@ -17,9 +17,6 @@ public record SalesInvoiceRequest(
 
         String clientName,
 
-        @NotBlank(message = "Le numéro de facture est obligatoire")
-        String invoiceNumber,
-
         @NotNull(message = "La date d'émission est obligatoire")
         LocalDate issueDate,
 

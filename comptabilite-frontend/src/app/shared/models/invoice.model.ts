@@ -39,7 +39,6 @@ export interface StoredInvoice {
 export interface CreateInvoicePayload {
   clientId: string
   clientName: string
-  invoiceNumber: string
   issueDate: string
   dueDate: string
   currency: string

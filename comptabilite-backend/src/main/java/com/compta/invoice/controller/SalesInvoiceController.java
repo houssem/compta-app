@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/invoices")
+@RequestMapping("/api/sales-invoices")
 @RequiredArgsConstructor
 @Tag(name = "Sales Invoices", description = "Gestion des factures de vente")
 public class SalesInvoiceController {

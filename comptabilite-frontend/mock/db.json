@@ -188,7 +188,7 @@
       "days": 90
     }
   ],
-  "invoices": [
+  "sales-invoices": [
     {
       "clientId": "clnt_1779319050184",
       "clientName": "Inetum",

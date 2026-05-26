@@ -3,7 +3,7 @@ import { RouterLink, Router } from '@angular/router'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { TranslateModule } from '@ngx-translate/core'
-import { InvoiceService } from './invoice.service'
+import { InvoiceService } from './sales-invoice.service'
 import { ApiInvoice, InvoiceStatus } from '../../shared/models/invoice.model'
 
 interface Invoice {

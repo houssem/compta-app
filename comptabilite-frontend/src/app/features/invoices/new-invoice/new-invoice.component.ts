@@ -50,7 +50,7 @@ export class NewInvoiceComponent implements OnInit {
   private invoiceDbId: string | null = null
 
   // Invoice fields
-  invoiceNumber      = signal(this.genInvoiceNumber())
+  invoiceNumber      = signal('')   // set from response in edit mode; not shown in create mode
   issueDate          = signal(this.dateOffset(0))
   dueDate            = signal(this.dateOffset(30))
   currency           = signal('TND')
@@ -142,7 +142,7 @@ export class NewInvoiceComponent implements OnInit {
       this.http.get<Client[]>('/api/clients').subscribe({
         next: (clients) => {
           this.allClients.set(clients)
-          this.http.get<StoredInvoice>(`/api/invoices/${id}`).subscribe({
+          this.http.get<StoredInvoice>(`/api/sales-invoices/${id}`).subscribe({
             next: (invoice) => { this.configLoading.set(false); this.patchFromInvoice(invoice, clients) },
             error: () => this.router.navigate(['/invoices'])
           })
@@ -177,12 +177,6 @@ export class NewInvoiceComponent implements OnInit {
     const d = new Date()
     d.setDate(d.getDate() + days)
     return d.toISOString().split('T')[0]
-  }
-
-  private genInvoiceNumber(): string {
-    const year = new Date().getFullYear()
-    const seq  = String(Math.floor(Math.random() * 9000) + 1000)
-    return `FAC-${year}-${seq}`
   }
 
   // ── Client selector ───────────────────────────────────
@@ -236,7 +230,6 @@ export class NewInvoiceComponent implements OnInit {
     const payload = {
       clientId:           this.selectedClient()!.id,
       clientName:         this.selectedClient()!.companyName,
-      invoiceNumber:      this.invoiceNumber(),
       issueDate:          this.issueDate(),
       dueDate:            this.dueDate(),
       currency:           this.currency(),
@@ -251,8 +244,8 @@ export class NewInvoiceComponent implements OnInit {
     }
 
     const request$ = this.editMode()
-      ? this.http.put(`/api/invoices/${this.invoiceDbId}`, payload)
-      : this.http.post('/api/invoices', payload)
+      ? this.http.put(`/api/sales-invoices/${this.invoiceDbId}`, payload)
+      : this.http.post('/api/sales-invoices', payload)
 
     request$.subscribe({
       next:  () => { this.saving.set(false); this.router.navigate(['/invoices']) },
