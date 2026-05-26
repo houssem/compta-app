@@ -1,0 +1,134 @@
+<div class="dv-page">
+  <div class="dv-content">
+
+    <div class="dv-page-header">
+      <div>
+        <h2 class="dv-page-title">{{ 'DASHBOARD.TITLE' | translate }}</h2>
+        <p class="dv-page-subtitle">{{ 'DASHBOARD.SUBTITLE' | translate }}</p>
+      </div>
+      <a routerLink="/invoice/create" class="dv-btn-primary">
+        <span class="material-symbols-outlined">add</span>
+        {{ 'DASHBOARD.NEW_INVOICE' | translate }}
+      </a>
+    </div>
+
+    <div class="dv-kpi-row">
+
+      <div class="dv-kpi-card">
+        <div class="dv-kpi-card__bar dv-kpi-card__bar--sent"></div>
+        <p class="dv-kpi-card__label">{{ 'DASHBOARD.KPI_ISSUED' | translate }}</p>
+        <p class="dv-kpi-card__value">{{ summary()?.kpis?.invoicesCount ?? 124 }}</p>
+        <div class="dv-kpi-card__trend dv-kpi-card__trend--up">
+          <span class="material-symbols-outlined">trending_up</span>
+          <span>{{ 'DASHBOARD.KPI_ISSUED_TREND' | translate }}</span>
+        </div>
+      </div>
+
+      <div class="dv-kpi-card">
+        <div class="dv-kpi-card__bar dv-kpi-card__bar--primary"></div>
+        <p class="dv-kpi-card__label">{{ 'DASHBOARD.KPI_TOTAL_HT' | translate }}</p>
+        <div class="dv-kpi-card__multicurrency">
+          <p><span class="dv-kpi-card__currency-label">EUR</span> €42,8k</p>
+          <p><span class="dv-kpi-card__currency-label">USD</span> $45,2k</p>
+          <p><span class="dv-kpi-card__currency-label">TND</span> 140,5k DT</p>
+        </div>
+        <div class="dv-kpi-card__trend">
+          <span>{{ 'DASHBOARD.KPI_ALL_ACCOUNTS' | translate }}</span>
+        </div>
+      </div>
+
+      <div class="dv-kpi-card">
+        <div class="dv-kpi-card__bar dv-kpi-card__bar--pending"></div>
+        <p class="dv-kpi-card__label">{{ 'DASHBOARD.KPI_PENDING' | translate }}</p>
+        <p class="dv-kpi-card__value">{{ summary()?.kpis?.pendingCount ?? 18 }}</p>
+        <div class="dv-kpi-card__trend dv-kpi-card__trend--pending">
+          <span class="material-symbols-outlined">schedule</span>
+          <span>{{ 'DASHBOARD.KPI_PENDING_TREND' | translate }}</span>
+        </div>
+      </div>
+
+      <div class="dv-kpi-card">
+        <div class="dv-kpi-card__bar dv-kpi-card__bar--overdue"></div>
+        <p class="dv-kpi-card__label">{{ 'DASHBOARD.KPI_OVERDUE' | translate }}</p>
+        <div class="dv-kpi-card__multicurrency dv-kpi-card__multicurrency--error">
+          <p><span class="dv-kpi-card__currency-label">EUR</span> €4,2k</p>
+          <p><span class="dv-kpi-card__currency-label">USD</span> $1,1k</p>
+          <p><span class="dv-kpi-card__currency-label">TND</span> 3,4k DT</p>
+        </div>
+        <div class="dv-kpi-card__trend dv-kpi-card__trend--overdue">
+          <span class="material-symbols-outlined">warning</span>
+          <span>{{ 'DASHBOARD.KPI_ACTION_REQUIRED' | translate }}</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="dv-charts-row">
+
+      <div class="dv-card dv-chart-revenue">
+        <div class="dv-card__header">
+          <h3 class="dv-card__title">{{ 'DASHBOARD.CHART_REVENUE_TITLE' | translate }}</h3>
+          <span class="dv-period-badge">{{ 'DASHBOARD.CHART_PERIOD' | translate }}</span>
+        </div>
+        <div echarts [options]="revenueChartOptions" class="dv-chart-canvas"></div>
+      </div>
+
+      <div class="dv-card dv-chart-donut">
+        <h3 class="dv-card__title">{{ 'DASHBOARD.CHART_STATUS_TITLE' | translate }}</h3>
+        <div echarts [options]="donutChartOptions" class="dv-donut-canvas"></div>
+        <div class="dv-donut-legend">
+          @for (item of statusData; track item.status) {
+            <div class="dv-donut-legend__item">
+              <span class="dv-donut-legend__dot dv-donut-legend__dot--{{ item.status }}"></span>
+              <span class="dv-donut-legend__name">{{ item.labelKey | translate }}</span>
+              <span class="dv-donut-legend__count">{{ item.count }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+    </div>
+
+    <div class="dv-card dv-table-card">
+      <div class="dv-table-card__header">
+        <h3 class="dv-card__title">{{ 'DASHBOARD.TABLE_TITLE' | translate }}</h3>
+        <a routerLink="/invoices" class="dv-table-card__view-all">
+          {{ 'DASHBOARD.TABLE_VIEW_ALL' | translate }} <span class="material-symbols-outlined">arrow_forward</span>
+        </a>
+      </div>
+      <div class="dv-table-wrapper">
+        <table class="dv-table">
+          <thead>
+            <tr>
+              <th>{{ 'DASHBOARD.COL_NUMBER' | translate }}</th>
+              <th>{{ 'DASHBOARD.COL_CLIENT' | translate }}</th>
+              <th>{{ 'DASHBOARD.COL_DATE' | translate }}</th>
+              <th class="dv-table__cell--right">{{ 'DASHBOARD.COL_AMOUNT' | translate }}</th>
+              <th>{{ 'DASHBOARD.COL_STATUS' | translate }}</th>
+              <th class="dv-table__cell--center">{{ 'DASHBOARD.COL_ACTIONS' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (inv of recentInvoices(); track inv.number) {
+              <tr class="dv-table__row">
+                <td class="dv-table__cell--number">{{ inv.number }}</td>
+                <td>{{ inv.client }}</td>
+                <td>{{ inv.date }}</td>
+                <td class="dv-table__cell--right dv-table__cell--mono">{{ inv.amount }}</td>
+                <td>
+                  <span class="dv-badge dv-badge--{{ inv.status }}">{{ inv.labelKey | translate }}</span>
+                </td>
+                <td class="dv-table__cell--center">
+                  <button class="dv-table__action-btn">
+                    <span class="material-symbols-outlined">more_vert</span>
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>

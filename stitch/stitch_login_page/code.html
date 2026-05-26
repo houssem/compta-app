@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#003366",
+                        "inverse-surface": "#2f3034",
+                        "inverse-primary": "#a7c8ff",
+                        "tertiary-fixed": "#ffdbca",
+                        "background": "#f9f9fe",
+                        "on-surface": "#1a1c1f",
+                        "surface-dim": "#dad9de",
+                        "on-secondary-container": "#57657a",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#723610",
+                        "border-subtle": "#E2E8F0",
+                        "surface-muted": "#F8FAFC",
+                        "surface": "#f9f9fe",
+                        "status-paid": "#10B981",
+                        "surface-container-high": "#e8e8ed",
+                        "primary": "#001e40",
+                        "secondary-fixed": "#d5e3fc",
+                        "status-draft": "#94A3B8",
+                        "secondary-container": "#d5e3fc",
+                        "on-tertiary-container": "#d8885c",
+                        "outline-variant": "#c3c6d1",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f4f3f8",
+                        "status-pending": "#F59E0B",
+                        "primary-fixed-dim": "#a7c8ff",
+                        "status-overdue": "#EF4444",
+                        "tertiary": "#381300",
+                        "secondary": "#515f74",
+                        "status-canceled": "#334155",
+                        "on-tertiary-fixed": "#341100",
+                        "on-error-container": "#93000a",
+                        "inverse-on-surface": "#f1f0f5",
+                        "surface-tint": "#3a5f94",
+                        "status-sent": "#3B82F6",
+                        "surface-container-lowest": "#ffffff",
+                        "outline": "#737780",
+                        "error": "#ba1a1a",
+                        "surface-container": "#eeedf2",
+                        "on-primary-container": "#799dd6",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#001b3c",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "on-background": "#1a1c1f",
+                        "on-primary-fixed-variant": "#1f477b",
+                        "primary-fixed": "#d5e3ff",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "tertiary-container": "#592300",
+                        "tertiary-fixed-dim": "#ffb690",
+                        "surface-bright": "#f9f9fe",
+                        "surface-container-highest": "#e2e2e7",
+                        "surface-variant": "#e2e2e7",
+                        "on-surface-variant": "#43474f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "table-row-height": "48px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "margin-desktop": "32px",
+                        "input-height": "40px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "body-sm-tabular": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "display-kpi": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-sm-tabular": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "display-kpi": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest dark:bg-inverse-surface border-b border-border-subtle dark:border-outline-variant w-full h-14 flex justify-between items-center px-gutter sticky top-0 z-50 transition-colors duration-200">
+<div class="flex items-center gap-8">
+<span class="text-headline-md font-headline-md font-bold text-primary dark:text-primary-fixed-dim">Precision Ledger</span>
+<nav class="hidden md:flex gap-6">
+<a class="text-body-md font-body-md text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-variant transition-colors duration-200" href="#">Features</a>
+<a class="text-body-md font-body-md text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-variant transition-colors duration-200" href="#">Pricing</a>
+<a class="text-body-md font-body-md text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-variant transition-colors duration-200" href="#">About</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-body-md font-body-md px-4 py-2 text-primary hover:bg-surface-container-low transition-colors font-bold border-b-2 border-primary">Login</button>
+<button class="text-body-md font-body-md px-4 py-2 bg-primary text-on-primary rounded-lg hover:opacity-90 transition-opacity">Register</button>
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant">settings</span>
+</div>
+</header>
+<main class="flex-grow flex items-center justify-center py-16 px-6 md:px-12 bg-surface-container-lowest">
+<div class="w-full max-w-md space-y-8">
+<!-- Brand Identity (Re-used for context in centered form) -->
+<header class="flex flex-col space-y-4 text-center">
+<div class="flex items-center justify-center space-x-2">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="account_balance">account_balance</span>
+<h1 class="font-headline-md text-headline-md text-primary">Precision Ledger</h1>
+</div>
+<div class="space-y-1">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Se connecter à votre compte</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Entrez vos identifiants pour accéder à votre espace.</p>
+</div>
+</header>
+<!-- Authentication Form -->
+<form class="space-y-6">
+<!-- Email Field -->
+<div class="space-y-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase" for="email">E-mail</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="mail">mail</span>
+<input class="w-full h-input-height pl-10 pr-4 bg-surface-container-lowest border border-border-subtle rounded text-body-md focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all" id="email" placeholder="nom@entreprise.com" type="email"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="space-y-2">
+<div class="flex justify-between items-center">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase" for="password">Mot de passe</label>
+<a class="font-label-caps text-label-caps text-primary hover:underline" href="#">Mot de passe oublié ?</a>
+</div>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="lock">lock</span>
+<input class="w-full h-input-height pl-10 pr-10 bg-surface-container-lowest border border-border-subtle rounded text-body-md focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all" id="password" placeholder="••••••••" type="password"/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary" type="button">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+</div>
+</div>
+<!-- Primary CTA -->
+<button class="w-full h-input-height bg-primary text-white font-label-caps text-label-caps rounded hover:brightness-110 transition-all flex items-center justify-center space-x-2" type="submit">
+<span>Se connecter</span>
+</button>
+</form>
+<!-- Social Login Divider -->
+<div class="relative flex items-center py-2">
+<div class="flex-grow border-t border-border-subtle"></div>
+<span class="flex-shrink mx-4 font-label-caps text-label-caps text-on-surface-variant">Ou continuer avec</span>
+<div class="flex-grow border-t border-border-subtle"></div>
+</div>
+<!-- Social Buttons -->
+<div class="grid grid-cols-2 gap-4">
+<button class="flex items-center justify-center space-x-2 h-input-height border border-border-subtle rounded hover:bg-surface-container-low transition-colors">
+<img alt="Google" class="w-5 h-5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA42lSH4qIzdSDmI4ii2TXWkJ2TT6weQoobp9Ft3ZJ4gb6W1lGI1GeMH8ejVDVitaFstrws3vhnhCxnCiQID4kEc-j3hSv41m5Iz-WYnD1C4HX_XE6qEA6h2mlPf19rpSnzpIfTDFkjSAogmor2l9IvZyOYCIHncvzqmbb3xR6hUw8NvQ31CIJ2FpgcDvsLtzPylOmXKQ3IoGJiB2u7Sz6L9hcVH-V9LK3a1ksDV-oxt-w6A24ux7EZTjfGYVon9pt4lW6BjtwzUhE4"/>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Google</span>
+</button>
+<button class="flex items-center justify-center space-x-2 h-input-height border border-border-subtle rounded hover:bg-surface-container-low transition-colors">
+<img alt="Microsoft" class="w-5 h-5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbI-4vGJFlPOF19FUYNKudOgUt1ld1YOesY7YEKkvpB8GG8tknKomFLEn-KT_o5HA0H5_e3AwhpBm0wrANbBwEZq-dsFqQKRjyX3xxxnr9Qao7_EVuWDwNrkVcYP-tDcjPXroa3_SaZfp47Z92-v6ExWEIenMQ_k1Adt32uwBIRChRLFPTQCzK9RHGpKBXgswTG8wRogtSg9Q6ax5p9WoIIAY6urjwsS8eNM0vkOtGIXUO_AfbJFYk7g9bzLF8WlRpN-LqLv1uI8BS"/>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Microsoft</span>
+</button>
+</div>
+<!-- Footer link -->
+<div class="text-center">
+<p class="font-body-md text-body-md text-on-surface-variant">
+                Pas encore de compte ? 
+                <a class="text-primary font-bold hover:underline" href="#">S'inscrire</a>
+</p>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-high dark:bg-inverse-surface mt-auto py-16">
+<div class="max-w-[1440px] mx-auto px-margin-desktop grid grid-cols-1 md:grid-cols-4 gap-12">
+<div class="col-span-1 md:col-span-2 space-y-6">
+<h3 class="text-headline-lg font-headline-lg text-primary">Precision Ledger</h3>
+<p class="text-body-md font-body-md text-on-surface-variant max-w-sm">
+                La suite comptable de référence pour les entreprises à forte croissance. Précision, rapidité et sécurité bancaire.
+            </p>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-primary cursor-pointer">Notebook</span>
+<span class="material-symbols-outlined text-primary cursor-pointer">language</span>
+<span class="material-symbols-outlined text-primary cursor-pointer">public</span>
+</div>
+</div>
+<div class="space-y-6">
+<h5 class="text-label-caps font-label-caps text-primary">Produit</h5>
+<ul class="space-y-4 text-body-md font-body-md text-on-surface-variant">
+<li><a class="hover:text-primary" href="#">Fonctionnalités</a></li>
+<li><a class="hover:text-primary" href="#">Tarifs</a></li>
+<li><a class="hover:text-primary" href="#">Sécurité</a></li>
+<li><a class="hover:text-primary" href="#">API</a></li>
+</ul>
+</div>
+<div class="space-y-6">
+<h5 class="text-label-caps font-label-caps text-primary">Contact</h5>
+<ul class="space-y-4 text-body-md font-body-md text-on-surface-variant">
+<li>support@precision-ledger.com</li>
+<li>+33 1 23 45 67 89</li>
+<li>12 Rue de la Finance, Paris</li>
+</ul>
+</div>
+</div>
+<div class="max-w-[1440px] mx-auto px-margin-desktop mt-12 pt-8 border-t border-border-subtle flex flex-col md:flex-row justify-between items-center gap-4 text-label-caps font-label-caps text-on-surface-variant opacity-60">
+<p>© 2024 Precision Ledger. Tous droits réservés.</p>
+<div class="flex gap-8">
+<a href="#">Conditions</a>
+<a href="#">Confidentialité</a>
+<a href="#">Cookies</a>
+</div>
+</div>
+</footer>
+</body></html>

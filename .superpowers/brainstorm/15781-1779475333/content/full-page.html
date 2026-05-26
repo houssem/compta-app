@@ -1,0 +1,228 @@
+<h2>Page complète — Header + Stepper + Footer (style login)</h2>
+<p class="subtitle">Le header et footer sont identiques à la page login actuelle. Voici le rendu complet.</p>
+
+<style>
+.page-mock {
+  background: #0f172a;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #1e293b;
+  font-family: 'Inter', sans-serif;
+  color: #e2e8f0;
+}
+
+/* HEADER */
+.lp-header {
+  background: #0f172a;
+  border-bottom: 1px solid #1e293b;
+  padding: 12px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.lp-brand { display: flex; align-items: center; gap: 8px; }
+.lp-brand__mark {
+  width: 28px; height: 28px; border-radius: 6px;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+}
+.lp-brand__name { font-size: 13px; font-weight: 700; color: #f1f5f9; }
+.lp-header__right { font-size: 11px; color: #64748b; }
+.lp-header__right a { color: #60a5fa; text-decoration: none; }
+
+/* MAIN */
+.lp-main {
+  padding: 32px 24px 40px;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+/* STEPPER */
+.stepper {
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 32px; gap: 0;
+}
+.step-dot { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.circle {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700;
+}
+.circle.active { background: #3b82f6; color: #fff; box-shadow: 0 0 0 4px rgba(59,130,246,0.2); }
+.circle.done { background: #22c55e; color: #fff; }
+.circle.pending { background: #1e293b; border: 2px solid #334155; color: #64748b; }
+.step-label { font-size: 10px; color: #64748b; white-space: nowrap; }
+.step-label.active { color: #60a5fa; font-weight: 600; }
+.step-line { flex: 1; height: 2px; margin: 0 8px; margin-bottom: 20px; }
+.step-line.done { background: #22c55e; }
+.step-line.pending { background: #334155; }
+
+/* FORM CARD */
+.form-card {
+  background: #1e293b;
+  border-radius: 10px;
+  padding: 24px 28px;
+  border: 1px solid #334155;
+}
+.form-title { font-size: 16px; font-weight: 700; color: #f1f5f9; margin-bottom: 4px; }
+.form-sub { font-size: 12px; color: #64748b; margin-bottom: 22px; }
+.form-grid { display: grid; gap: 14px; margin-bottom: 20px; }
+.g2 { grid-template-columns: 1fr 1fr; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label { font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+.field .inp {
+  background: #0f172a; border: 1px solid #334155; border-radius: 6px;
+  height: 36px; padding: 0 12px; font-size: 12px; color: #94a3b8;
+  display: flex; align-items: center;
+}
+.field .inp.active-field { border-color: #3b82f6; color: #e2e8f0; }
+.req { color: #ef4444; }
+.span2 { grid-column: span 2; }
+.form-nav {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 16px; border-top: 1px solid #1e293b;
+}
+.btn { padding: 8px 20px; border-radius: 6px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
+.btn-ghost { background: transparent; border: 1px solid #334155; color: #94a3b8; }
+.btn-primary { background: #3b82f6; color: #fff; }
+.login-link { font-size: 11px; color: #64748b; text-align: center; margin-top: 16px; }
+.login-link a { color: #60a5fa; }
+
+/* FOOTER */
+.lp-footer {
+  background: #080f1a;
+  border-top: 1px solid #1e293b;
+  padding: 24px 32px 16px;
+}
+.lp-footer__inner {
+  display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 24px;
+  margin-bottom: 16px;
+}
+.lp-footer__brand h3 { font-size: 12px; font-weight: 700; color: #f1f5f9; margin-bottom: 4px; }
+.lp-footer__brand p { font-size: 10px; color: #475569; line-height: 1.5; }
+.lp-footer__col h5 { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+.lp-footer__col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 4px; }
+.lp-footer__col ul li { font-size: 10px; color: #475569; }
+.lp-footer__bottom {
+  border-top: 1px solid #1e293b; padding-top: 12px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.lp-footer__bottom p { font-size: 10px; color: #475569; }
+.lp-footer__bottom-links { display: flex; gap: 12px; }
+.lp-footer__bottom-links a { font-size: 10px; color: #475569; text-decoration: none; }
+</style>
+
+<div class="mockup">
+  <div class="mockup-header">Rendu complet — /register (Étape 1 affichée)</div>
+  <div class="mockup-body" style="padding:0">
+
+    <div class="page-mock">
+
+      <!-- HEADER (identique login) -->
+      <header class="lp-header">
+        <div class="lp-brand">
+          <div class="lp-brand__mark">🧾</div>
+          <span class="lp-brand__name">Billing Module</span>
+        </div>
+        <div class="lp-header__right">
+          Déjà un compte ? <a href="#">Se connecter</a>
+        </div>
+      </header>
+
+      <!-- MAIN CONTENT -->
+      <div class="lp-main">
+
+        <!-- STEPPER -->
+        <div class="stepper">
+          <div class="step-dot">
+            <div class="circle active">1</div>
+            <span class="step-label active">Personnel</span>
+          </div>
+          <div class="step-line pending"></div>
+          <div class="step-dot">
+            <div class="circle pending">2</div>
+            <span class="step-label">Entreprise</span>
+          </div>
+          <div class="step-line pending"></div>
+          <div class="step-dot">
+            <div class="circle pending">3</div>
+            <span class="step-label">Banque</span>
+          </div>
+          <div class="step-line pending"></div>
+          <div class="step-dot">
+            <div class="circle pending">✓</div>
+            <span class="step-label">Confirmation</span>
+          </div>
+        </div>
+
+        <!-- FORM CARD -->
+        <div class="form-card">
+          <div class="form-title">Informations personnelles</div>
+          <div class="form-sub">Vos coordonnées pour accéder à votre espace</div>
+          <div class="form-grid g2">
+            <div class="field">
+              <label>Nom complet <span class="req">*</span></label>
+              <div class="inp active-field">Jean Dupont</div>
+            </div>
+            <div class="field">
+              <label>Email <span class="req">*</span></label>
+              <div class="inp active-field">jean@entreprise.com</div>
+            </div>
+            <div class="field">
+              <label>Mot de passe <span class="req">*</span></label>
+              <div class="inp">••••••••••</div>
+            </div>
+            <div class="field">
+              <label>Confirmer le mot de passe <span class="req">*</span></label>
+              <div class="inp">••••••••••</div>
+            </div>
+          </div>
+          <div class="form-nav">
+            <div class="btn btn-ghost">Annuler</div>
+            <div class="btn btn-primary">Suivant →</div>
+          </div>
+        </div>
+
+        <p class="login-link">Déjà un compte ? <a href="#">Se connecter</a></p>
+
+      </div>
+
+      <!-- FOOTER (identique login) -->
+      <footer class="lp-footer">
+        <div class="lp-footer__inner">
+          <div class="lp-footer__brand">
+            <h3>Billing Module</h3>
+            <p>La suite comptable de référence pour les entreprises à forte croissance. Précision, rapidité et sécurité bancaire.</p>
+          </div>
+          <div class="lp-footer__col">
+            <h5>Produit</h5>
+            <ul>
+              <li>Fonctionnalités</li>
+              <li>Tarifs</li>
+              <li>Sécurité</li>
+              <li>API</li>
+            </ul>
+          </div>
+          <div class="lp-footer__col">
+            <h5>Contact</h5>
+            <ul>
+              <li>support@facturation.dev</li>
+              <li>+33 1 23 45 67 89</li>
+              <li>12 Rue de la Finance, Paris</li>
+            </ul>
+          </div>
+        </div>
+        <div class="lp-footer__bottom">
+          <p>© 2026 Facturation. Tous droits réservés.</p>
+          <div class="lp-footer__bottom-links">
+            <a href="#">Conditions</a>
+            <a href="#">Confidentialité</a>
+            <a href="#">Cookies</a>
+          </div>
+        </div>
+      </footer>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,285 @@
+<div class="inv-page">
+
+  <!-- PAGE HEADER -->
+  <div class="inv-header">
+    <div class="inv-header__info">
+      <h1 class="inv-header__title">{{ 'INVOICES.TITLE' | translate }}</h1>
+      <p class="inv-header__sub">{{ 'INVOICES.SUBTITLE' | translate }}</p>
+    </div>
+    <div class="inv-header__actions">
+      <a routerLink="/invoice/create" class="inv-btn inv-btn--primary">
+        <span class="material-symbols-outlined">add</span>
+        {{ 'INVOICES.NEW_INVOICE' | translate }}
+      </a>
+      <button type="button" class="inv-btn inv-btn--outline">
+        <span class="material-symbols-outlined">upload</span>
+        {{ 'INVOICES.UPLOAD' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- KPI ROW -->
+  <div class="inv-kpi-row">
+
+    <!-- Total à payer -->
+    <div class="inv-kpi inv-kpi--blue">
+      <p class="inv-kpi__label">{{ 'INVOICES.KPI_TOTAL' | translate }}</p>
+      <p class="inv-kpi__value">
+      @if (loading()) { <span class="inv-kpi__skeleton"></span> }
+      @else { {{ formatAmount(totalAPayer()) }} }
+    </p>
+      <p class="inv-kpi__trend inv-kpi__trend--up">
+        <span class="material-symbols-outlined">trending_up</span>
+        {{ 'INVOICES.KPI_TREND' | translate }}
+      </p>
+    </div>
+
+    <!-- Reçues récemment -->
+    <div class="inv-kpi inv-kpi--amber">
+      <p class="inv-kpi__label">{{ 'INVOICES.KPI_RECENT' | translate }}</p>
+      <p class="inv-kpi__value inv-kpi__value--count">
+        @if (loading()) { <span class="inv-kpi__skeleton"></span> }
+        @else { {{ recuesCount() }} <span>{{ 'INVOICES.KPI_INVOICES' | translate }}</span> }
+      </p>
+      <p class="inv-kpi__sub">{{ 'INVOICES.KPI_PENDING_VALIDATION' | translate }} {{ enAttenteCount() }}</p>
+    </div>
+
+    <!-- Total en retard -->
+    <div class="inv-kpi inv-kpi--red">
+      <p class="inv-kpi__label">{{ 'INVOICES.KPI_OVERDUE' | translate }}</p>
+      <p class="inv-kpi__value inv-kpi__value--danger">
+        @if (loading()) { <span class="inv-kpi__skeleton"></span> }
+        @else { {{ formatAmount(totalEnRetard()) }} }
+      </p>
+      <p class="inv-kpi__action-required">{{ 'INVOICES.KPI_ACTION' | translate }}</p>
+    </div>
+
+  </div>
+
+  <!-- INVOICE TABLE CARD -->
+  <div class="inv-card">
+    <div class="inv-table-header">
+      <h2 class="inv-table-title">{{ 'INVOICES.TABLE_TITLE' | translate }}</h2>
+      <div class="inv-table-controls">
+        <!-- Search -->
+        <div class="inv-search-wrapper">
+          <span class="material-symbols-outlined inv-search-icon">search</span>
+          <input
+            class="inv-search"
+            type="text"
+            [placeholder]="'INVOICES.SEARCH_PLACEHOLDER' | translate"
+            [ngModel]="searchQuery()"
+            (ngModelChange)="onSearchChange($event)"
+          />
+        </div>
+        <!-- Status filter -->
+        <select
+          class="inv-filter-select"
+          [ngModel]="statusFilter()"
+          (ngModelChange)="onStatusChange($event)"
+        >
+          @for (opt of statusOptions; track opt.value) {
+            <option [value]="opt.value">{{ opt.label | translate }}</option>
+          }
+        </select>
+        <!-- Actions -->
+        <button type="button" class="inv-btn-ghost">
+          <span class="material-symbols-outlined">filter_list</span>
+          {{ 'INVOICES.FILTER' | translate }}
+        </button>
+        <button type="button" class="inv-btn-ghost">
+          <span class="material-symbols-outlined">download</span>
+          {{ 'INVOICES.EXPORT' | translate }}
+        </button>
+      </div>
+    </div>
+
+    <div class="inv-table-wrapper">
+      <table class="inv-table">
+        <thead>
+          <tr>
+            <th class="inv-th">{{ 'INVOICES.COL_CLIENT' | translate }}</th>
+            <th class="inv-th">{{ 'INVOICES.COL_DATE' | translate }}</th>
+            <th class="inv-th">{{ 'INVOICES.COL_DUE' | translate }}</th>
+            <th class="inv-th inv-th--right">{{ 'INVOICES.COL_AMOUNT' | translate }}</th>
+            <th class="inv-th">{{ 'INVOICES.COL_STATUS' | translate }}</th>
+            <th class="inv-th inv-th--center">{{ 'INVOICES.COL_ACTIONS' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (loading()) {
+            @for (_ of [1,2,3]; track $index) {
+              <tr class="inv-tr inv-tr--skeleton">
+                <td class="inv-td"><span class="inv-skeleton inv-skeleton--wide"></span></td>
+                <td class="inv-td"><span class="inv-skeleton"></span></td>
+                <td class="inv-td"><span class="inv-skeleton"></span></td>
+                <td class="inv-td"><span class="inv-skeleton inv-skeleton--short"></span></td>
+                <td class="inv-td"><span class="inv-skeleton inv-skeleton--badge"></span></td>
+                <td class="inv-td"></td>
+              </tr>
+            }
+          } @else if (error()) {
+            <tr>
+              <td colspan="6" class="inv-td inv-state">
+                <span class="material-symbols-outlined inv-state__icon inv-state__icon--error">error</span>
+                <p class="inv-state__msg">{{ error() }}</p>
+              </td>
+            </tr>
+          } @else if (pagedInvoices().length === 0) {
+            <tr>
+              <td colspan="6" class="inv-td inv-state">
+                <span class="material-symbols-outlined inv-state__icon">receipt_long</span>
+                <p class="inv-state__msg">{{ 'INVOICES.EMPTY' | translate }}</p>
+              </td>
+            </tr>
+          } @else {
+            @for (inv of pagedInvoices(); track inv.id) {
+              <tr class="inv-tr">
+                <td class="inv-td">
+                  <div class="inv-client">
+                    <span class="inv-avatar" [style.background]="inv.avatarColor">{{ inv.initial }}</span>
+                    <div class="inv-client__info">
+                      <span class="inv-client__name">{{ inv.client }}</span>
+                      <span class="inv-client__id">{{ inv.id }}</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="inv-td inv-td--date">{{ inv.dateFacture }}</td>
+                <td class="inv-td" [class.inv-td--overdue]="inv.echeanceOverdue">{{ inv.echeance }}</td>
+                <td class="inv-td inv-td--amount">{{ formatAmount(inv.montantTTC, inv.currency) }}</td>
+                <td class="inv-td">
+                  <span class="inv-badge inv-badge--{{ inv.statut }}">
+                    {{ 'INVOICES.STATUS_' + inv.statut.toUpperCase() | translate }}
+                  </span>
+                </td>
+                <td class="inv-td inv-td--center">
+                  <div class="inv-action-wrap">
+                    <button
+                      type="button"
+                      class="inv-row-action"
+                      [class.inv-row-action--active]="openMenuId() === inv.dbId"
+                      (click)="toggleMenu(inv.dbId, $event)"
+                      title="Actions"
+                    >
+                      <span class="material-symbols-outlined">more_vert</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PAGINATION -->
+    <div class="inv-pagination" [style.visibility]="(!loading() && !error() && filteredInvoices().length > 0) ? 'visible' : 'hidden'">
+      <span class="inv-pagination__info">
+        {{ 'INVOICES.PAGE_INFO' | translate: { start: (currentPage()-1)*pageSize+1, end: pageEnd(), total: filteredInvoices().length } }}
+      </span>
+      <div class="inv-pagination__controls">
+        <button
+          type="button"
+          class="inv-page-btn"
+          [disabled]="currentPage() === 1"
+          (click)="goToPage(currentPage() - 1)"
+        >
+          <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+        @for (p of pages(); track p) {
+          <button
+            type="button"
+            class="inv-page-btn"
+            [class.inv-page-btn--active]="p === currentPage()"
+            (click)="goToPage(p)"
+          >{{ p }}</button>
+        }
+        <button
+          type="button"
+          class="inv-page-btn"
+          [disabled]="currentPage() === totalPages()"
+          (click)="goToPage(currentPage() + 1)"
+        >
+          <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM ROW -->
+  <div class="inv-bottom-row">
+
+    <!-- Recent Activity -->
+    <div class="inv-card inv-activity">
+      <div class="inv-activity__header">
+        <span class="material-symbols-outlined inv-activity__icon">history</span>
+        <h2 class="inv-activity__title">{{ 'INVOICES.ACTIVITY_TITLE' | translate }}</h2>
+      </div>
+      <ul class="inv-activity__list">
+        @for (act of activities; track act.text) {
+          <li class="inv-activity__item">
+            <span class="inv-activity__dot inv-activity__dot--{{ act.dot }}"></span>
+            <div>
+              <p class="inv-activity__text" [innerHTML]="act.text"></p>
+              <p class="inv-activity__sub">{{ act.sub }}</p>
+            </div>
+          </li>
+        }
+      </ul>
+    </div>
+
+    <!-- OCR Promo -->
+    <div class="inv-ocr-card">
+      <div class="inv-ocr-card__header">
+        <h2 class="inv-ocr-card__title">Besoin d'aide avec l'OCR&nbsp;?</h2>
+      </div>
+      <p class="inv-ocr-card__body">
+        Notre intelligence artificielle analyse vos factures automatiquement pour gagner du temps sur la saisie manuelle.
+      </p>
+      <button type="button" class="inv-ocr-card__btn">En savoir plus</button>
+    </div>
+
+  </div>
+
+  <!-- Floating action menu — position:fixed to escape overflow clipping -->
+  @if (openMenuId() !== null && menuAnchorRect() !== null) {
+    @if (confirmDeleteId() === openMenuId()) {
+      <div class="inv-menu" style="position:fixed"
+           [style.top.px]="menuAnchorRect()!.top"
+           [style.right.px]="menuAnchorRect()!.right"
+           (click)="$event.stopPropagation()">
+        <div class="inv-menu__confirm">
+          <p class="inv-menu__confirm-text">Supprimer cette facture&nbsp;?</p>
+          <div class="inv-menu__confirm-actions">
+            <button class="inv-menu__confirm-cancel" (click)="cancelDelete($event)">Annuler</button>
+            <button class="inv-menu__confirm-ok" (click)="deleteInvoice(openMenuId()!, $event)">Supprimer</button>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <div class="inv-menu" style="position:fixed"
+           [style.top.px]="menuAnchorRect()!.top"
+           [style.right.px]="menuAnchorRect()!.right"
+           (click)="$event.stopPropagation()">
+        <button class="inv-menu__item" (click)="editInvoice(openMenuId()!)">
+          <span class="material-symbols-outlined">edit</span>
+          Modifier
+        </button>
+        <button class="inv-menu__item" (click)="$event.stopPropagation()">
+          <span class="material-symbols-outlined">send</span>
+          Envoyer par e-mail
+        </button>
+        <button class="inv-menu__item" (click)="$event.stopPropagation()">
+          <span class="material-symbols-outlined">print</span>
+          Aperçu PDF
+        </button>
+        <div class="inv-menu__sep"></div>
+        <button class="inv-menu__item inv-menu__item--danger" (click)="confirmDelete(openMenuId()!, $event)">
+          <span class="material-symbols-outlined">delete</span>
+          Supprimer
+        </button>
+      </div>
+    }
+  }
+
+</div>

@@ -1,0 +1,91 @@
+/* ============================================================
+   PRECISION LEDGER — Design System (from DESIGN.md)
+   ============================================================ */
+
+/* --- CSS Custom Properties / Design Tokens --- */
+:root {
+  /* Colors */
+  --color-primary:                #001e40;
+  --color-primary-container:      #003366;
+  --color-on-primary:             #ffffff;
+  --color-on-primary-container:   #799dd6;
+  --color-secondary:              #515f74;
+  --color-on-secondary:           #ffffff;
+  --color-secondary-container:    #d5e3fc;
+  --color-on-secondary-container: #57657a;
+  --color-surface:                #f9f9fe;
+  --color-surface-muted:          #F8FAFC;
+  --color-surface-container-low:  #f4f3f8;
+  --color-surface-container:      #eeedf2;
+  --color-surface-container-high: #e8e8ed;
+  --color-surface-container-lowest: #ffffff;
+  --color-on-surface:             #1a1c1f;
+  --color-on-surface-variant:     #43474f;
+  --color-outline:                #737780;
+  --color-outline-variant:        #c3c6d1;
+  --color-border-subtle:          #E2E8F0;
+  --color-background:             #f9f9fe;
+  --color-inverse-surface:        #2f3034;
+  --color-inverse-on-surface:     #f1f0f5;
+  --color-inverse-primary:        #a7c8ff;
+  --color-error:                  #ba1a1a;
+  --color-status-paid:            #10B981;
+  --color-status-pending:         #F59E0B;
+  --color-status-overdue:         #EF4444;
+  --color-status-sent:            #3B82F6;
+  --color-status-draft:           #94A3B8;
+  --color-status-canceled:        #334155;
+
+  /* Typography */
+  --font-family: 'Inter', sans-serif;
+
+  /* Spacing */
+  --spacing-unit:           4px;
+  --spacing-gutter:         24px;
+  --spacing-margin-desktop: 32px;
+  --spacing-margin-mobile:  16px;
+
+  /* Border radius */
+  --radius-sm:   2px;
+  --radius-md:   4px;
+  --radius-lg:   8px;
+  --radius-xl:   12px;
+  --radius-full: 9999px;
+}
+
+/* --- Base Reset & Typography --- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-family);
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-on-surface);
+  background-color: var(--color-background);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Material Symbols helper */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Status badge utility */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-md);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.badge-paid    { background: rgba(16,185,129,.12); color: var(--color-status-paid); }
+.badge-pending { background: rgba(245,158,11,.12); color: var(--color-status-pending); }
+.badge-overdue { background: rgba(239,68,68,.12);  color: var(--color-status-overdue); }
+.badge-sent    { background: rgba(59,130,246,.12); color: var(--color-status-sent); }

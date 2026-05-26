@@ -1,0 +1,203 @@
+<div class="cl-page">
+
+  <!-- PAGE HEADER -->
+  <div class="cl-header">
+    <div class="cl-header__info">
+      <h1 class="cl-header__title">{{ 'CLIENTS.TITLE' | translate }}</h1>
+      <p class="cl-header__sub">{{ 'CLIENTS.SUBTITLE' | translate }}</p>
+    </div>
+    <div class="cl-header__actions">
+      <div class="cl-search-wrapper">
+        <span class="material-symbols-outlined cl-search-icon">search</span>
+        <input
+          class="cl-search"
+          type="text"
+          [placeholder]="'CLIENTS.SEARCH_PLACEHOLDER' | translate"
+          [ngModel]="searchQuery()"
+          (ngModelChange)="onSearchChange($event)"
+        />
+      </div>
+      <a routerLink="/client/create" class="cl-btn cl-btn--primary">
+        <span class="material-symbols-outlined">person_add</span>
+        {{ 'CLIENTS.NEW_CLIENT' | translate }}
+      </a>
+    </div>
+  </div>
+
+  <!-- KPI STRIP -->
+  <div class="cl-kpi-strip">
+    <div class="cl-kpi cl-kpi--blue">
+      <p class="cl-kpi__label">{{ 'CLIENTS.KPI_TOTAL' | translate }}</p>
+      <p class="cl-kpi__value">
+        @if (loading()) { <span class="cl-kpi__skeleton"></span> }
+        @else { {{ totalClients().toLocaleString('fr-FR') }} <span class="cl-kpi__badge cl-kpi__badge--green">+4%</span> }
+      </p>
+    </div>
+    <div class="cl-kpi cl-kpi--amber">
+      <p class="cl-kpi__label">{{ 'CLIENTS.KPI_NEW' | translate }}</p>
+      <p class="cl-kpi__value">
+        {{ nouveaux30j() }}
+        <span class="cl-kpi__trend material-symbols-outlined">trending_up</span>
+      </p>
+    </div>
+    <div class="cl-kpi cl-kpi--red">
+      <p class="cl-kpi__label">{{ 'CLIENTS.KPI_BALANCE' | translate }}</p>
+      <p class="cl-kpi__value cl-kpi__value--danger">{{ formatAmount(soldeGlobalDu) }}</p>
+    </div>
+  </div>
+
+  <!-- CLIENTS TABLE -->
+  <div class="cl-card">
+    <div class="cl-table-wrapper">
+      <table class="cl-table">
+        <thead>
+          <tr>
+            <th class="cl-th">{{ 'CLIENTS.COL_NAME' | translate }}</th>
+            <th class="cl-th">{{ 'CLIENTS.COL_CONTACT' | translate }}</th>
+            <th class="cl-th">{{ 'CLIENTS.COL_EMAIL' | translate }}</th>
+            <th class="cl-th">{{ 'CLIENTS.COL_DATE' | translate }}</th>
+            <th class="cl-th cl-th--center">{{ 'CLIENTS.COL_INVOICES' | translate }}</th>
+            <th class="cl-th cl-th--right">{{ 'CLIENTS.COL_BALANCE' | translate }}</th>
+            <th class="cl-th cl-th--center">{{ 'CLIENTS.COL_ACTIONS' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          @if (loading()) {
+            @for (_ of [1,2,3,4]; track $index) {
+              <tr class="cl-tr cl-tr--skeleton">
+                <td class="cl-td"><span class="cl-skeleton cl-skeleton--wide"></span></td>
+                <td class="cl-td"><span class="cl-skeleton"></span></td>
+                <td class="cl-td"><span class="cl-skeleton cl-skeleton--short"></span></td>
+                <td class="cl-td"><span class="cl-skeleton cl-skeleton--short"></span></td>
+                <td class="cl-td cl-td--center"><span class="cl-skeleton cl-skeleton--badge"></span></td>
+                <td class="cl-td"><span class="cl-skeleton cl-skeleton--short"></span></td>
+                <td class="cl-td"></td>
+              </tr>
+            }
+          } @else if (error()) {
+            <tr>
+              <td colspan="7" class="cl-td cl-state">
+                <span class="material-symbols-outlined cl-state__icon cl-state__icon--error">error</span>
+                <p class="cl-state__msg">{{ error() }}</p>
+              </td>
+            </tr>
+          } @else if (pagedClients().length === 0) {
+            <tr>
+              <td colspan="7" class="cl-td cl-state">
+                <span class="material-symbols-outlined cl-state__icon">group_off</span>
+                <p class="cl-state__msg">{{ 'CLIENTS.EMPTY' | translate }}</p>
+              </td>
+            </tr>
+          } @else {
+            @for (client of pagedClients(); track client.id) {
+              <tr class="cl-tr">
+
+                <td class="cl-td">
+                  <span class="cl-client-name">{{ client.companyName }}</span>
+                </td>
+                <td class="cl-td cl-td--muted">{{ client.contacts[0].fullName }}</td>
+                <td class="cl-td">
+                  <a class="cl-email-link" href="mailto:{{ client.contacts[0].email }}">{{ client.contacts[0].email }}</a>
+                </td>
+                <td class="cl-td cl-td--muted cl-td--date">{{ formatDate(client.createdAt) }}</td>
+                <td class="cl-td cl-td--center">
+                  <span class="cl-badge cl-badge--a-jour">{{ 'CLIENTS.STATUS_OK' | translate }}</span>
+                </td>
+                <td class="cl-td cl-td--amount">{{ formatAmount(0) }}</td>
+                <td class="cl-td cl-td--center">
+                  <div class="cl-action-wrap">
+                    <button type="button" class="cl-row-action"
+                      (click)="toggleMenu(client.id, $event)">
+                      <span class="material-symbols-outlined">more_horiz</span>
+                    </button>
+                  </div>
+                </td>
+
+              </tr>
+            }
+          }
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PAGINATION -->
+    @if (!loading() && !error() && filteredClients().length > 0) {
+      <div class="cl-pagination">
+        <span class="cl-pagination__info">
+          {{ 'CLIENTS.PAGE_INFO' | translate: { start: pageStart(), end: pageEnd(), total: filteredClients().length } }}
+        </span>
+        <div class="cl-pagination__controls">
+          <button
+            type="button"
+            class="cl-page-btn"
+            [disabled]="currentPage() === 1"
+            (click)="goToPage(currentPage() - 1)"
+          >
+            <span class="material-symbols-outlined">chevron_left</span>
+          </button>
+
+          @for (p of visiblePages(); track $index) {
+            @if (p === '...') {
+              <span class="cl-page-ellipsis">…</span>
+            } @else {
+              <button
+                type="button"
+                class="cl-page-btn"
+                [class.cl-page-btn--active]="p === currentPage()"
+                (click)="goToPage(+p)"
+              >{{ p }}</button>
+            }
+          }
+
+          <button
+            type="button"
+            class="cl-page-btn"
+            [disabled]="currentPage() === totalPages()"
+            (click)="goToPage(currentPage() + 1)"
+          >
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+        </div>
+      </div>
+    }
+
+  </div>
+
+  <!-- Floating action menu — position:fixed to escape overflow clipping -->
+  @if (openMenuId() !== null && menuAnchorRect() !== null) {
+    @if (confirmDeleteId() === openMenuId()) {
+      <div class="cl-menu" style="position:fixed"
+           [style.top.px]="menuAnchorRect()!.top"
+           [style.right.px]="menuAnchorRect()!.right"
+           (click)="$event.stopPropagation()">
+        <p class="cl-menu__confirm-text">
+          <span class="material-symbols-outlined">warning</span>
+          Supprimer ce client ?
+        </p>
+        <div class="cl-menu__confirm-btns">
+          <button class="cl-menu__cancel-btn" (click)="confirmDeleteId.set(null)">Annuler</button>
+          <button class="cl-menu__delete-btn" (click)="deleteClient(openMenuId()!, $event)">Supprimer</button>
+        </div>
+      </div>
+    } @else {
+      <div class="cl-menu" style="position:fixed"
+           [style.top.px]="menuAnchorRect()!.top"
+           [style.right.px]="menuAnchorRect()!.right"
+           (click)="$event.stopPropagation()">
+        <button class="cl-menu__item" (click)="editClient(openMenuId()!)">
+          <span class="material-symbols-outlined">edit</span>
+          Modifier
+        </button>
+        <div class="cl-menu__sep"></div>
+        <button class="cl-menu__item cl-menu__item--danger"
+          (click)="confirmDelete(openMenuId()!, $event)">
+          <span class="material-symbols-outlined">delete</span>
+          Supprimer
+        </button>
+      </div>
+    }
+  }
+
+</div>

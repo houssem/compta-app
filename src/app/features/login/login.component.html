@@ -1,0 +1,184 @@
+<div class="lp-page">
+
+  <!-- ══ LEFT PANEL ══════════════════════════════════════════ -->
+  <div class="lp-left" aria-hidden="true">
+    <div class="lp-left__content">
+
+      <!-- Brand -->
+      <div class="lp-brand">
+        <span class="lp-brand__mark">
+          <span class="material-symbols-outlined">receipt_long</span>
+        </span>
+        <span class="lp-brand__name">{{ 'HEADER.BRAND' | translate }}</span>
+      </div>
+
+      <!-- Hero copy -->
+      <div class="lp-left__hero">
+        <h2 class="lp-left__headline">Gérez vos finances avec précision.</h2>
+        <p class="lp-left__sub">Factures, clients, paiements — tout centralisé dans une interface épurée conçue pour les professionnels.</p>
+      </div>
+
+      <!-- Feature bullets -->
+      <ul class="lp-features">
+        <li class="lp-features__item">
+          <span class="lp-features__icon">
+            <span class="material-symbols-outlined">verified</span>
+          </span>
+          <span>Conformité fiscale automatisée</span>
+        </li>
+        <li class="lp-features__item">
+          <span class="lp-features__icon">
+            <span class="material-symbols-outlined">trending_up</span>
+          </span>
+          <span>Suivi des paiements en temps réel</span>
+        </li>
+        <li class="lp-features__item">
+          <span class="lp-features__icon">
+            <span class="material-symbols-outlined">lock</span>
+          </span>
+          <span>Sécurité de niveau bancaire</span>
+        </li>
+      </ul>
+
+    </div>
+
+    <!-- Decorative rings -->
+    <div class="lp-deco">
+      <div class="lp-deco__ring lp-deco__ring--1"></div>
+      <div class="lp-deco__ring lp-deco__ring--2"></div>
+      <div class="lp-deco__ring lp-deco__ring--3"></div>
+    </div>
+  </div>
+
+  <!-- ══ RIGHT PANEL (form) ══════════════════════════════════ -->
+  <main class="lp-right">
+    <div class="lp-form-wrap">
+
+      <!-- Mobile brand (hidden on desktop) -->
+      <div class="lp-brand lp-brand--mobile">
+        <span class="lp-brand__mark">
+          <span class="material-symbols-outlined">receipt_long</span>
+        </span>
+        <span class="lp-brand__name lp-brand__name--dark">{{ 'HEADER.BRAND' | translate }}</span>
+      </div>
+
+      <!-- Form header -->
+      <div class="lp-form-head">
+        <h1 class="lp-form-title">{{ 'LOGIN.TITLE' | translate }}</h1>
+        <p class="lp-form-sub">{{ 'LOGIN.SUBTITLE' | translate }}</p>
+      </div>
+
+      <!-- Form -->
+      <form class="lp-form" (ngSubmit)="onSubmit()" #loginForm="ngForm" autocomplete="off">
+
+        <div class="lp-field">
+          <label class="lp-label" for="email">{{ 'LOGIN.EMAIL' | translate }}</label>
+          <div class="lp-input-wrap">
+            <span class="material-symbols-outlined lp-input-icon">mail</span>
+            <input id="email" class="lp-input" type="email" name="email"
+              [(ngModel)]="email" placeholder="nom@entreprise.com" required />
+          </div>
+        </div>
+
+        <div class="lp-field">
+          <div class="lp-label-row">
+            <label class="lp-label" for="password">{{ 'LOGIN.PASSWORD' | translate }}</label>
+            <a href="#" class="lp-forgot">{{ 'LOGIN.FORGOT' | translate }}</a>
+          </div>
+          <div class="lp-input-wrap">
+            <span class="material-symbols-outlined lp-input-icon">lock</span>
+            <input id="password" class="lp-input" [type]="showPassword ? 'text' : 'password'"
+              name="password" [(ngModel)]="password" placeholder="••••••••" required />
+            <button type="button" class="lp-eye-btn" (click)="togglePassword()">
+              <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+            </button>
+          </div>
+        </div>
+
+        @if (errorMessage) {
+          <div class="lp-error">
+            <span class="material-symbols-outlined">error</span>
+            <span>{{ errorMessage }}</span>
+          </div>
+        }
+
+        <button type="submit" class="lp-submit" [disabled]="!email || !password || loading">
+          @if (loading) {
+            <span class="material-symbols-outlined lp-spin">progress_activity</span>
+          } @else {
+            <span class="material-symbols-outlined">login</span>
+          }
+          {{ (loading ? 'LOGIN.LOADING' : 'LOGIN.SUBMIT') | translate }}
+        </button>
+
+      </form>
+
+      <!-- Divider -->
+      <div class="lp-divider">
+        <span class="lp-divider__line"></span>
+        <span class="lp-divider__text">{{ 'LOGIN.OR' | translate }}</span>
+        <span class="lp-divider__line"></span>
+      </div>
+
+      <!-- Social login -->
+      <div class="lp-social">
+        <button type="button" class="lp-social__btn">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuA42lSH4qIzdSDmI4ii2TXWkJ2TT6weQoobp9Ft3ZJ4gb6W1lGI1GeMH8ejVDVitaFstrws3vhnhCxnCiQID4kEc-j3hSv41m5Iz-WYnD1C4HX_XE6qEA6h2mlPf19rpSnzpIfTDFkjSAogmor2l9IvZyOYCIHncvzqmbb3xR6hUw8NvQ31CIJ2FpgcDvsLtzPylOmXKQ3IoGJiB2u7Sz6L9hcVH-V9LK3a1ksDV-oxt-w6A24ux7EZTjfGYVon9pt4lW6BjtwzUhE4" alt="Google" width="18" height="18" />
+          <span>Google</span>
+        </button>
+        <button type="button" class="lp-social__btn">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbI-4vGJFlPOF19FUYNKudOgUt1ld1YOesY7YEKkvpB8GG8tknKomFLEn-KT_o5HA0H5_e3AwhpBm0wrANbBwEZq-dsFqQKRjyX3xxxnr9Qao7_EVuWDwNrkVcYP-tDcjPXroa3_SaZfp47Z92-v6ExWEIenMQ_k1Adt32uwBIRChRLFPTQCzK9RHGpKBXgswTG8wRogtSg9Q6ax5p9WoIIAY6urjwsS8eNM0vkOtGIXUO_AfbJFYk7g9bzLF8WlRpN-LqLv1uI8BS" alt="Microsoft" width="18" height="18" />
+          <span>Microsoft</span>
+        </button>
+      </div>
+
+      <!-- Register link -->
+      <p class="lp-register">
+        {{ 'LOGIN.NO_ACCOUNT' | translate }}
+        <a routerLink="/register">{{ 'LOGIN.REGISTER' | translate }}</a>
+      </p>
+
+    </div>
+  </main>
+
+</div>
+
+<!-- ══ FOOTER ═══════════════════════════════════════════════ -->
+<footer class="lp-footer">
+  <div class="lp-footer__inner">
+    <div class="lp-footer__brand">
+      <h3>{{ 'HEADER.BRAND' | translate }}</h3>
+      <p>{{ 'LOGIN.FOOTER_DESC' | translate }}</p>
+      <div class="lp-footer__icons">
+        <span class="material-symbols-outlined">menu_book</span>
+        <span class="material-symbols-outlined">language</span>
+        <span class="material-symbols-outlined">public</span>
+      </div>
+    </div>
+    <div class="lp-footer__col">
+      <h5>{{ 'LOGIN.FOOTER_PRODUCT' | translate }}</h5>
+      <ul>
+        <li><a href="#">{{ 'LOGIN.FOOTER_FEATURES' | translate }}</a></li>
+        <li><a href="#">{{ 'LOGIN.FOOTER_PRICING' | translate }}</a></li>
+        <li><a href="#">{{ 'LOGIN.FOOTER_SECURITY' | translate }}</a></li>
+        <li><a href="#">{{ 'LOGIN.FOOTER_API' | translate }}</a></li>
+      </ul>
+    </div>
+    <div class="lp-footer__col">
+      <h5>{{ 'LOGIN.FOOTER_CONTACT' | translate }}</h5>
+      <ul>
+        <li>support&#64;facturation.dev</li>
+        <li>+33 1 23 45 67 89</li>
+        <li>12 Rue de la Finance, Paris</li>
+      </ul>
+    </div>
+  </div>
+  <div class="lp-footer__bottom">
+    <p>{{ 'LOGIN.FOOTER_RIGHTS' | translate }}</p>
+    <div class="lp-footer__bottom-links">
+      <a href="#">{{ 'LOGIN.FOOTER_TERMS' | translate }}</a>
+      <a href="#">{{ 'LOGIN.FOOTER_PRIVACY' | translate }}</a>
+      <a href="#">{{ 'LOGIN.FOOTER_COOKIES' | translate }}</a>
+    </div>
+  </div>
+</footer>

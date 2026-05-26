@@ -1,0 +1,251 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&display=swap');
+
+:host {
+  display: block;
+  flex-shrink: 0;
+}
+
+/* =====================================================
+   HEADER SHELL
+   ===================================================== */
+.app-header {
+  height: 58px;
+  background: var(--color-surface-container-lowest);
+  border-bottom: 1px solid var(--color-border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  z-index: 70;
+  font-family: var(--font-family);
+  box-shadow: 0 1px 3px rgba(0, 30, 64, 0.04);
+}
+
+/* =====================================================
+   BRAND
+   ===================================================== */
+.app-header__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  text-decoration: none;
+  transition: opacity 0.15s;
+
+  &:hover { opacity: 0.82; }
+}
+
+.app-header__logomark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: var(--color-primary);
+  flex-shrink: 0;
+
+  .material-symbols-outlined {
+    font-size: 17px;
+    color: #fff;
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+}
+
+.app-header__wordmark {
+  font-family: 'Syne', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-primary);
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+/* =====================================================
+   RIGHT ZONE
+   ===================================================== */
+.app-header__right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* =====================================================
+   LANGUAGE TOGGLE
+   ===================================================== */
+.app-header__lang-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 32px;
+  padding: 0 10px;
+  border: 1.5px solid var(--color-border-subtle);
+  border-radius: 20px;
+  background: transparent;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+
+  &:hover {
+    background: var(--color-surface-container-low);
+    border-color: var(--color-outline-variant);
+  }
+}
+
+.app-header__lang-flag {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.app-header__lang-code {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--color-on-surface-variant);
+}
+
+/* =====================================================
+   ICON BUTTONS (notifications, settings)
+   ===================================================== */
+.app-header__icon-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  color: var(--color-on-surface-variant);
+  transition: background 0.15s, color 0.15s;
+
+  .material-symbols-outlined {
+    font-size: 20px;
+    font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+  }
+
+  &:hover {
+    background: var(--color-surface-container);
+    color: var(--color-on-surface);
+  }
+}
+
+/* Notification dot */
+.app-header__notif-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ef4444;
+  border: 1.5px solid var(--color-surface-container-lowest);
+}
+
+/* =====================================================
+   SEPARATOR
+   ===================================================== */
+.app-header__sep {
+  display: block;
+  width: 1px;
+  height: 22px;
+  background: var(--color-border-subtle);
+  margin: 0 6px;
+  flex-shrink: 0;
+}
+
+/* =====================================================
+   USER AREA (avatar + logout)
+   ===================================================== */
+.app-header__user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.app-header__avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  /* ring effect: white gap then navy border */
+  box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px var(--color-primary);
+  cursor: default;
+  user-select: none;
+}
+
+.app-header__logout {
+  height: 32px;
+  padding: 0 12px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-on-surface-variant);
+  background: transparent;
+  border: 1.5px solid var(--color-border-subtle);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+
+  &:hover {
+    background: var(--color-surface-container-low);
+    color: var(--color-on-surface);
+    border-color: var(--color-outline-variant);
+  }
+}
+
+/* =====================================================
+   PUBLIC STATE (logged-out)
+   ===================================================== */
+.app-header__link {
+  display: inline-flex;
+  align-items: center;
+  height: 34px;
+  padding: 0 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-on-surface-variant);
+  text-decoration: none;
+  border-radius: 8px;
+  transition: background 0.15s, color 0.15s;
+
+  &:hover {
+    background: var(--color-surface-container-low);
+    color: var(--color-on-surface);
+  }
+
+  &--active {
+    font-weight: 700;
+    color: var(--color-primary);
+  }
+}
+
+.app-header__btn-register {
+  display: inline-flex;
+  align-items: center;
+  height: 34px;
+  padding: 0 16px;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--color-on-primary);
+  background: var(--color-primary);
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.15s;
+
+  &:hover {
+    background: #002d5c;
+    box-shadow: 0 4px 12px rgba(0, 30, 64, 0.25);
+  }
+}
