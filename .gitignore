@@ -1,0 +1,23 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Claude
+.claude/
+.remember/
+
+# Backend
+comptabilite-backend/target/
+comptabilite-backend/.idea/
+comptabilite-backend/*.iml
+
+# Frontend
+comptabilite-frontend/dist/
+comptabilite-frontend/tmp/
+comptabilite-frontend/node_modules/
+comptabilite-frontend/.angular/
