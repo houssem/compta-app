@@ -1,0 +1,26 @@
+spring:
+  profiles:
+    active: dev
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
+  jpa:
+    open-in-view: false
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:devSecretKeyComptaApp123456789012345678901234}
+    access-token-expiration: 900000       # 15 minutes en ms
+    refresh-token-expiration: 604800000   # 7 jours en ms
+  upload:
+    dir: ${UPLOAD_DIR:uploads}
+
+server:
+  port: 8080
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html

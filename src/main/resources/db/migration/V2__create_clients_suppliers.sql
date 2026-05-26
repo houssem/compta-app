@@ -1,0 +1,92 @@
+CREATE TABLE clients (
+    id                  VARCHAR(36)   NOT NULL,
+    company_id          VARCHAR(36)   NOT NULL,
+    code                VARCHAR(20)   NOT NULL,
+    name                VARCHAR(255)  NOT NULL,
+    legal_form          VARCHAR(50),
+    rne_number          VARCHAR(20),
+    matricule_fiscal    VARCHAR(20),
+    regime_fiscal       VARCHAR(20)   NOT NULL DEFAULT 'REEL',
+    assujetti_tva       BOOLEAN       NOT NULL DEFAULT TRUE,
+    client_type         VARCHAR(20)   NOT NULL DEFAULT 'PROFESSIONNEL',
+    category            VARCHAR(100),
+    notes               TEXT,
+    currency            VARCHAR(3)    NOT NULL DEFAULT 'TND',
+    street_number       VARCHAR(20),
+    street_name         VARCHAR(255),
+    complement          VARCHAR(255),
+    city                VARCHAR(100),
+    postal_code         VARCHAR(20),
+    country             VARCHAR(100)  NOT NULL DEFAULT 'Tunisie',
+    phone               VARCHAR(50),
+    email               VARCHAR(255),
+    website             VARCHAR(255),
+    payment_terms       VARCHAR(100),
+    max_credit          DECIMAL(15,2) NOT NULL DEFAULT 0.00,
+    default_vat_rate    DECIMAL(5,2)  NOT NULL DEFAULT 19.00,
+    discount_rate       DECIMAL(5,2)  NOT NULL DEFAULT 0.00,
+    status              VARCHAR(20)   NOT NULL DEFAULT 'ACTIVE',
+    created_at          TIMESTAMP     NOT NULL,
+    updated_at          TIMESTAMP     NOT NULL,
+    CONSTRAINT pk_clients PRIMARY KEY (id),
+    CONSTRAINT uq_clients_code UNIQUE (company_id, code),
+    CONSTRAINT fk_clients_company FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE
+);
+
+CREATE TABLE client_contacts (
+    id          VARCHAR(36)   NOT NULL,
+    client_id   VARCHAR(36)   NOT NULL,
+    full_name   VARCHAR(200)  NOT NULL,
+    role        VARCHAR(100),
+    email       VARCHAR(255),
+    phone       VARCHAR(50),
+    is_primary  BOOLEAN       NOT NULL DEFAULT FALSE,
+    created_at  TIMESTAMP     NOT NULL,
+    updated_at  TIMESTAMP     NOT NULL,
+    CONSTRAINT pk_client_contacts PRIMARY KEY (id),
+    CONSTRAINT fk_client_contacts_client FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE
+);
+
+CREATE TABLE suppliers (
+    id                  VARCHAR(36)   NOT NULL,
+    company_id          VARCHAR(36)   NOT NULL,
+    code                VARCHAR(20)   NOT NULL,
+    name                VARCHAR(255)  NOT NULL,
+    legal_form          VARCHAR(50),
+    rne_number          VARCHAR(20),
+    matricule_fiscal    VARCHAR(20),
+    regime_fiscal       VARCHAR(20)   NOT NULL DEFAULT 'REEL',
+    assujetti_tva       BOOLEAN       NOT NULL DEFAULT TRUE,
+    currency            VARCHAR(3)    NOT NULL DEFAULT 'TND',
+    street_number       VARCHAR(20),
+    street_name         VARCHAR(255),
+    complement          VARCHAR(255),
+    city                VARCHAR(100),
+    postal_code         VARCHAR(20),
+    country             VARCHAR(100)  NOT NULL DEFAULT 'Tunisie',
+    phone               VARCHAR(50),
+    email               VARCHAR(255),
+    website             VARCHAR(255),
+    contact_name        VARCHAR(200),
+    contact_role        VARCHAR(100),
+    contact_phone       VARCHAR(50),
+    contact_email       VARCHAR(255),
+    payment_terms       VARCHAR(100),
+    category            VARCHAR(100),
+    default_account     VARCHAR(10)   DEFAULT '401000',
+    bank_name           VARCHAR(255),
+    iban                VARCHAR(34),
+    swift_bic           VARCHAR(11),
+    status              VARCHAR(20)   NOT NULL DEFAULT 'ACTIVE',
+    created_at          TIMESTAMP     NOT NULL,
+    updated_at          TIMESTAMP     NOT NULL,
+    CONSTRAINT pk_suppliers PRIMARY KEY (id),
+    CONSTRAINT uq_suppliers_code UNIQUE (company_id, code),
+    CONSTRAINT fk_suppliers_company FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_clients_company        ON clients(company_id);
+CREATE INDEX idx_clients_status         ON clients(company_id, status);
+CREATE INDEX idx_client_contacts_client ON client_contacts(client_id);
+CREATE INDEX idx_suppliers_company      ON suppliers(company_id);
+CREATE INDEX idx_suppliers_status       ON suppliers(company_id, status);
