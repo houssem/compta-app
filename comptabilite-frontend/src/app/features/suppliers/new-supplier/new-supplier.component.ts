@@ -1,6 +1,6 @@
 // src/app/features/suppliers/new-supplier/new-supplier.component.ts
 import { Component, signal, computed, OnInit } from '@angular/core'
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms'
+import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators, AbstractControl, ValidationErrors } from '@angular/forms'
 import { RouterLink, Router, ActivatedRoute } from '@angular/router'
 import { TranslateModule } from '@ngx-translate/core'
 import { SupplierService } from '../supplier.service'
@@ -44,6 +44,10 @@ export class NewSupplierComponent implements OnInit {
 
   get f() { return this.form.controls }
 
+  get contactsArray(): FormArray {
+    return this.form.get('contacts') as FormArray
+  }
+
   private supplierId: string | null = null
 
   constructor(
@@ -62,9 +66,7 @@ export class NewSupplierComponent implements OnInit {
       taxId:        [''],
       regimeFiscal: ['REEL'],
       assujettiTva: [true],
-      fullName:     [''],
-      email:        ['', Validators.email],
-      phone:        ['', optionalPhone],
+      contacts:     this.fb.array([this.newContactGroup(true)]),
       street:       [''],
       city:         [''],
       postalCode:   [''],
@@ -73,7 +75,6 @@ export class NewSupplierComponent implements OnInit {
       paymentTerms: ['Net 30'],
     })
 
-    // Réagir au changement de pays
     this.form.get('country')!.valueChanges.subscribe((country: string) => {
       this.selectedCountry.set(country)
       const suggestedCurrency = COUNTRY_CURRENCY_MAP[country] ?? 'TND'
@@ -95,13 +96,10 @@ export class NewSupplierComponent implements OnInit {
             companyName:  supplier.companyName,
             website:      supplier.website,
             category:     supplier.category,
-            rneNumber:    (supplier as any).rneNumber ?? '',
+            rneNumber:    supplier.rneNumber ?? '',
             taxId:        supplier.financial.taxId,
-            regimeFiscal: (supplier as any).regimeFiscal ?? 'REEL',
-            assujettiTva: (supplier as any).assujettiTva ?? true,
-            fullName:     supplier.contact.fullName,
-            email:        supplier.contact.email,
-            phone:        supplier.contact.phone,
+            regimeFiscal: supplier.regimeFiscal ?? 'REEL',
+            assujettiTva: supplier.assujettiTva ?? true,
             street:       supplier.address.street,
             city:         supplier.address.city,
             postalCode:   supplier.address.postalCode,
@@ -109,11 +107,52 @@ export class NewSupplierComponent implements OnInit {
             currency:     supplier.financial.currency,
             paymentTerms: supplier.financial.paymentTerms,
           })
+          if (supplier.contacts?.length) {
+            const groups = supplier.contacts.map(c => {
+              const g = this.newContactGroup(c.isPrimary)
+              g.patchValue({ fullName: c.fullName, role: c.role, email: c.email, phone: c.phone })
+              return g
+            })
+            this.form.setControl('contacts', this.fb.array(groups))
+          }
         },
         error: () => this.router.navigate(['/suppliers'])
       })
     }
   }
+
+  // ── Contact helpers ─────────────────────────────────────────
+
+  newContactGroup(isPrimary = false): FormGroup {
+    return this.fb.group({
+      fullName:  ['', Validators.required],
+      role:      [''],
+      email:     ['', Validators.email],
+      phone:     ['', optionalPhone],
+      isPrimary: [isPrimary],
+    })
+  }
+
+  addContact(): void {
+    this.contactsArray.push(this.newContactGroup(false))
+  }
+
+  removeContact(index: number): void {
+    if (this.contactsArray.length === 1) return
+    const wasPrimary = this.contactsArray.at(index).get('isPrimary')?.value
+    this.contactsArray.removeAt(index)
+    if (wasPrimary) {
+      this.contactsArray.at(0).get('isPrimary')?.setValue(true)
+    }
+  }
+
+  setPrimary(index: number): void {
+    this.contactsArray.controls.forEach((ctrl, i) => {
+      ctrl.get('isPrimary')?.setValue(i === index)
+    })
+  }
+
+  // ── Save ────────────────────────────────────────────────────
 
   save(): void {
     this.form.markAllAsTouched()
@@ -128,11 +167,13 @@ export class NewSupplierComponent implements OnInit {
       companyName: v.companyName,
       website:     v.website,
       category:    v.category,
-      contact: {
-        fullName: v.fullName,
-        email:    v.email,
-        phone:    v.phone,
-      },
+      contacts:    this.contactsArray.getRawValue().map((c: any) => ({
+        fullName:  c.fullName,
+        role:      c.role,
+        email:     c.email,
+        phone:     c.phone,
+        isPrimary: c.isPrimary,
+      })),
       address: {
         street:     v.street,
         city:       v.city,
