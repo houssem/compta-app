@@ -97,7 +97,6 @@ public class SupplierService {
         }
     }
 
-    @Transactional
     private void applyContacts(Supplier supplier, List<SupplierRequest.ContactDto> dtos) {
         contactRepository.deleteAllBySupplierId(supplier.getId());
         if (dtos == null || dtos.isEmpty()) return;
