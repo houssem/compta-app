@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.compta.supplier.entity.Supplier;
 import com.compta.supplier.entity.SupplierContact;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -21,7 +22,8 @@ public record SupplierResponse(
         LocalDateTime createdAt,
         List<ContactDto> contacts,
         AddressDto address,
-        FinancialDto financial
+        FinancialDto financial,
+        BankDto bank
 ) {
     public record ContactDto(
             UUID id,
@@ -34,7 +36,16 @@ public record SupplierResponse(
 
     public record AddressDto(String street, String city, String postalCode, String country) {}
 
-    public record FinancialDto(String taxId, String currency, String paymentTerms) {}
+    public record FinancialDto(
+            String taxId,
+            String currency,
+            String paymentTerms,
+            String defaultAccount,
+            String withholdingTaxType,
+            BigDecimal withholdingTaxRate
+    ) {}
+
+    public record BankDto(String bankName, String iban, String swiftBic) {}
 
     public static SupplierResponse from(Supplier s, List<SupplierContact> contacts) {
         return new SupplierResponse(
@@ -53,7 +64,9 @@ public record SupplierResponse(
                         c.getEmail(), c.getPhone(), c.isPrimary()
                 )).toList(),
                 new AddressDto(s.getStreetName(), s.getCity(), s.getPostalCode(), s.getCountry()),
-                new FinancialDto(s.getMatriculeFiscal(), s.getCurrency(), s.getPaymentTerms())
+                new FinancialDto(s.getMatriculeFiscal(), s.getCurrency(), s.getPaymentTerms(),
+                        s.getDefaultAccount(), s.getWithholdingTaxType(), s.getWithholdingTaxRate()),
+                new BankDto(s.getBankName(), s.getIban(), s.getSwiftBic())
         );
     }
 }

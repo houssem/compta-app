@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators, Abs
 import { RouterLink, Router, ActivatedRoute } from '@angular/router'
 import { TranslateModule } from '@ngx-translate/core'
 import { SupplierService } from '../supplier.service'
-import { CreateSupplierDto, SUPPLIER_CATEGORIES } from '../../../shared/models/supplier.model'
+import { CreateSupplierDto, SUPPLIER_CATEGORIES, WITHHOLDING_TAX_TYPES } from '../../../shared/models/supplier.model'
 import { COUNTRIES, CURRENCIES, PAYMENT_TERMS, COUNTRY_CURRENCY_MAP } from '../../../shared/models/client.model'
 
 function optionalUrl(control: AbstractControl): ValidationErrors | null {
@@ -29,10 +29,11 @@ function optionalPhone(control: AbstractControl): ValidationErrors | null {
 export class NewSupplierComponent implements OnInit {
 
   form!: FormGroup
-  readonly categories   = SUPPLIER_CATEGORIES
-  readonly countries    = COUNTRIES
-  readonly currencies   = CURRENCIES
-  readonly paymentTerms = PAYMENT_TERMS
+  readonly categories        = SUPPLIER_CATEGORIES
+  readonly countries         = COUNTRIES
+  readonly currencies        = CURRENCIES
+  readonly paymentTerms      = PAYMENT_TERMS
+  readonly withholdingTypes  = WITHHOLDING_TAX_TYPES
 
   editMode      = signal(false)
   loading       = signal(false)
@@ -59,20 +60,26 @@ export class NewSupplierComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = this.fb.nonNullable.group({
-      companyName:  ['', Validators.required],
-      website:      ['', optionalUrl],
-      category:     ['', Validators.required],
-      rneNumber:    [''],
-      taxId:        [''],
-      regimeFiscal: ['REEL'],
-      assujettiTva: [true],
-      contacts:     this.fb.array([this.newContactGroup(true)]),
-      street:       [''],
-      city:         [''],
-      postalCode:   [''],
-      country:      ['Tunisie'],
-      currency:     ['TND'],
-      paymentTerms: ['Net 30'],
+      companyName:         ['', Validators.required],
+      website:             ['', optionalUrl],
+      category:            ['', Validators.required],
+      rneNumber:           [''],
+      taxId:               [''],
+      regimeFiscal:        ['REEL'],
+      assujettiTva:        [true],
+      contacts:            this.fb.array([this.newContactGroup(true)]),
+      street:              [''],
+      city:                [''],
+      postalCode:          [''],
+      country:             ['Tunisie'],
+      currency:            ['TND'],
+      paymentTerms:        ['Net 30'],
+      defaultAccount:      ['401000'],
+      withholdingTaxType:  [''],
+      withholdingTaxRate:  [{ value: null, disabled: true }],
+      bankName:            [''],
+      iban:                [''],
+      swiftBic:            [''],
     })
 
     this.form.get('country')!.valueChanges.subscribe((country: string) => {
@@ -86,6 +93,21 @@ export class NewSupplierComponent implements OnInit {
       }
     })
 
+    this.form.get('withholdingTaxType')!.valueChanges.subscribe((type: string) => {
+      const match = this.withholdingTypes.find(t => t.value === type)
+      const rateCtrl = this.form.get('withholdingTaxRate')!
+      if (match?.rate != null) {
+        rateCtrl.enable({ emitEvent: false })
+        rateCtrl.setValue(match.rate, { emitEvent: false })
+      } else if (type === 'ETRANGER') {
+        rateCtrl.enable({ emitEvent: false })
+        rateCtrl.setValue(null, { emitEvent: false })
+      } else {
+        rateCtrl.disable({ emitEvent: false })
+        rateCtrl.setValue(null, { emitEvent: false })
+      }
+    })
+
     this.supplierId = this.route.snapshot.paramMap.get('id')
     if (this.supplierId) {
       this.editMode.set(true)
@@ -93,20 +115,29 @@ export class NewSupplierComponent implements OnInit {
         next: (supplier) => {
           this.selectedCountry.set(supplier.address.country ?? 'Tunisie')
           this.form.patchValue({
-            companyName:  supplier.companyName,
-            website:      supplier.website,
-            category:     supplier.category,
-            rneNumber:    supplier.rneNumber ?? '',
-            taxId:        supplier.financial.taxId,
-            regimeFiscal: supplier.regimeFiscal ?? 'REEL',
-            assujettiTva: supplier.assujettiTva ?? true,
-            street:       supplier.address.street,
-            city:         supplier.address.city,
-            postalCode:   supplier.address.postalCode,
-            country:      supplier.address.country,
-            currency:     supplier.financial.currency,
-            paymentTerms: supplier.financial.paymentTerms,
+            companyName:        supplier.companyName,
+            website:            supplier.website,
+            category:           supplier.category,
+            rneNumber:          supplier.rneNumber ?? '',
+            taxId:              supplier.financial.taxId,
+            regimeFiscal:       supplier.regimeFiscal ?? 'REEL',
+            assujettiTva:       supplier.assujettiTva ?? true,
+            street:             supplier.address.street,
+            city:               supplier.address.city,
+            postalCode:         supplier.address.postalCode,
+            country:            supplier.address.country,
+            currency:           supplier.financial.currency,
+            paymentTerms:       supplier.financial.paymentTerms,
+            defaultAccount:     supplier.financial.defaultAccount ?? '401000',
+            withholdingTaxType: supplier.financial.withholdingTaxType ?? '',
+            withholdingTaxRate: supplier.financial.withholdingTaxRate ?? null,
+            bankName:           supplier.bank?.bankName ?? '',
+            iban:               supplier.bank?.iban ?? '',
+            swiftBic:           supplier.bank?.swiftBic ?? '',
           })
+          if (supplier.financial.withholdingTaxType) {
+            this.form.get('withholdingTaxRate')!.enable({ emitEvent: false })
+          }
           if (supplier.contacts?.length) {
             const groups = supplier.contacts.map(c => {
               const g = this.newContactGroup(c.isPrimary)
@@ -152,6 +183,10 @@ export class NewSupplierComponent implements OnInit {
     })
   }
 
+  withholdingLabel(type: string): string {
+    return this.withholdingTypes.find(t => t.value === type)?.label ?? type
+  }
+
   // ── Save ────────────────────────────────────────────────────
 
   save(): void {
@@ -181,9 +216,17 @@ export class NewSupplierComponent implements OnInit {
         country:    v.country,
       },
       financial: {
-        taxId:        v.taxId,
-        currency:     v.currency,
-        paymentTerms: v.paymentTerms,
+        taxId:              v.taxId,
+        currency:           v.currency,
+        paymentTerms:       v.paymentTerms,
+        defaultAccount:     v.defaultAccount,
+        withholdingTaxType: v.withholdingTaxType,
+        withholdingTaxRate: v.withholdingTaxRate,
+      },
+      bank: {
+        bankName: v.bankName,
+        iban:     v.iban,
+        swiftBic: v.swiftBic,
       },
     }
 

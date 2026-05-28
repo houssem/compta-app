@@ -20,6 +20,15 @@ export interface SupplierFinancial {
   taxId: string
   currency: string
   paymentTerms: string
+  defaultAccount: string
+  withholdingTaxType: string
+  withholdingTaxRate: number | null
+}
+
+export interface SupplierBank {
+  bankName: string
+  iban: string
+  swiftBic: string
 }
 
 export interface CreateSupplierDto {
@@ -29,6 +38,7 @@ export interface CreateSupplierDto {
   contacts: SupplierContact[]
   address: SupplierAddress
   financial: SupplierFinancial
+  bank: SupplierBank
 }
 
 export interface Supplier {
@@ -45,6 +55,7 @@ export interface Supplier {
   contacts: SupplierContact[]
   address: SupplierAddress
   financial: SupplierFinancial
+  bank: SupplierBank
 }
 
 export const SUPPLIER_CATEGORIES = [
@@ -54,4 +65,12 @@ export const SUPPLIER_CATEGORIES = [
   'Services professionnels',
   'Télécommunications',
   'Autre',
+] as const
+
+export const WITHHOLDING_TAX_TYPES = [
+  { value: '',            label: 'Aucune retenue',                    rate: null },
+  { value: 'HONORAIRES',  label: 'Honoraires (libéral)',               rate: 10 },
+  { value: 'LOYERS',      label: 'Loyers (personne physique)',          rate: 15 },
+  { value: 'TRAVAUX',     label: 'Marchés de travaux / fournitures',   rate: 1.5 },
+  { value: 'ETRANGER',    label: 'Fournisseur étranger (prestation)',  rate: null },
 ] as const

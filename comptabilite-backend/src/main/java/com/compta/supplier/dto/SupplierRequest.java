@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public record SupplierRequest(
@@ -31,7 +32,9 @@ public record SupplierRequest(
         @NotNull(message = "L'adresse est obligatoire")
         @Valid AddressDto address,
 
-        @Valid FinancialDto financial
+        @Valid FinancialDto financial,
+
+        @Valid BankDto bank
 
 ) {
     public record ContactDto(
@@ -53,6 +56,15 @@ public record SupplierRequest(
     public record FinancialDto(
             String taxId,
             String currency,
-            String paymentTerms
+            String paymentTerms,
+            String defaultAccount,
+            String withholdingTaxType,
+            BigDecimal withholdingTaxRate
+    ) {}
+
+    public record BankDto(
+            String bankName,
+            String iban,
+            String swiftBic
     ) {}
 }

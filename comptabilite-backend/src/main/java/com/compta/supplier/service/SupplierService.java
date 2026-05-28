@@ -94,6 +94,15 @@ public class SupplierService {
             supplier.setMatriculeFiscal(req.financial().taxId());
             supplier.setCurrency(req.financial().currency() != null ? req.financial().currency() : "TND");
             supplier.setPaymentTerms(req.financial().paymentTerms());
+            supplier.setDefaultAccount(req.financial().defaultAccount() != null ? req.financial().defaultAccount() : "401000");
+            supplier.setWithholdingTaxType(req.financial().withholdingTaxType());
+            supplier.setWithholdingTaxRate(req.financial().withholdingTaxRate());
+        }
+
+        if (req.bank() != null) {
+            supplier.setBankName(req.bank().bankName());
+            supplier.setIban(req.bank().iban());
+            supplier.setSwiftBic(req.bank().swiftBic());
         }
     }
 

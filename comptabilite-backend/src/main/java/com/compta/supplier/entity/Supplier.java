@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Getter
@@ -84,6 +85,12 @@ public class Supplier extends BaseEntity {
 
     @Column(name = "swift_bic", length = 11)
     private String swiftBic;
+
+    @Column(name = "withholding_tax_type", length = 50)
+    private String withholdingTaxType;
+
+    @Column(name = "withholding_tax_rate", precision = 5, scale = 2)
+    private BigDecimal withholdingTaxRate;
 
     @Column(name = "status", nullable = false, length = 20)
     private String status = "ACTIVE";
