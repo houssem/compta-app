@@ -1,9 +1,12 @@
 // src/app/shared/models/supplier.model.ts
 
 export interface SupplierContact {
+  id?: string
   fullName: string
+  role: string
   email: string
   phone: string
+  isPrimary: boolean
 }
 
 export interface SupplierAddress {
@@ -23,17 +26,25 @@ export interface CreateSupplierDto {
   companyName: string
   website: string
   category: string
-  contact: SupplierContact
+  contacts: SupplierContact[]
   address: SupplierAddress
   financial: SupplierFinancial
 }
 
-export interface Supplier extends CreateSupplierDto {
+export interface Supplier {
   id: string
   reference: string
-  openBalance: number
-  lastInvoiceDate: string
+  companyName: string
+  website: string
+  category: string
+  rneNumber: string
+  regimeFiscal: string
+  assujettiTva: boolean
+  status: string
   createdAt: string
+  contacts: SupplierContact[]
+  address: SupplierAddress
+  financial: SupplierFinancial
 }
 
 export const SUPPLIER_CATEGORIES = [
