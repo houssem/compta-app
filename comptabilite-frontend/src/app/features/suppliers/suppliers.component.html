@@ -138,11 +138,11 @@
                   <span class="sp-badge sp-badge--category">{{ supplier.category }}</span>
                 </td>
 
-                <td class="sp-td sp-td--amount">{{ formatAmount(supplier.openBalance) }}</td>
+                <td class="sp-td sp-td--amount">—</td>
 
                 <td class="sp-td sp-td--muted">{{ supplier.financial.currency }}</td>
 
-                <td class="sp-td sp-td--muted sp-td--date">{{ formatDate(supplier.lastInvoiceDate) }}</td>
+                <td class="sp-td sp-td--muted sp-td--date">{{ formatDate(supplier.createdAt) }}</td>
 
                 <td class="sp-td sp-td--center">
                   <div class="sp-action-wrap">

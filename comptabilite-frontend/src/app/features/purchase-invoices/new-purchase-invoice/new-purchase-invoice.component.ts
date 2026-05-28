@@ -40,11 +40,12 @@ export class NewPurchaseInvoiceComponent implements OnInit {
   filteredSupplierOptions = computed(() => {
     const q = this.supplierSearch().toLowerCase().trim()
     if (!q) return this.allSuppliers()
-    return this.allSuppliers().filter(s =>
-      s.companyName.toLowerCase().includes(q) ||
-      s.contact.fullName.toLowerCase().includes(q) ||
-      s.contact.email.toLowerCase().includes(q)
-    )
+    return this.allSuppliers().filter(s => {
+      const primary = s.contacts?.find(c => c.isPrimary) ?? s.contacts?.[0]
+      return s.companyName.toLowerCase().includes(q) ||
+        (primary?.fullName ?? '').toLowerCase().includes(q) ||
+        (primary?.email ?? '').toLowerCase().includes(q)
+    })
   })
 
   readonly currencies: Currency[] = CURRENCIES

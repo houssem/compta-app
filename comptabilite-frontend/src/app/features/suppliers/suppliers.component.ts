@@ -29,16 +29,9 @@ export class SuppliersComponent implements OnInit {
   // ── KPIs ─────────────────────────────────────────────
   totalSuppliers = computed(() => this.allSuppliers().length)
 
-  openBalanceTotal = computed(() =>
-    this.allSuppliers().reduce((sum, s) => sum + (s.openBalance ?? 0), 0)
-  )
+  openBalanceTotal = computed(() => 0)
 
-  overdueTotal = computed(() => {
-    const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000
-    return this.allSuppliers()
-      .filter(s => (s.openBalance ?? 0) > 0 && s.lastInvoiceDate && new Date(s.lastInvoiceDate).getTime() < cutoff)
-      .reduce((sum, s) => sum + (s.openBalance ?? 0), 0)
-  })
+  overdueTotal = computed(() => 0)
 
   nouveaux30j = computed(() => {
     const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000
@@ -87,11 +80,11 @@ export class SuppliersComponent implements OnInit {
 
     if (tab === 'overdue') {
       return suppliers.filter(s =>
-        (s.openBalance ?? 0) > 0 && s.lastInvoiceDate && new Date(s.lastInvoiceDate).getTime() < cutoff
+        s.createdAt && new Date(s.createdAt).getTime() < cutoff
       )
     }
     if (tab === 'high-priority') {
-      return suppliers.filter(s => (s.openBalance ?? 0) > 5000)
+      return suppliers.filter(s => s.status === 'high-priority')
     }
     return suppliers
   })
@@ -99,12 +92,14 @@ export class SuppliersComponent implements OnInit {
   filteredSuppliers = computed(() => {
     const q = this.searchQuery().toLowerCase()
     if (!q) return this.tabFilteredSuppliers()
-    return this.tabFilteredSuppliers().filter(s =>
-      s.companyName.toLowerCase().includes(q) ||
-      s.contact.fullName.toLowerCase().includes(q) ||
-      s.contact.email.toLowerCase().includes(q) ||
-      s.address.city.toLowerCase().includes(q)
-    )
+    const primaryContact = (s: any) => s.contacts?.find((c: any) => c.isPrimary) ?? s.contacts?.[0]
+    return this.tabFilteredSuppliers().filter(s => {
+      const contact = primaryContact(s)
+      return s.companyName.toLowerCase().includes(q) ||
+        (contact?.fullName ?? '').toLowerCase().includes(q) ||
+        (contact?.email ?? '').toLowerCase().includes(q) ||
+        s.address.city.toLowerCase().includes(q)
+    })
   })
 
   totalPages = computed(() =>
