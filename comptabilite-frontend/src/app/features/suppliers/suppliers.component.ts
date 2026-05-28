@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms'
 import { RouterLink, Router } from '@angular/router'
 import { TranslateModule } from '@ngx-translate/core'
 import { SupplierService } from './supplier.service'
-import { Supplier } from '../../shared/models/supplier.model'
+import { Supplier, SupplierContact } from '../../shared/models/supplier.model'
 
 type FilterTab = 'all' | 'overdue' | 'high-priority'
 
@@ -76,12 +76,9 @@ export class SuppliersComponent implements OnInit {
   tabFilteredSuppliers = computed(() => {
     const tab = this.activeTab()
     const suppliers = this.allSuppliers()
-    const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000
 
     if (tab === 'overdue') {
-      return suppliers.filter(s =>
-        s.createdAt && new Date(s.createdAt).getTime() < cutoff
-      )
+      return suppliers.filter(() => false)
     }
     if (tab === 'high-priority') {
       return suppliers.filter(s => s.status === 'high-priority')
@@ -92,7 +89,7 @@ export class SuppliersComponent implements OnInit {
   filteredSuppliers = computed(() => {
     const q = this.searchQuery().toLowerCase()
     if (!q) return this.tabFilteredSuppliers()
-    const primaryContact = (s: any) => s.contacts?.find((c: any) => c.isPrimary) ?? s.contacts?.[0]
+    const primaryContact = (s: Supplier) => s.contacts?.find((c: SupplierContact) => c.isPrimary) ?? s.contacts?.[0]
     return this.tabFilteredSuppliers().filter(s => {
       const contact = primaryContact(s)
       return s.companyName.toLowerCase().includes(q) ||

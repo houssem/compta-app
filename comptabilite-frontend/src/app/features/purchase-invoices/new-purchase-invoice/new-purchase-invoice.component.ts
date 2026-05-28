@@ -4,7 +4,7 @@ import { RouterLink, Router, ActivatedRoute } from '@angular/router'
 import { CommonModule } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
 import { Currency, CURRENCIES } from '../../../shared/models/client.model'
-import { Supplier } from '../../../shared/models/supplier.model'
+import { Supplier, SupplierContact } from '../../../shared/models/supplier.model'
 import { PurchaseInvoiceService } from '../purchase-invoice.service'
 import { LineItem, StoredPurchaseInvoice, PurchaseInvoiceStatus, InvoiceAttachment } from '../../../shared/models/purchase-invoice.model'
 
@@ -154,6 +154,10 @@ export class NewPurchaseInvoiceComponent implements OnInit {
   }
 
   clearSupplier(event: MouseEvent): void { event.stopPropagation(); this.selectedSupplier.set(null) }
+
+  getPrimaryContact(supplier: Supplier): SupplierContact | undefined {
+    return supplier.contacts?.find(c => c.isPrimary) ?? supplier.contacts?.[0]
+  }
 
   getInitials(name: string): string {
     return name.trim().split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 2)
