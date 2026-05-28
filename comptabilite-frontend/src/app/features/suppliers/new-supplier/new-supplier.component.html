@@ -157,56 +157,98 @@
       </div>
     </section>
 
-    <!-- 02 — Contact principal -->
+    <!-- 02 — Contacts -->
     <section class="ns-section ns-anim-2">
       <div class="ns-section__head">
         <span class="ns-section__num">02</span>
         <div class="ns-section__icon-wrap">
-          <span class="material-symbols-outlined">person</span>
+          <span class="material-symbols-outlined">people</span>
         </div>
         <div class="ns-section__meta">
           <h2 class="ns-section__title">{{ 'NEW_SUPPLIER.SECTION_CONTACT' | translate }}</h2>
-          <p class="ns-section__desc">Interlocuteur principal pour les commandes et factures</p>
+          <p class="ns-section__desc">Interlocuteurs pour les commandes et factures</p>
         </div>
       </div>
-      <div class="ns-section__body">
-        <div class="ns-grid ns-grid--3">
+      <div class="ns-section__body" formArrayName="contacts">
 
-          <div class="ns-field">
-            <label class="ns-label" for="fullName">{{ 'NEW_SUPPLIER.FULL_NAME' | translate }}</label>
-            <input id="fullName" class="ns-input" type="text"
-              [placeholder]="isTunisian() ? 'Ahmed Ben Salem' : 'Jean Dupont'"
-              formControlName="fullName" />
+        @for (contact of contactsArray.controls; track $index) {
+          <div class="ns-contact-card" [formGroupName]="$index">
+            <div class="ns-contact-card__head">
+              <span class="ns-contact-card__num">Contact {{ $index + 1 }}</span>
+              <div class="ns-contact-card__actions">
+                @if (!contact.get('isPrimary')?.value) {
+                  <button type="button" class="ns-btn-link" (click)="setPrimary($index)">
+                    <span class="material-symbols-outlined">star</span>
+                    Définir principal
+                  </button>
+                } @else {
+                  <span class="ns-badge-primary">
+                    <span class="material-symbols-outlined">star</span>
+                    Principal
+                  </span>
+                }
+                @if (contactsArray.length > 1) {
+                  <button type="button" class="ns-btn-link ns-btn-link--danger" (click)="removeContact($index)">
+                    <span class="material-symbols-outlined">delete</span>
+                  </button>
+                }
+              </div>
+            </div>
+
+            <div class="ns-grid ns-grid--2">
+              <div class="ns-field">
+                <label class="ns-label">Nom complet <span class="ns-required">*</span></label>
+                <input class="ns-input" type="text" placeholder="Ahmed Ben Ali"
+                  formControlName="fullName"
+                  [class.ns-input--error]="contact.get('fullName')?.invalid && contact.get('fullName')?.touched" />
+                @if (contact.get('fullName')?.invalid && contact.get('fullName')?.touched) {
+                  <p class="ns-field-error">
+                    <span class="material-symbols-outlined">error</span>
+                    Le nom est requis.
+                  </p>
+                }
+              </div>
+              <div class="ns-field">
+                <label class="ns-label">Fonction</label>
+                <input class="ns-input" type="text" placeholder="Directeur financier…"
+                  formControlName="role" />
+              </div>
+            </div>
+
+            <div class="ns-grid ns-grid--2">
+              <div class="ns-field">
+                <label class="ns-label">Email</label>
+                <input class="ns-input" type="email" placeholder="contact@fournisseur.tn"
+                  formControlName="email"
+                  [class.ns-input--error]="contact.get('email')?.invalid && contact.get('email')?.touched" />
+                @if (contact.get('email')?.hasError('email') && contact.get('email')?.touched) {
+                  <p class="ns-field-error">
+                    <span class="material-symbols-outlined">error</span>
+                    Email invalide.
+                  </p>
+                }
+              </div>
+              <div class="ns-field">
+                <label class="ns-label">Téléphone</label>
+                <input class="ns-input" type="tel" placeholder="+216 XX XXX XXX"
+                  formControlName="phone"
+                  [class.ns-input--error]="contact.get('phone')?.invalid && contact.get('phone')?.touched" />
+                @if (contact.get('phone')?.hasError('invalidPhone') && contact.get('phone')?.touched) {
+                  <p class="ns-field-error">
+                    <span class="material-symbols-outlined">error</span>
+                    Numéro invalide.
+                  </p>
+                }
+              </div>
+            </div>
           </div>
+        }
 
-          <div class="ns-field">
-            <label class="ns-label" for="email">{{ 'NEW_SUPPLIER.EMAIL' | translate }}</label>
-            <input id="email" class="ns-input" type="email" placeholder="contact@fournisseur.com"
-              [class.ns-input--error]="f['email'].invalid && f['email'].touched"
-              formControlName="email" />
-            @if (f['email'].hasError('email') && f['email'].touched) {
-              <p class="ns-field-error">
-                <span class="material-symbols-outlined">error</span>
-                L'adresse e-mail n'est pas valide.
-              </p>
-            }
-          </div>
+        <button type="button" class="ns-btn-add-contact" (click)="addContact()">
+          <span class="material-symbols-outlined">add</span>
+          Ajouter un contact
+        </button>
 
-          <div class="ns-field">
-            <label class="ns-label" for="phone">{{ 'NEW_SUPPLIER.PHONE' | translate }}</label>
-            <input id="phone" class="ns-input" type="tel"
-              [placeholder]="isTunisian() ? '+216 71 000 000' : '+33 1 00 00 00 00'"
-              [class.ns-input--error]="f['phone'].invalid && f['phone'].touched"
-              formControlName="phone" />
-            @if (f['phone'].hasError('invalidPhone') && f['phone'].touched) {
-              <p class="ns-field-error">
-                <span class="material-symbols-outlined">error</span>
-                Le numéro de téléphone est invalide.
-              </p>
-            }
-          </div>
-
-        </div>
       </div>
     </section>
 
@@ -265,21 +307,21 @@
       </div>
     </section>
 
-    <!-- 04 — Détails financiers -->
+    <!-- 04 — Conditions de règlement -->
     <section class="ns-section ns-anim-4">
       <div class="ns-section__head">
         <span class="ns-section__num">04</span>
         <div class="ns-section__icon-wrap">
-          <span class="material-symbols-outlined">account_balance</span>
+          <span class="material-symbols-outlined">payments</span>
         </div>
         <div class="ns-section__meta">
-          <h2 class="ns-section__title">{{ 'NEW_SUPPLIER.SECTION_FINANCIAL' | translate }}</h2>
-          <p class="ns-section__desc">Paramètres de paiement</p>
+          <h2 class="ns-section__title">Conditions de règlement</h2>
+          <p class="ns-section__desc">Délai de paiement, devise et retenue à la source</p>
         </div>
       </div>
       <div class="ns-section__body">
-        <div class="ns-grid ns-grid--2">
 
+        <div class="ns-grid ns-grid--2">
           <div class="ns-field">
             <label class="ns-label" for="currency">{{ 'NEW_SUPPLIER.CURRENCY' | translate }}</label>
             <select id="currency" class="ns-select" formControlName="currency">
@@ -297,15 +339,99 @@
               }
             </select>
           </div>
-
         </div>
+
+        <div class="ns-grid ns-grid--2">
+          <div class="ns-field">
+            <label class="ns-label" for="defaultAccount">Compte comptable par défaut</label>
+            <input id="defaultAccount" class="ns-input" type="text"
+              placeholder="401000"
+              formControlName="defaultAccount" />
+          </div>
+          <div></div>
+        </div>
+
+        <div class="ns-section-sub">
+          <p class="ns-section-sub__label">Retenue à la source</p>
+          <div class="ns-grid ns-grid--2">
+            <div class="ns-field">
+              <label class="ns-label" for="withholdingTaxType">Type de prestation</label>
+              <select id="withholdingTaxType" class="ns-select" formControlName="withholdingTaxType">
+                @for (t of withholdingTypes; track t.value) {
+                  <option [value]="t.value">{{ t.label }}</option>
+                }
+              </select>
+            </div>
+            <div class="ns-field">
+              <label class="ns-label" for="withholdingTaxRate">
+                Taux (%)
+                @if (f['withholdingTaxType'].value === 'ETRANGER') {
+                  <span class="ns-hint">Variable selon convention fiscale</span>
+                }
+              </label>
+              <input id="withholdingTaxRate" class="ns-input" type="number" min="0" max="100" step="0.5"
+                placeholder="—"
+                formControlName="withholdingTaxRate" />
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 05 — Coordonnées bancaires -->
+    <section class="ns-section ns-anim-5">
+      <div class="ns-section__head">
+        <span class="ns-section__num">05</span>
+        <div class="ns-section__icon-wrap">
+          <span class="material-symbols-outlined">account_balance</span>
+        </div>
+        <div class="ns-section__meta">
+          <h2 class="ns-section__title">Coordonnées bancaires</h2>
+          <p class="ns-section__desc">RIB, IBAN et SWIFT pour les virements</p>
+        </div>
+      </div>
+      <div class="ns-section__body">
+
+        <div class="ns-grid ns-grid--1">
+          <div class="ns-field">
+            <label class="ns-label" for="bankName">Nom de la banque</label>
+            <input id="bankName" class="ns-input" type="text"
+              placeholder="STB, Attijari, BNA, BNP Paribas…"
+              formControlName="bankName" />
+          </div>
+        </div>
+
+        <div class="ns-grid ns-grid--2">
+          <div class="ns-field">
+            <label class="ns-label" for="iban">
+              {{ isTunisian() ? 'RIB' : 'IBAN' }}
+            </label>
+            <input id="iban" class="ns-input" type="text"
+              [placeholder]="isTunisian() ? '01 234 0123456789012 56' : 'FR76 1234 5678 9012 3456 7890 123'"
+              formControlName="iban" />
+          </div>
+
+          <div class="ns-field">
+            <label class="ns-label" for="swiftBic">
+              SWIFT / BIC
+              @if (isTunisian()) {
+                <span class="ns-hint">Virement international uniquement</span>
+              }
+            </label>
+            <input id="swiftBic" class="ns-input" type="text"
+              placeholder="STBKTNTT"
+              formControlName="swiftBic" />
+          </div>
+        </div>
+
       </div>
     </section>
 
   </div><!-- /ns-form -->
 
   <!-- FOOTER ACTIONS -->
-  <footer class="ns-footer ns-anim-5">
+  <footer class="ns-footer ns-anim-6">
     @if (formSubmitted() && form.invalid) {
       <p class="ns-footer__error">
         <span class="material-symbols-outlined">error</span>

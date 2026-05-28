@@ -1,8 +1,12 @@
 package com.compta.supplier.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.compta.supplier.entity.Supplier;
+import com.compta.supplier.entity.SupplierContact;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public record SupplierResponse(
@@ -16,17 +20,34 @@ public record SupplierResponse(
         boolean assujettiTva,
         String status,
         LocalDateTime createdAt,
-        ContactDto contact,
+        List<ContactDto> contacts,
         AddressDto address,
-        FinancialDto financial
+        FinancialDto financial,
+        BankDto bank
 ) {
-    public record ContactDto(String fullName, String email, String phone) {}
+    public record ContactDto(
+            UUID id,
+            String fullName,
+            String role,
+            String email,
+            String phone,
+            @JsonProperty("isPrimary") boolean isPrimary
+    ) {}
 
     public record AddressDto(String street, String city, String postalCode, String country) {}
 
-    public record FinancialDto(String taxId, String currency, String paymentTerms) {}
+    public record FinancialDto(
+            String taxId,
+            String currency,
+            String paymentTerms,
+            String defaultAccount,
+            String withholdingTaxType,
+            BigDecimal withholdingTaxRate
+    ) {}
 
-    public static SupplierResponse from(Supplier s) {
+    public record BankDto(String bankName, String iban, String swiftBic) {}
+
+    public static SupplierResponse from(Supplier s, List<SupplierContact> contacts) {
         return new SupplierResponse(
                 s.getId(),
                 s.getCode(),
@@ -38,9 +59,14 @@ public record SupplierResponse(
                 s.isAssujettiTva(),
                 s.getStatus(),
                 s.getCreatedAt(),
-                new ContactDto(s.getContactName(), s.getContactEmail(), s.getContactPhone()),
+                contacts.stream().map(c -> new ContactDto(
+                        c.getId(), c.getFullName(), c.getRole(),
+                        c.getEmail(), c.getPhone(), c.isPrimary()
+                )).toList(),
                 new AddressDto(s.getStreetName(), s.getCity(), s.getPostalCode(), s.getCountry()),
-                new FinancialDto(s.getMatriculeFiscal(), s.getCurrency(), s.getPaymentTerms())
+                new FinancialDto(s.getMatriculeFiscal(), s.getCurrency(), s.getPaymentTerms(),
+                        s.getDefaultAccount(), s.getWithholdingTaxType(), s.getWithholdingTaxRate()),
+                new BankDto(s.getBankName(), s.getIban(), s.getSwiftBic())
         );
     }
 }

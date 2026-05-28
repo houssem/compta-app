@@ -4,6 +4,8 @@ import com.compta.common.exception.ApiException;
 import com.compta.supplier.dto.SupplierRequest;
 import com.compta.supplier.dto.SupplierResponse;
 import com.compta.supplier.entity.Supplier;
+import com.compta.supplier.entity.SupplierContact;
+import com.compta.supplier.repository.SupplierContactRepository;
 import com.compta.supplier.repository.SupplierRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,18 +19,24 @@ import java.util.UUID;
 public class SupplierService {
 
     private final SupplierRepository supplierRepository;
+    private final SupplierContactRepository contactRepository;
 
+    @Transactional(readOnly = true)
     public List<SupplierResponse> getAll(UUID companyId) {
         return supplierRepository.findAllByCompanyIdOrderByCreatedAtDesc(companyId)
                 .stream()
-                .map(SupplierResponse::from)
+                .map(s -> SupplierResponse.from(s,
+                        contactRepository.findAllBySupplierIdOrderByPrimaryDesc(s.getId())))
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public SupplierResponse getById(UUID id, UUID companyId) {
-        return supplierRepository.findByIdAndCompanyId(id, companyId)
-                .map(SupplierResponse::from)
+        Supplier supplier = supplierRepository.findByIdAndCompanyId(id, companyId)
                 .orElseThrow(() -> ApiException.notFound("Fournisseur introuvable"));
+        List<SupplierContact> contacts =
+                contactRepository.findAllBySupplierIdOrderByPrimaryDesc(supplier.getId());
+        return SupplierResponse.from(supplier, contacts);
     }
 
     @Transactional
@@ -37,7 +45,10 @@ public class SupplierService {
         supplier.setCompanyId(companyId);
         supplier.setCode(generateCode(companyId));
         applyRequest(supplier, req);
-        return SupplierResponse.from(supplierRepository.save(supplier));
+        Supplier saved = supplierRepository.save(supplier);
+        applyContacts(saved, req.contacts());
+        return SupplierResponse.from(saved,
+                contactRepository.findAllBySupplierIdOrderByPrimaryDesc(saved.getId()));
     }
 
     @Transactional
@@ -45,7 +56,10 @@ public class SupplierService {
         Supplier supplier = supplierRepository.findByIdAndCompanyId(id, companyId)
                 .orElseThrow(() -> ApiException.notFound("Fournisseur introuvable"));
         applyRequest(supplier, req);
-        return SupplierResponse.from(supplierRepository.save(supplier));
+        Supplier saved = supplierRepository.save(supplier);
+        applyContacts(saved, req.contacts());
+        return SupplierResponse.from(saved,
+                contactRepository.findAllBySupplierIdOrderByPrimaryDesc(saved.getId()));
     }
 
     @Transactional
@@ -69,14 +83,6 @@ public class SupplierService {
             supplier.setStatus(req.status());
         }
 
-        if (req.contact() != null) {
-            supplier.setContactName(req.contact().fullName());
-            supplier.setContactEmail(req.contact().email());
-            supplier.setContactPhone(req.contact().phone());
-            supplier.setEmail(req.contact().email());
-            supplier.setPhone(req.contact().phone());
-        }
-
         if (req.address() != null) {
             supplier.setStreetName(req.address().street());
             supplier.setCity(req.address().city());
@@ -88,7 +94,43 @@ public class SupplierService {
             supplier.setMatriculeFiscal(req.financial().taxId());
             supplier.setCurrency(req.financial().currency() != null ? req.financial().currency() : "TND");
             supplier.setPaymentTerms(req.financial().paymentTerms());
+            supplier.setDefaultAccount(req.financial().defaultAccount() != null ? req.financial().defaultAccount() : "401000");
+            supplier.setWithholdingTaxType(req.financial().withholdingTaxType());
+            supplier.setWithholdingTaxRate(req.financial().withholdingTaxRate());
         }
+
+        if (req.bank() != null) {
+            supplier.setBankName(req.bank().bankName());
+            supplier.setIban(req.bank().iban());
+            supplier.setSwiftBic(req.bank().swiftBic());
+        }
+    }
+
+    private void applyContacts(Supplier supplier, List<SupplierRequest.ContactDto> dtos) {
+        contactRepository.deleteAllBySupplierId(supplier.getId());
+        if (dtos == null || dtos.isEmpty()) return;
+
+        boolean hasPrimary = dtos.stream().anyMatch(SupplierRequest.ContactDto::isPrimary);
+
+        for (int i = 0; i < dtos.size(); i++) {
+            SupplierRequest.ContactDto dto = dtos.get(i);
+            SupplierContact sc = new SupplierContact();
+            sc.setSupplierId(supplier.getId());
+            sc.setFullName(dto.fullName());
+            sc.setRole(dto.role());
+            sc.setEmail(dto.email());
+            sc.setPhone(dto.phone());
+            sc.setPrimary(!hasPrimary ? i == 0 : dto.isPrimary());
+            contactRepository.save(sc);
+        }
+
+        // Sync email/phone from primary contact to supplier row
+        SupplierRequest.ContactDto primary = hasPrimary
+                ? dtos.stream().filter(SupplierRequest.ContactDto::isPrimary).findFirst().orElse(dtos.get(0))
+                : dtos.get(0);
+        supplier.setEmail(primary.email());
+        supplier.setPhone(primary.phone());
+        supplierRepository.save(supplier);
     }
 
     private String generateCode(UUID companyId) {

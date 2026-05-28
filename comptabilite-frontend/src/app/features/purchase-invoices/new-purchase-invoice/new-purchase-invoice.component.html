@@ -62,7 +62,7 @@
                   <div class="ni-cs-trigger__avatar">{{ getInitials(sup.companyName) }}</div>
                   <div class="ni-cs-trigger__info">
                     <span class="ni-cs-trigger__name">{{ sup.companyName }}</span>
-                    <span class="ni-cs-trigger__sub">{{ sup.contact.fullName }} · {{ sup.contact.email }}</span>
+                    <span class="ni-cs-trigger__sub">{{ getPrimaryContact(sup)?.fullName }} · {{ getPrimaryContact(sup)?.email }}</span>
                   </div>
                   <span class="material-symbols-outlined ni-cs-trigger__edit">edit</span>
                   <span class="ni-cs-trigger__sep"></span>
@@ -370,10 +370,10 @@
                     </div>
                     <div class="ni-modal__item-bottom">
                       <span class="material-symbols-outlined">person</span>
-                      <span>{{ sup.contact.fullName }}</span>
+                      <span>{{ getPrimaryContact(sup)?.fullName }}</span>
                       <span class="ni-modal__item-dot">·</span>
                       <span class="material-symbols-outlined">mail</span>
-                      <span>{{ sup.contact.email }}</span>
+                      <span>{{ getPrimaryContact(sup)?.email }}</span>
                       @if (sup.address.city) {
                         <span class="ni-modal__item-dot">·</span>
                         <span class="material-symbols-outlined">location_on</span>

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Getter
@@ -67,18 +68,6 @@ public class Supplier extends BaseEntity {
     @Column(name = "website", length = 255)
     private String website;
 
-    @Column(name = "contact_name", length = 200)
-    private String contactName;
-
-    @Column(name = "contact_role", length = 100)
-    private String contactRole;
-
-    @Column(name = "contact_phone", length = 50)
-    private String contactPhone;
-
-    @Column(name = "contact_email", length = 255)
-    private String contactEmail;
-
     @Column(name = "payment_terms", length = 100)
     private String paymentTerms;
 
@@ -96,6 +85,12 @@ public class Supplier extends BaseEntity {
 
     @Column(name = "swift_bic", length = 11)
     private String swiftBic;
+
+    @Column(name = "withholding_tax_type", length = 50)
+    private String withholdingTaxType;
+
+    @Column(name = "withholding_tax_rate", precision = 5, scale = 2)
+    private BigDecimal withholdingTaxRate;
 
     @Column(name = "status", nullable = false, length = 20)
     private String status = "ACTIVE";

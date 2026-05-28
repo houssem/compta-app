@@ -26,6 +26,7 @@
 .ns-anim-3 { animation: slideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.20s both; }
 .ns-anim-4 { animation: slideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.28s both; }
 .ns-anim-5 { animation: slideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.36s both; }
+.ns-anim-6 { animation: slideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.44s both; }
 
 .ns-topbar {
   position: sticky;
@@ -470,4 +471,115 @@
     font-size: 14px;
     color: var(--color-on-surface);
   }
+}
+
+// ── Sub-section (e.g. Retenue à la source) ────────────────────
+
+.ns-section-sub {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.ns-section-sub__label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-on-surface-variant);
+  margin-bottom: 14px;
+}
+
+.ns-hint {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-on-surface-variant);
+  opacity: 0.7;
+  margin-left: 4px;
+}
+
+// ── Contact cards ─────────────────────────────────────────────
+
+.ns-contact-card {
+  border: 1.5px solid var(--color-border-subtle);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 16px;
+  background: #fff;
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  &__num {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-on-surface-variant);
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+}
+
+.ns-badge-primary {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-primary);
+  background: rgba(0, 30, 64, 0.07);
+  padding: 4px 10px;
+  border-radius: 20px;
+
+  .material-symbols-outlined { font-size: 14px; }
+}
+
+.ns-btn-link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-on-surface-variant);
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.15s;
+
+  &:hover { background: rgba(0, 0, 0, 0.04); }
+  &--danger { color: #d32f2f; }
+  .material-symbols-outlined { font-size: 16px; }
+}
+
+.ns-btn-add-contact {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-primary);
+  background: none;
+  border: 1.5px dashed var(--color-primary);
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  width: 100%;
+  justify-content: center;
+  transition: background 0.15s;
+
+  &:hover { background: rgba(0, 30, 64, 0.04); }
+  .material-symbols-outlined { font-size: 18px; }
 }

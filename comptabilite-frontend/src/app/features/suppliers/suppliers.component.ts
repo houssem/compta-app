@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms'
 import { RouterLink, Router } from '@angular/router'
 import { TranslateModule } from '@ngx-translate/core'
 import { SupplierService } from './supplier.service'
-import { Supplier } from '../../shared/models/supplier.model'
+import { Supplier, SupplierContact } from '../../shared/models/supplier.model'
 
 type FilterTab = 'all' | 'overdue' | 'high-priority'
 
@@ -29,16 +29,9 @@ export class SuppliersComponent implements OnInit {
   // ── KPIs ─────────────────────────────────────────────
   totalSuppliers = computed(() => this.allSuppliers().length)
 
-  openBalanceTotal = computed(() =>
-    this.allSuppliers().reduce((sum, s) => sum + (s.openBalance ?? 0), 0)
-  )
+  openBalanceTotal = computed(() => 0)
 
-  overdueTotal = computed(() => {
-    const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000
-    return this.allSuppliers()
-      .filter(s => (s.openBalance ?? 0) > 0 && s.lastInvoiceDate && new Date(s.lastInvoiceDate).getTime() < cutoff)
-      .reduce((sum, s) => sum + (s.openBalance ?? 0), 0)
-  })
+  overdueTotal = computed(() => 0)
 
   nouveaux30j = computed(() => {
     const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000
@@ -83,15 +76,12 @@ export class SuppliersComponent implements OnInit {
   tabFilteredSuppliers = computed(() => {
     const tab = this.activeTab()
     const suppliers = this.allSuppliers()
-    const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000
 
     if (tab === 'overdue') {
-      return suppliers.filter(s =>
-        (s.openBalance ?? 0) > 0 && s.lastInvoiceDate && new Date(s.lastInvoiceDate).getTime() < cutoff
-      )
+      return suppliers.filter(() => false)
     }
     if (tab === 'high-priority') {
-      return suppliers.filter(s => (s.openBalance ?? 0) > 5000)
+      return suppliers.filter(s => s.status === 'high-priority')
     }
     return suppliers
   })
@@ -99,12 +89,14 @@ export class SuppliersComponent implements OnInit {
   filteredSuppliers = computed(() => {
     const q = this.searchQuery().toLowerCase()
     if (!q) return this.tabFilteredSuppliers()
-    return this.tabFilteredSuppliers().filter(s =>
-      s.companyName.toLowerCase().includes(q) ||
-      s.contact.fullName.toLowerCase().includes(q) ||
-      s.contact.email.toLowerCase().includes(q) ||
-      s.address.city.toLowerCase().includes(q)
-    )
+    const primaryContact = (s: Supplier) => s.contacts?.find((c: SupplierContact) => c.isPrimary) ?? s.contacts?.[0]
+    return this.tabFilteredSuppliers().filter(s => {
+      const contact = primaryContact(s)
+      return s.companyName.toLowerCase().includes(q) ||
+        (contact?.fullName ?? '').toLowerCase().includes(q) ||
+        (contact?.email ?? '').toLowerCase().includes(q) ||
+        s.address.city.toLowerCase().includes(q)
+    })
   })
 
   totalPages = computed(() =>

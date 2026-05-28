@@ -1,8 +1,13 @@
 package com.compta.supplier.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 public record SupplierRequest(
 
@@ -20,18 +25,25 @@ public record SupplierRequest(
         String regimeFiscal,
         Boolean assujettiTva,
 
-        @Valid ContactDto contact,
+        @NotNull(message = "Au moins un contact est obligatoire")
+        @Size(min = 1, message = "Au moins un contact est obligatoire")
+        @Valid List<ContactDto> contacts,
 
         @NotNull(message = "L'adresse est obligatoire")
         @Valid AddressDto address,
 
-        @Valid FinancialDto financial
+        @Valid FinancialDto financial,
+
+        @Valid BankDto bank
 
 ) {
     public record ContactDto(
+            @NotBlank(message = "Le nom du contact est obligatoire")
             String fullName,
+            String role,
             String email,
-            String phone
+            String phone,
+            @JsonProperty("isPrimary") boolean isPrimary
     ) {}
 
     public record AddressDto(
@@ -44,6 +56,15 @@ public record SupplierRequest(
     public record FinancialDto(
             String taxId,
             String currency,
-            String paymentTerms
+            String paymentTerms,
+            String defaultAccount,
+            String withholdingTaxType,
+            BigDecimal withholdingTaxRate
+    ) {}
+
+    public record BankDto(
+            String bankName,
+            String iban,
+            String swiftBic
     ) {}
 }
