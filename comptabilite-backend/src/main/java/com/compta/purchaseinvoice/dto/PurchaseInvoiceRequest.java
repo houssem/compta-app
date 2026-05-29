@@ -29,6 +29,13 @@ public record PurchaseInvoiceRequest(
         String internalNotes,
         AttachmentDto attachment,
 
+        @NotBlank(message = "La référence facture fournisseur est obligatoire")
+        String supplierInvoiceRef,
+
+        String purchaseCategory,
+
+        String paymentMethod,
+
         @NotEmpty(message = "Au moins une ligne est obligatoire")
         @Valid List<LineDto> lineItems
 

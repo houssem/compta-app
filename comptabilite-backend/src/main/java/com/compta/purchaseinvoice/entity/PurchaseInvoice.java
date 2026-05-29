@@ -50,6 +50,15 @@ public class PurchaseInvoice extends BaseEntity {
     @Column(name = "internal_notes", columnDefinition = "TEXT")
     private String internalNotes;
 
+    @Column(name = "supplier_invoice_ref", length = 100)
+    private String supplierInvoiceRef;
+
+    @Column(name = "purchase_category", length = 100)
+    private String purchaseCategory;
+
+    @Column(name = "payment_method", length = 50)
+    private String paymentMethod;
+
     @Column(name = "attachment_data", columnDefinition = "TEXT")
     private String attachmentData;
 
