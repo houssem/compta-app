@@ -24,6 +24,7 @@ public class PurchaseInvoiceService {
     private final PurchaseInvoiceRepository invoiceRepository;
     private final ObjectMapper objectMapper;
 
+    @Transactional(readOnly = true)
     public List<PurchaseInvoiceResponse> getAll(UUID companyId) {
         return invoiceRepository.findAllByCompanyIdOrderByIssueDateDesc(companyId)
                 .stream()
@@ -31,6 +32,7 @@ public class PurchaseInvoiceService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public PurchaseInvoiceResponse getById(UUID id, UUID companyId) {
         return invoiceRepository.findByIdAndCompanyId(id, companyId)
                 .map(PurchaseInvoiceResponse::from)
