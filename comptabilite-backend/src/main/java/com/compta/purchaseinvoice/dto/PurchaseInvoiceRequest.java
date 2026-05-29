@@ -29,7 +29,6 @@ public record PurchaseInvoiceRequest(
         String internalNotes,
         AttachmentDto attachment,
 
-        @NotBlank(message = "La référence facture fournisseur est obligatoire")
         String supplierInvoiceRef,
 
         String purchaseCategory,

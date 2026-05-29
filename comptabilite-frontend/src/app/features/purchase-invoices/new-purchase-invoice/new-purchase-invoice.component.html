@@ -120,18 +120,14 @@
 
             <!-- Réf. facture fournisseur -->
             <div class="ni-field ni-field--span2">
-              <label class="ni-label">Réf. facture fournisseur <span class="ni-required">*</span></label>
+              <label class="ni-label">Réf. facture fournisseur</label>
               <input
                 class="ni-input"
-                [class.ni-input--error]="supplierInvoiceRefError()"
                 type="text"
                 placeholder="Ex : FA-2026-00123"
                 [ngModel]="supplierInvoiceRef()"
                 (ngModelChange)="supplierInvoiceRef.set($event)"
               />
-              @if (supplierInvoiceRefError()) {
-                <p class="ni-field-error"><span class="material-symbols-outlined">error</span> La référence facture fournisseur est requise.</p>
-              }
             </div>
 
             <!-- Catégorie achat -->

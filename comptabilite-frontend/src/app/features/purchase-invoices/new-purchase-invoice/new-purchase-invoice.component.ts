@@ -94,7 +94,6 @@ export class NewPurchaseInvoiceComponent implements OnInit {
     !!this.selectedSupplier() &&
     !!this.issueDate() &&
     !!this.dueDate() &&
-    this.supplierInvoiceRef().trim() !== '' &&
     this.lineItems().length > 0 &&
     this.lineItems().every(i => i.description.trim() !== '' && i.qty > 0 && i.priceHT >= 0)
   )
@@ -115,7 +114,7 @@ export class NewPurchaseInvoiceComponent implements OnInit {
   supplierError  = computed(() => this.formSubmitted() && !this.selectedSupplier())
   issueDateError = computed(() => this.formSubmitted() && !this.issueDate())
   dueDateError   = computed(() => this.formSubmitted() && !this.dueDate())
-  supplierInvoiceRefError = computed(() => this.formSubmitted() && !this.supplierInvoiceRef().trim())
+
   noItemsError   = computed(() => this.formSubmitted() && this.lineItems().length === 0)
   itemDescError  = (item: LineItem) => this.formSubmitted() && !item.description.trim()
   itemQtyError   = (item: LineItem) => this.formSubmitted() && item.qty <= 0
