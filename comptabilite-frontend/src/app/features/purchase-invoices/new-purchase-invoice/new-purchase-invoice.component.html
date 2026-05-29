@@ -118,6 +118,44 @@
               </select>
             </div>
 
+            <!-- Réf. facture fournisseur -->
+            <div class="ni-field ni-field--span2">
+              <label class="ni-label">Réf. facture fournisseur <span class="ni-required">*</span></label>
+              <input
+                class="ni-input"
+                [class.ni-input--error]="supplierInvoiceRefError()"
+                type="text"
+                placeholder="Ex : FA-2026-00123"
+                [ngModel]="supplierInvoiceRef()"
+                (ngModelChange)="supplierInvoiceRef.set($event)"
+              />
+              @if (supplierInvoiceRefError()) {
+                <p class="ni-field-error"><span class="material-symbols-outlined">error</span> La référence facture fournisseur est requise.</p>
+              }
+            </div>
+
+            <!-- Catégorie achat -->
+            <div class="ni-field ni-field--span2">
+              <label class="ni-label">Catégorie achat</label>
+              <select class="ni-select" [ngModel]="purchaseCategory()" (ngModelChange)="purchaseCategory.set($event)">
+                <option value="">— Sélectionner —</option>
+                @for (cat of purchaseCategoryOptions; track cat) {
+                  <option [value]="cat">{{ cat }}</option>
+                }
+              </select>
+            </div>
+
+            <!-- Mode de paiement -->
+            <div class="ni-field ni-field--span2">
+              <label class="ni-label">Mode de paiement</label>
+              <select class="ni-select" [ngModel]="paymentMethod()" (ngModelChange)="paymentMethod.set($event)">
+                <option value="">— Sélectionner —</option>
+                @for (pm of paymentMethodOptions; track pm) {
+                  <option [value]="pm">{{ pm }}</option>
+                }
+              </select>
+            </div>
+
           </div>
         </div>
       </section>
