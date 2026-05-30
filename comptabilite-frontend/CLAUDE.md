@@ -88,9 +88,14 @@ Each entity uses three interfaces:
 
 - `shared/models/kpi.model.ts` — `User`, `KpiSummary`, `DashboardSummary`
 - `shared/models/invoice.model.ts` — `ApiInvoice`, `StoredInvoice`, `CreateInvoicePayload`, `LineItem`, `InvoiceStatus`
-- `shared/models/purchase-invoice.model.ts` — `ApiPurchaseInvoice`, `StoredPurchaseInvoice`, `CreatePurchaseInvoicePayload`, `LineItem`, `PurchaseInvoiceStatus`, `InvoiceAttachment`
+- `shared/models/purchase-invoice.model.ts` — `ApiPurchaseInvoice`, `StoredPurchaseInvoice`, `CreatePurchaseInvoicePayload`, `LineItem`, `PurchaseInvoiceStatus`, `InvoiceAttachment { name, type, size, data }` where `data` is a base64 data URL from `FileReader.readAsDataURL()` — the full blob is sent in the request body and stored in the DB
 - `shared/models/client.model.ts` — `Client`, `CreateClientDto`, `Country`, `Currency`, `PaymentTerm`
 - `shared/models/supplier.model.ts` — `Supplier`, `CreateSupplierDto`, `SUPPLIER_CATEGORIES`
+
+### Gotchas
+
+- **`purchaseCategory` auto-fill**: when a supplier is selected in create mode, `purchaseCategory` is auto-filled from `supplier.financial.defaultAccount`. This field is free-text (not a dropdown) and represents the SCE accounting category (Loi 96-112).
+- **Attachment in purchase invoices**: file is read client-side via `FileReader.readAsDataURL()` and held as a base64 string in a signal. It is sent as part of the JSON payload (not `multipart/form-data`) and stored as a TEXT blob in the DB. Planned migration to filesystem for production.
 
 ### Charts
 

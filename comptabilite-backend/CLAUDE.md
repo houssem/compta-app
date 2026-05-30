@@ -70,3 +70,5 @@ Schema is managed exclusively by Flyway — never use `ddl-auto: create` or `upd
 - **`JwtAuthFilter`**: single `extractAllClaims()` parse per request; on invalid token returns 401 directly via `response.sendError()`.
 - **Integration tests**: use `httpclient5` dependency + `HttpComponentsClientHttpRequestFactory` so `TestRestTemplate` can read 401 response bodies.
 - **Logo upload**: MIME type validated (png/jpeg/webp/gif only), filename sanitized, path traversal checked.
+- **Attachment storage**: `AttachmentDto` is serialized to JSON via `ObjectMapper` and stored as a single `TEXT` column (`attachment_data` on `purchase_invoices`). The `data` field contains the full base64 data URL. Planned migration to filesystem for production (single server).
+- **`supplierInvoiceRef` is not unique**: uniqueness check was intentionally removed — multiple invoices can share the same supplier ref.
