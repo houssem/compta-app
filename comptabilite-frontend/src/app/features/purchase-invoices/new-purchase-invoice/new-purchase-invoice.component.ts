@@ -6,7 +6,9 @@ import { HttpClient } from '@angular/common/http'
 import { Currency, CURRENCIES } from '../../../shared/models/client.model'
 import { Supplier, SupplierContact } from '../../../shared/models/supplier.model'
 import { PurchaseInvoiceService } from '../purchase-invoice.service'
-import { LineItem, StoredPurchaseInvoice, PurchaseInvoiceStatus, InvoiceAttachment } from '../../../shared/models/purchase-invoice.model'
+import { LineItem, StoredPurchaseInvoice, PurchaseInvoiceStatus, InvoiceAttachment, ExtractedInvoice } from '../../../shared/models/purchase-invoice.model'
+
+type ExtractionState = 'idle' | 'loading' | 'success' | 'error'
 
 @Component({
   selector: 'app-new-purchase-invoice',
@@ -69,6 +71,11 @@ export class NewPurchaseInvoiceComponent implements OnInit {
   attachment = signal<InvoiceAttachment | null>(null)
   dragOver   = signal(false)
   fileError  = signal('')
+
+  extractionState  = signal<ExtractionState>('idle')
+  extractionError  = signal('')
+  extractedCount   = signal(0)
+  extractDragOver  = signal(false)
 
   readonly ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'application/pdf']
   readonly MAX_SIZE = 10 * 1024 * 1024
@@ -219,6 +226,127 @@ export class NewPurchaseInvoiceComponent implements OnInit {
   }
 
   removeAttachment(): void { this.attachment.set(null); this.fileError.set('') }
+
+  onExtractDragOver(event: DragEvent): void { event.preventDefault(); this.extractDragOver.set(true) }
+  onExtractDragLeave(): void { this.extractDragOver.set(false) }
+
+  onExtractDrop(event: DragEvent): void {
+    event.preventDefault()
+    this.extractDragOver.set(false)
+    const file = event.dataTransfer?.files?.[0]
+    if (file) this.processExtraction(file)
+  }
+
+  onExtractUpload(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0]
+    ;(event.target as HTMLInputElement).value = ''
+    if (file) this.processExtraction(file)
+  }
+
+  private processExtraction(file: File): void {
+    if (!this.ACCEPTED_TYPES.includes(file.type)) {
+      this.extractionError.set('Format non supporté. Utilisez PDF, JPG, PNG ou WEBP.')
+      this.extractionState.set('error')
+      return
+    }
+    if (file.size > this.MAX_SIZE) {
+      this.extractionError.set('Le fichier dépasse la limite de 10 Mo.')
+      this.extractionState.set('error')
+      return
+    }
+    const reader = new FileReader()
+    reader.onload = () => {
+      const data = reader.result as string
+      this.attachment.set({ name: file.name, type: file.type, size: file.size, data })
+      this.extractionState.set('loading')
+      this.extractionError.set('')
+      this.service.extract({ name: file.name, type: file.type, data }).subscribe({
+        next: (extracted) => {
+          this.applyExtractedData(extracted)
+          this.extractionState.set('success')
+        },
+        error: () => {
+          this.extractionError.set('L\'analyse a échoué. Vérifiez votre connexion et réessayez.')
+          this.extractionState.set('error')
+        }
+      })
+    }
+    reader.readAsDataURL(file)
+  }
+
+  resetExtraction(): void {
+    this.extractionState.set('idle')
+    this.extractionError.set('')
+    this.extractedCount.set(0)
+    this.attachment.set(null)
+  }
+
+  private applyExtractedData(extracted: ExtractedInvoice): void {
+    let count = 0
+    if (extracted.supplierInvoiceRef) { this.supplierInvoiceRef.set(extracted.supplierInvoiceRef); count++ }
+    if (extracted.issueDate)          { this.issueDate.set(extracted.issueDate); count++ }
+    if (extracted.dueDate)            { this.dueDate.set(extracted.dueDate); count++ }
+    if (extracted.currency)           { this.currency.set(extracted.currency); count++ }
+    if (extracted.purchaseCategory)   { this.purchaseCategory.set(extracted.purchaseCategory); count++ }
+    if (extracted.paymentMethod)      { this.paymentMethod.set(extracted.paymentMethod); count++ }
+
+    if (extracted.lineItems?.length) {
+      this.lineItems.set(extracted.lineItems.map(item => ({
+        id: this.nextId++,
+        description: item.description ?? '',
+        qty: item.qty ?? 1,
+        priceHT: item.priceHT ?? 0,
+        discPct: item.discPct ?? 0,
+        vatPct: item.vatPct ?? 19
+      })))
+      count++
+    }
+
+    if (extracted.supplierName) {
+      const match = this.fuzzyMatchSupplier(extracted.supplierName)
+      if (match) { this.selectedSupplier.set(match); count++ }
+    }
+
+    this.extractedCount.set(count)
+  }
+
+  private fuzzyMatchSupplier(name: string): Supplier | null {
+    if (!name) return null
+    const normalize = (s: string) =>
+      s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim()
+    const needle = normalize(name)
+
+    const exact = this.allSuppliers().find(s => {
+      const hay = normalize(s.companyName)
+      return hay === needle || hay.includes(needle) || needle.includes(hay)
+    })
+    if (exact) return exact
+
+    const best = this.allSuppliers()
+      .map(s => ({ supplier: s, score: this.stringSimilarity(needle, normalize(s.companyName)) }))
+      .reduce((a, b) => a.score > b.score ? a : b, { supplier: null as any, score: 0 })
+    return best.score >= 0.75 ? best.supplier : null
+  }
+
+  private stringSimilarity(a: string, b: string): number {
+    const longer = a.length >= b.length ? a : b
+    const shorter = a.length >= b.length ? b : a
+    if (longer.length === 0) return 1.0
+    return (longer.length - this.editDistance(longer, shorter)) / longer.length
+  }
+
+  private editDistance(a: string, b: string): number {
+    const m = a.length, n = b.length
+    const dp: number[][] = Array.from({ length: m + 1 }, (_, i) =>
+      Array.from({ length: n + 1 }, (_, j) => i === 0 ? j : j === 0 ? i : 0)
+    )
+    for (let i = 1; i <= m; i++)
+      for (let j = 1; j <= n; j++)
+        dp[i][j] = a[i - 1] === b[j - 1]
+          ? dp[i - 1][j - 1]
+          : 1 + Math.min(dp[i - 1][j - 1], dp[i][j - 1], dp[i - 1][j])
+    return dp[m][n]
+  }
   isImage(type: string): boolean { return type.startsWith('image/') }
   formatFileSize(bytes: number): string {
     if (bytes < 1024) return bytes + ' o'
