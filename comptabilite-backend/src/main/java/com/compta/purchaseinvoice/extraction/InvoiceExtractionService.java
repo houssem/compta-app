@@ -1,6 +1,7 @@
 package com.compta.purchaseinvoice.extraction;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 public class InvoiceExtractionService {
 
@@ -81,14 +83,14 @@ public class InvoiceExtractionService {
                 Map.class
         );
 
-        @SuppressWarnings("unchecked")
-        List<Map<String, Object>> content =
-                (List<Map<String, Object>>) response.getBody().get("content");
-        String text = (String) content.get(0).get("text");
-
         try {
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> content =
+                    (List<Map<String, Object>>) response.getBody().get("content");
+            String text = (String) content.get(0).get("text");
             return parseClaudeResponse(text);
         } catch (Exception e) {
+            log.warn("Failed to parse Claude extraction response, returning empty result", e);
             return new ExtractedInvoiceDto(null, null, null, null, null, null, null, List.of());
         }
     }
