@@ -36,6 +36,79 @@
 
     <div class="ni-form-col">
 
+      <!-- 00 — Import & extraction IA (create mode only) -->
+      @if (!editMode()) {
+        <section class="ni-section ni-extract-section ni-anim-0">
+          <div class="ni-section__head">
+            <span class="ni-section__num">00</span>
+            <div class="ni-section__icon-wrap"><span class="material-symbols-outlined">auto_awesome</span></div>
+            <div class="ni-section__meta">
+              <h2 class="ni-section__title">Import &amp; extraction automatique</h2>
+              <p class="ni-section__desc">Importez la facture fournisseur — le formulaire se remplit par IA</p>
+            </div>
+            <span class="ni-extract-badge">IA</span>
+          </div>
+          <div class="ni-section__body">
+
+            @if (extractionState() === 'idle') {
+              <div
+                class="ni-upload-zone ni-extract-zone"
+                [class.ni-upload-zone--drag]="extractDragOver()"
+                (dragover)="onExtractDragOver($event)"
+                (dragleave)="onExtractDragLeave()"
+                (drop)="onExtractDrop($event)"
+                (click)="extractInput.click()"
+              >
+                <input #extractInput type="file" accept="image/*,application/pdf"
+                       style="display:none" (change)="onExtractUpload($event)" />
+                <span class="material-symbols-outlined ni-upload-zone__icon">upload_file</span>
+                <p class="ni-upload-zone__title">
+                  Glissez la facture ici ou <span class="ni-upload-zone__link">parcourir</span>
+                </p>
+                <p class="ni-upload-zone__hint">PDF, JPG, PNG, WEBP — 10 Mo max</p>
+              </div>
+            }
+
+            @if (extractionState() === 'loading') {
+              <div class="ni-extract-loading">
+                <span class="material-symbols-outlined ni-spin ni-extract-loading__icon">progress_activity</span>
+                <div>
+                  <p class="ni-extract-loading__title">Analyse de la facture en cours…</p>
+                  <p class="ni-extract-loading__sub">Extraction des informations par IA · ~10 secondes</p>
+                </div>
+              </div>
+            }
+
+            @if (extractionState() === 'success') {
+              <div class="ni-extract-result ni-extract-result--success">
+                <span class="material-symbols-outlined ni-extract-result__icon">check_circle</span>
+                <div class="ni-extract-result__body">
+                  <p class="ni-extract-result__title">
+                    Extraction réussie — {{ extractedCount() }} champ{{ extractedCount() > 1 ? 's' : '' }} rempli{{ extractedCount() > 1 ? 's' : '' }}
+                  </p>
+                  <p class="ni-extract-result__sub">Vérifiez et corrigez les champs ci-dessous si nécessaire</p>
+                </div>
+                <button type="button" class="ni-btn ni-btn--ghost ni-extract-result__reset"
+                        (click)="resetExtraction()">Recommencer</button>
+              </div>
+            }
+
+            @if (extractionState() === 'error') {
+              <div class="ni-extract-result ni-extract-result--error">
+                <span class="material-symbols-outlined ni-extract-result__icon">error</span>
+                <div class="ni-extract-result__body">
+                  <p class="ni-extract-result__title">Extraction échouée</p>
+                  <p class="ni-extract-result__sub">{{ extractionError() }}</p>
+                </div>
+                <button type="button" class="ni-btn ni-btn--ghost ni-extract-result__reset"
+                        (click)="resetExtraction()">Réessayer</button>
+              </div>
+            }
+
+          </div>
+        </section>
+      }
+
       <!-- 01 — Informations générales -->
       <section class="ni-section ni-anim-1">
         <div class="ni-section__head">
