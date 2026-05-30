@@ -63,3 +63,22 @@ export interface CreatePurchaseInvoicePayload {
   purchaseCategory?: string
   paymentMethod?: string
 }
+
+export interface ExtractedLineItem {
+  description: string | null
+  qty: number | null
+  priceHT: number | null
+  discPct: number | null
+  vatPct: number | null
+}
+
+export interface ExtractedInvoice {
+  supplierName: string | null
+  supplierInvoiceRef: string | null
+  issueDate: string | null
+  dueDate: string | null
+  currency: string | null
+  purchaseCategory: string | null
+  paymentMethod: string | null
+  lineItems: ExtractedLineItem[]
+}
