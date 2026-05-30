@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { Observable } from 'rxjs'
-import { ApiPurchaseInvoice, StoredPurchaseInvoice, CreatePurchaseInvoicePayload } from '../../shared/models/purchase-invoice.model'
+import { ApiPurchaseInvoice, StoredPurchaseInvoice, CreatePurchaseInvoicePayload, ExtractedInvoice } from '../../shared/models/purchase-invoice.model'
 
 @Injectable({ providedIn: 'root' })
 export class PurchaseInvoiceService {
@@ -25,5 +25,9 @@ export class PurchaseInvoiceService {
 
   delete(id: string): Observable<void> {
     return this.http.delete<void>(`/api/purchase-invoices/${id}`)
+  }
+
+  extract(file: { name: string; type: string; data: string }): Observable<ExtractedInvoice> {
+    return this.http.post<ExtractedInvoice>('/api/purchase-invoices/extract', file)
   }
 }
