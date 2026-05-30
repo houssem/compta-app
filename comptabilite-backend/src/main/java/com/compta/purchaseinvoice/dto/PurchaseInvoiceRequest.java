@@ -29,6 +29,12 @@ public record PurchaseInvoiceRequest(
         String internalNotes,
         AttachmentDto attachment,
 
+        String supplierInvoiceRef,
+
+        String purchaseCategory,
+
+        String paymentMethod,
+
         @NotEmpty(message = "Au moins une ligne est obligatoire")
         @Valid List<LineDto> lineItems
 

@@ -40,6 +40,9 @@ export interface StoredPurchaseInvoice {
   internalNotes: string
   attachment?: InvoiceAttachment | null
   status: PurchaseInvoiceStatus
+  supplierInvoiceRef: string
+  purchaseCategory?: string
+  paymentMethod?: string
 }
 
 export interface CreatePurchaseInvoicePayload {
@@ -56,4 +59,7 @@ export interface CreatePurchaseInvoicePayload {
   totalTTC: number
   status: PurchaseInvoiceStatus
   createdAt: string
+  supplierInvoiceRef: string
+  purchaseCategory?: string
+  paymentMethod?: string
 }

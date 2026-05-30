@@ -118,6 +118,43 @@
               </select>
             </div>
 
+            <!-- Réf. facture fournisseur -->
+            <div class="ni-field ni-field--span2">
+              <label class="ni-label">Réf. facture fournisseur</label>
+              <input
+                class="ni-input"
+                type="text"
+                autocomplete="off"
+                placeholder="Ex : FA-2026-00123"
+                [ngModel]="supplierInvoiceRef()"
+                (ngModelChange)="supplierInvoiceRef.set($event)"
+              />
+            </div>
+
+            <!-- Catégorie achat -->
+            <div class="ni-field ni-field--span2">
+              <label class="ni-label">
+                Catégorie achat
+                <span class="ni-info-icon material-symbols-outlined"
+                  title="Système Comptable des Entreprises. Référentiel comptable tunisien (Loi 96-112 du 30/12/1996).">
+                  info
+                </span>
+              </label>
+              <input class="ni-input" type="text" placeholder="Catégorie achat" autocomplete="off"
+                     [ngModel]="purchaseCategory()" (ngModelChange)="purchaseCategory.set($event)">
+            </div>
+
+            <!-- Mode de paiement -->
+            <div class="ni-field ni-field--span2">
+              <label class="ni-label">Mode de paiement</label>
+              <select class="ni-select" [ngModel]="paymentMethod()" (ngModelChange)="paymentMethod.set($event)">
+                <option value="">— Sélectionner —</option>
+                @for (pm of paymentMethodOptions; track pm) {
+                  <option [value]="pm">{{ pm }}</option>
+                }
+              </select>
+            </div>
+
           </div>
         </div>
       </section>
@@ -243,6 +280,9 @@
                 <span class="ni-attachment__name">{{ att.name }}</span>
                 <span class="ni-attachment__size">{{ formatFileSize(att.size) }}</span>
               </div>
+              <a class="ni-attachment__download" [href]="att.data" [download]="att.name" title="Télécharger">
+                <span class="material-symbols-outlined">download</span>
+              </a>
               <button type="button" class="ni-attachment__remove" (click)="removeAttachment()" title="Supprimer la pièce jointe">
                 <span class="material-symbols-outlined">delete</span>
               </button>

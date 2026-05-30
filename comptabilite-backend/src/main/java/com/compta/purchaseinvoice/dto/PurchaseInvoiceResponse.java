@@ -22,6 +22,9 @@ public record PurchaseInvoiceResponse(
         BigDecimal totalHT,
         BigDecimal totalTTC,
         String internalNotes,
+        String supplierInvoiceRef,
+        String purchaseCategory,
+        String paymentMethod,
         AttachmentDto attachment,
         LocalDateTime createdAt,
         List<LineDto> lineItems
@@ -60,6 +63,9 @@ public record PurchaseInvoiceResponse(
                 inv.getTotalHt(),
                 inv.getTotalTtc(),
                 inv.getInternalNotes(),
+                inv.getSupplierInvoiceRef(),
+                inv.getPurchaseCategory(),
+                inv.getPaymentMethod(),
                 attachment,
                 inv.getCreatedAt(),
                 inv.getLines().stream().map(PurchaseInvoiceResponse::fromLine).toList()

@@ -12,4 +12,5 @@ public interface PurchaseInvoiceRepository extends JpaRepository<PurchaseInvoice
     Optional<PurchaseInvoice> findByIdAndCompanyId(UUID id, UUID companyId);
     boolean existsByIdAndCompanyId(UUID id, UUID companyId);
     long countByCompanyId(UUID companyId);
+
 }
