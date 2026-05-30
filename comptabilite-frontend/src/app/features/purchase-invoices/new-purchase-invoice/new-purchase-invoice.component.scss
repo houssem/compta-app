@@ -30,6 +30,7 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
+.ni-anim-0 { animation: slideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0s both; }
 .ni-anim-1 { animation: slideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.04s both; }
 .ni-anim-2 { animation: slideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both; }
 .ni-anim-3 { animation: slideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.20s both; }
