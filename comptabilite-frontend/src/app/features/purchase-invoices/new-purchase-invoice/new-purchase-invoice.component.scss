@@ -1441,6 +1441,25 @@
   color: var(--color-on-surface-variant);
 }
 
+.ni-attachment__download {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  color: var(--color-on-surface-variant);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s, background 0.15s;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--color-primary);
+    background: rgba(var(--color-primary-rgb, 99, 102, 241), 0.08);
+  }
+  .material-symbols-outlined { font-size: 18px; }
+}
+
 .ni-attachment__remove {
   flex-shrink: 0;
   width: 34px;

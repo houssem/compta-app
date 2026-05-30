@@ -280,6 +280,9 @@
                 <span class="ni-attachment__name">{{ att.name }}</span>
                 <span class="ni-attachment__size">{{ formatFileSize(att.size) }}</span>
               </div>
+              <a class="ni-attachment__download" [href]="att.data" [download]="att.name" title="Télécharger">
+                <span class="material-symbols-outlined">download</span>
+              </a>
               <button type="button" class="ni-attachment__remove" (click)="removeAttachment()" title="Supprimer la pièce jointe">
                 <span class="material-symbols-outlined">delete</span>
               </button>
