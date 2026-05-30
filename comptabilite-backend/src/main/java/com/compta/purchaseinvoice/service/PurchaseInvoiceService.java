@@ -41,10 +41,6 @@ public class PurchaseInvoiceService {
 
     @Transactional
     public PurchaseInvoiceResponse create(PurchaseInvoiceRequest req, UUID companyId) {
-        if (invoiceRepository.existsBySupplierInvoiceRefAndSupplierIdAndCompanyId(
-                req.supplierInvoiceRef(), req.supplierId(), companyId)) {
-            throw ApiException.conflict("La référence facture fournisseur existe déjà pour ce fournisseur.");
-        }
         PurchaseInvoice invoice = new PurchaseInvoice();
         invoice.setCompanyId(companyId);
         applyRequest(invoice, req);
@@ -55,10 +51,6 @@ public class PurchaseInvoiceService {
     public PurchaseInvoiceResponse update(UUID id, PurchaseInvoiceRequest req, UUID companyId) {
         PurchaseInvoice invoice = invoiceRepository.findByIdAndCompanyId(id, companyId)
                 .orElseThrow(() -> ApiException.notFound("Facture d'achat introuvable"));
-        if (invoiceRepository.existsBySupplierInvoiceRefAndSupplierIdAndCompanyIdAndIdNot(
-                req.supplierInvoiceRef(), req.supplierId(), companyId, id)) {
-            throw ApiException.conflict("La référence facture fournisseur existe déjà pour ce fournisseur.");
-        }
         invoice.getLines().clear();
         applyRequest(invoice, req);
         return PurchaseInvoiceResponse.from(invoiceRepository.save(invoice));

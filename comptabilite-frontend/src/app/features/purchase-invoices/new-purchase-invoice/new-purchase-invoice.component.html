@@ -133,13 +133,15 @@
 
             <!-- Catégorie achat -->
             <div class="ni-field ni-field--span2">
-              <label class="ni-label">Catégorie achat</label>
-              <select class="ni-select" [ngModel]="purchaseCategory()" (ngModelChange)="purchaseCategory.set($event)">
-                <option value="">— Sélectionner —</option>
-                @for (cat of purchaseCategoryOptions; track cat) {
-                  <option [value]="cat">{{ cat }}</option>
-                }
-              </select>
+              <label class="ni-label">
+                Catégorie achat
+                <span class="ni-info-icon material-symbols-outlined"
+                  title="Système Comptable des Entreprises. Référentiel comptable tunisien (Loi 96-112 du 30/12/1996).">
+                  info
+                </span>
+              </label>
+              <input class="ni-input" type="text" placeholder="Catégorie achat" autocomplete="off"
+                     [ngModel]="purchaseCategory()" (ngModelChange)="purchaseCategory.set($event)">
             </div>
 
             <!-- Mode de paiement -->

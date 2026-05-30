@@ -253,6 +253,19 @@
   letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--color-on-surface-variant);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ni-info-icon {
+  font-size: 15px;
+  color: var(--color-on-surface-variant);
+  cursor: help;
+  opacity: 0.7;
+  text-transform: none;
+  letter-spacing: 0;
+  &:hover { opacity: 1; }
 }
 
 /* =====================================================

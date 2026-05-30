@@ -1,6 +1,5 @@
 package com.compta.purchaseinvoice;
 
-import com.compta.common.exception.ApiException;
 import com.compta.purchaseinvoice.dto.PurchaseInvoiceRequest;
 import com.compta.purchaseinvoice.dto.PurchaseInvoiceRequest.LineDto;
 import com.compta.purchaseinvoice.entity.PurchaseInvoice;
@@ -19,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -52,25 +50,12 @@ class PurchaseInvoiceServiceTest {
     }
 
     @Test
-    void create_shouldThrowConflict_whenSupplierInvoiceRefAlreadyExists() {
-        when(invoiceRepository.existsBySupplierInvoiceRefAndSupplierIdAndCompanyId(
-                "REF-001", SUPPLIER_ID, COMPANY_ID)).thenReturn(true);
-
-        assertThatThrownBy(() -> service.create(buildRequest("REF-001"), COMPANY_ID))
-                .isInstanceOf(ApiException.class)
-                .hasMessageContaining("existe déjà");
-    }
-
-    @Test
-    void create_shouldNotThrow_whenSupplierInvoiceRefIsUnique() {
-        when(invoiceRepository.existsBySupplierInvoiceRefAndSupplierIdAndCompanyId(
-                "REF-002", SUPPLIER_ID, COMPANY_ID)).thenReturn(false);
+    void create_shouldSucceed_withSupplierInvoiceRef() {
         PurchaseInvoice saved = new PurchaseInvoice();
         saved.setIssueDate(LocalDate.now());
         saved.setLines(new ArrayList<>());
         when(invoiceRepository.save(any())).thenReturn(saved);
 
-        // Should not throw
-        service.create(buildRequest("REF-002"), COMPANY_ID);
+        service.create(buildRequest("REF-001"), COMPANY_ID);
     }
 }

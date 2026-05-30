@@ -58,25 +58,12 @@ export class NewPurchaseInvoiceComponent implements OnInit {
   lineItems = signal<LineItem[]>([])
   vatRates  = [0, 7, 13, 19]
 
-  readonly purchaseCategoryOptions = [
-    'Achats de marchandises',
-    'Achats de matières et fournitures',
-    'Matériel informatique',
-    'Matériel de transport',
-    'Locations',
-    'Honoraires',
-    'Frais de déplacement',
-    'Publicité et communication',
-    'Charges financières',
-    'Achat étranger',
-    'Autre',
-  ]
-
   readonly paymentMethodOptions = [
     'Virement bancaire',
     'Chèque',
     'Traite',
     'Prélèvement',
+    'Espèce / Cash',
   ]
 
   attachment = signal<InvoiceAttachment | null>(null)
@@ -178,7 +165,10 @@ export class NewPurchaseInvoiceComponent implements OnInit {
   selectSupplier(supplier: Supplier): void {
     this.selectedSupplier.set(supplier)
     this.supplierModalOpen.set(false)
-    if (!this.editMode() && supplier.financial.currency) this.currency.set(supplier.financial.currency)
+    if (!this.editMode()) {
+      if (supplier.financial.currency) this.currency.set(supplier.financial.currency)
+      this.purchaseCategory.set(supplier.financial.defaultAccount ?? '')
+    }
   }
 
   clearSupplier(event: MouseEvent): void { event.stopPropagation(); this.selectedSupplier.set(null) }
