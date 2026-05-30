@@ -1496,3 +1496,71 @@
   &:hover { background: rgba(0, 30, 64, 0.07); }
   .material-symbols-outlined { font-size: 16px; }
 }
+
+/* =====================================================
+   SECTION 00 — EXTRACTION IA
+   ===================================================== */
+
+.ni-extract-section {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.04), rgba(139, 92, 246, 0.02));
+  border-color: rgba(99, 102, 241, 0.25);
+}
+
+.ni-extract-badge {
+  background: rgba(99, 102, 241, 0.2);
+  color: var(--color-primary, #818cf8);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.05em;
+  margin-left: auto;
+}
+
+.ni-extract-zone {
+  border-color: rgba(99, 102, 241, 0.3);
+  &:hover { border-color: rgba(99, 102, 241, 0.6); }
+}
+
+.ni-extract-loading {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  background: rgba(99, 102, 241, 0.05);
+  border: 1px solid rgba(99, 102, 241, 0.15);
+  border-radius: 10px;
+
+  &__icon { font-size: 32px; color: var(--color-primary, #818cf8); flex-shrink: 0; }
+  &__title { font-size: 14px; font-weight: 600; color: var(--color-on-surface, #e2e8f0); margin: 0 0 4px; }
+  &__sub   { font-size: 12px; color: var(--color-on-surface-variant, #94a3b8); margin: 0; }
+}
+
+.ni-extract-result {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  border-radius: 10px;
+  border: 1px solid;
+
+  &--success {
+    background: rgba(16, 185, 129, 0.06);
+    border-color: rgba(16, 185, 129, 0.25);
+    .ni-extract-result__icon  { color: #6ee7b7; }
+    .ni-extract-result__title { color: #6ee7b7; }
+  }
+
+  &--error {
+    background: rgba(239, 68, 68, 0.06);
+    border-color: rgba(239, 68, 68, 0.25);
+    .ni-extract-result__icon  { color: #fca5a5; }
+    .ni-extract-result__title { color: #fca5a5; }
+  }
+
+  &__icon  { font-size: 26px; flex-shrink: 0; }
+  &__body  { flex: 1; }
+  &__title { font-size: 13px; font-weight: 600; margin: 0 0 3px; }
+  &__sub   { font-size: 12px; color: var(--color-on-surface-variant, #94a3b8); margin: 0; }
+  &__reset { flex-shrink: 0; }
+}
