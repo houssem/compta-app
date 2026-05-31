@@ -30,7 +30,6 @@ interface StoredInvoice {
   internalNotes: string
   termsAndConditions: string
   status: string
-  timbreFiscal?: number
 }
 
 @Component({
