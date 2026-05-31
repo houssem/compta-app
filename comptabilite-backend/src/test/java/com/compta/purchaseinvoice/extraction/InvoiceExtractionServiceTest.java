@@ -112,6 +112,21 @@ class InvoiceExtractionServiceTest {
     }
 
     @Test
+    void parseAiResponse_shouldHandleMissingTimbreFiscalKey() throws Exception {
+        String json = """
+                {
+                  "supplierName": "Test SARL",
+                  "supplierInvoiceRef": null,
+                  "issueDate": null, "dueDate": null, "currency": null,
+                  "purchaseCategory": null, "paymentMethod": null,
+                  "lineItems": []
+                }
+                """;
+        ExtractedInvoiceDto result = service.parseAiResponse(json);
+        assertThat(result.timbreFiscal()).isNull();
+    }
+
+    @Test
     void parseAiResponse_shouldStripMarkdownCodeBlock() throws Exception {
         String json = """
                 ```json
