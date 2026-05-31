@@ -43,6 +43,7 @@ export interface StoredPurchaseInvoice {
   supplierInvoiceRef: string
   purchaseCategory?: string
   paymentMethod?: string
+  timbreFiscal?: number
 }
 
 export interface CreatePurchaseInvoicePayload {
@@ -62,6 +63,7 @@ export interface CreatePurchaseInvoicePayload {
   supplierInvoiceRef: string
   purchaseCategory?: string
   paymentMethod?: string
+  timbreFiscal: number
 }
 
 export interface ExtractedLineItem {
@@ -81,4 +83,5 @@ export interface ExtractedInvoice {
   purchaseCategory: string | null
   paymentMethod: string | null
   lineItems: ExtractedLineItem[]
+  timbreFiscal?: number | null
 }

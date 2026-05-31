@@ -397,6 +397,12 @@
           }
           @if (vatBreakdown().length === 0) { <p class="ni-summary__vat-none">—</p> }
         </div>
+        @if (timbreFiscal() > 0) {
+          <div class="ni-summary__row">
+            <span class="ni-summary__label">Timbre fiscal</span>
+            <span class="ni-summary__value">{{ formatAmount(timbreFiscal()) }}</span>
+          </div>
+        }
         <div class="ni-summary__ttc-bar"></div>
         <div class="ni-summary__ttc-row">
           <span class="ni-summary__ttc-label">Total<br><small>TTC</small></span>
