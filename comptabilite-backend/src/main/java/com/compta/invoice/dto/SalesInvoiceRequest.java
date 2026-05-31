@@ -1,6 +1,7 @@
 package com.compta.invoice.dto;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -28,6 +29,7 @@ public record SalesInvoiceRequest(
         String status,
         String internalNotes,
         String termsAndConditions,
+        @DecimalMin(value = "0.00", message = "Le timbre fiscal doit être positif ou nul")
         BigDecimal timbreFiscal,
 
         @NotEmpty(message = "Au moins une ligne est obligatoire")
