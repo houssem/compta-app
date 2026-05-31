@@ -51,6 +51,10 @@
           <div class="ni-section__body">
 
             @if (extractionState() === 'idle') {
+              <label class="ni-extract-toggle">
+                <input type="checkbox" [ngModel]="autoExtract()" (ngModelChange)="autoExtract.set($event)" />
+                <span>Extraire automatiquement avec l'IA</span>
+              </label>
               <div
                 class="ni-upload-zone ni-extract-zone"
                 [class.ni-upload-zone--drag]="extractDragOver()"
@@ -91,6 +95,24 @@
                 <button type="button" class="ni-btn ni-btn--ghost ni-extract-result__reset"
                         (click)="resetExtraction()">Recommencer</button>
               </div>
+              @if (attachment(); as att) {
+                <div class="ni-attachment" style="margin-top: 12px;">
+                  @if (isImage(att.type)) {
+                    <img class="ni-attachment__thumb" [src]="att.data" [alt]="att.name" />
+                  } @else {
+                    <div class="ni-attachment__pdf-icon">
+                      <span class="material-symbols-outlined">picture_as_pdf</span>
+                    </div>
+                  }
+                  <div class="ni-attachment__info">
+                    <span class="ni-attachment__name">{{ att.name }}</span>
+                    <span class="ni-attachment__size">{{ formatFileSize(att.size) }}</span>
+                  </div>
+                  <a class="ni-attachment__download" [href]="att.data" [download]="att.name" title="Télécharger">
+                    <span class="material-symbols-outlined">download</span>
+                  </a>
+                </div>
+              }
             }
 
             @if (extractionState() === 'error') {
@@ -103,6 +125,30 @@
                 <button type="button" class="ni-btn ni-btn--ghost ni-extract-result__reset"
                         (click)="resetExtraction()">Réessayer</button>
               </div>
+            }
+
+            @if (extractionState() === 'attached') {
+              @if (attachment(); as att) {
+                <div class="ni-attachment">
+                  @if (isImage(att.type)) {
+                    <img class="ni-attachment__thumb" [src]="att.data" [alt]="att.name" />
+                  } @else {
+                    <div class="ni-attachment__pdf-icon">
+                      <span class="material-symbols-outlined">picture_as_pdf</span>
+                    </div>
+                  }
+                  <div class="ni-attachment__info">
+                    <span class="ni-attachment__name">{{ att.name }}</span>
+                    <span class="ni-attachment__size">{{ formatFileSize(att.size) }}</span>
+                  </div>
+                  <a class="ni-attachment__download" [href]="att.data" [download]="att.name" title="Télécharger">
+                    <span class="material-symbols-outlined">download</span>
+                  </a>
+                  <button type="button" class="ni-attachment__remove" (click)="resetExtraction()" title="Supprimer la pièce jointe">
+                    <span class="material-symbols-outlined">delete</span>
+                  </button>
+                </div>
+              }
             }
 
           </div>
@@ -326,58 +372,6 @@
           <div class="ni-field">
             <textarea class="ni-textarea" placeholder="Ajouter une note interne…" rows="4" [ngModel]="internalNotes()" (ngModelChange)="internalNotes.set($event)"></textarea>
           </div>
-        </div>
-      </section>
-
-      <!-- 04 — Pièce jointe -->
-      <section class="ni-section ni-anim-4">
-        <div class="ni-section__head">
-          <span class="ni-section__num">04</span>
-          <div class="ni-section__icon-wrap"><span class="material-symbols-outlined">attach_file</span></div>
-          <div class="ni-section__meta">
-            <h2 class="ni-section__title">Pièce jointe</h2>
-            <p class="ni-section__desc">PDF ou image (JPG, PNG, WEBP) — 10 Mo max</p>
-          </div>
-        </div>
-        <div class="ni-section__body">
-          @if (attachment(); as att) {
-            <div class="ni-attachment">
-              @if (isImage(att.type)) {
-                <img class="ni-attachment__thumb" [src]="att.data" [alt]="att.name" />
-              } @else {
-                <div class="ni-attachment__pdf-icon">
-                  <span class="material-symbols-outlined">picture_as_pdf</span>
-                </div>
-              }
-              <div class="ni-attachment__info">
-                <span class="ni-attachment__name">{{ att.name }}</span>
-                <span class="ni-attachment__size">{{ formatFileSize(att.size) }}</span>
-              </div>
-              <a class="ni-attachment__download" [href]="att.data" [download]="att.name" title="Télécharger">
-                <span class="material-symbols-outlined">download</span>
-              </a>
-              <button type="button" class="ni-attachment__remove" (click)="removeAttachment()" title="Supprimer la pièce jointe">
-                <span class="material-symbols-outlined">delete</span>
-              </button>
-            </div>
-          } @else {
-            <div
-              class="ni-upload-zone"
-              [class.ni-upload-zone--drag]="dragOver()"
-              (dragover)="onDragOver($event)"
-              (dragleave)="onDragLeave()"
-              (drop)="onDrop($event)"
-              (click)="fileInput.click()"
-            >
-              <input #fileInput type="file" accept="image/*,application/pdf" style="display:none" (change)="onFileSelected($event)" />
-              <span class="material-symbols-outlined ni-upload-zone__icon">upload_file</span>
-              <p class="ni-upload-zone__title">Glissez votre fichier ici ou <span class="ni-upload-zone__link">parcourir</span></p>
-              <p class="ni-upload-zone__hint">PDF, JPG, PNG, WEBP</p>
-            </div>
-            @if (fileError()) {
-              <p class="ni-field-error" style="margin-top:8px"><span class="material-symbols-outlined">error</span> {{ fileError() }}</p>
-            }
-          }
         </div>
       </section>
 
