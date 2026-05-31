@@ -28,6 +28,7 @@ public record SalesInvoiceRequest(
         String status,
         String internalNotes,
         String termsAndConditions,
+        BigDecimal timbreFiscal,
 
         @NotEmpty(message = "Au moins une ligne est obligatoire")
         @Valid List<LineDto> lineItems
