@@ -11,6 +11,7 @@ public record ExtractedInvoiceDto(
         String currency,
         String purchaseCategory,
         String paymentMethod,
+        BigDecimal timbreFiscal,
         List<LineItemDto> lineItems
 ) {
     public record LineItemDto(

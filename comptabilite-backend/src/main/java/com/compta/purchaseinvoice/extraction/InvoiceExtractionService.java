@@ -15,7 +15,11 @@ import java.util.Map;
 public class InvoiceExtractionService {
 
     private static final String CLAUDE_API_URL = "https://api.anthropic.com/v1/messages";
-    private static final String MODEL = "claude-sonnet-4-5-20251001";
+    private static final String CLAUDE_MODEL = "claude-sonnet-4-5-20251001";
+
+    private static final String GEMINI_API_URL =
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=";
+
     private static final String PROMPT = """
             You are an invoice data extractor. Extract the following fields from this invoice \
             and return ONLY a valid JSON object — no markdown, no extra text.
@@ -29,6 +33,7 @@ public class InvoiceExtractionService {
               "currency": "3-letter code such as TND, EUR, USD — or null",
               "purchaseCategory": "accounting category or null",
               "paymentMethod": "payment method or null",
+              "timbreFiscal": 1.000 or null if not present on the document,
               "lineItems": [
                 { "description": "text", "qty": 1, "priceHT": 0.00, "discPct": 0, "vatPct": 19 }
               ]
@@ -37,17 +42,29 @@ public class InvoiceExtractionService {
 
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
-    private final String apiKey;
+    private final String provider;
+    private final String claudeApiKey;
+    private final String geminiApiKey;
 
     public InvoiceExtractionService(ObjectMapper objectMapper,
                                     RestTemplate restTemplate,
-                                    @Value("${anthropic.api-key:}") String apiKey) {
+                                    @Value("${ai.provider:gemini}") String provider,
+                                    @Value("${anthropic.api-key:}") String claudeApiKey,
+                                    @Value("${gemini.api-key:}") String geminiApiKey) {
         this.objectMapper = objectMapper;
         this.restTemplate = restTemplate;
-        this.apiKey = apiKey;
+        this.provider = provider;
+        this.claudeApiKey = claudeApiKey;
+        this.geminiApiKey = geminiApiKey;
     }
 
     public ExtractedInvoiceDto extract(InvoiceFileDto file) {
+        return "claude".equalsIgnoreCase(provider)
+                ? extractWithClaude(file)
+                : extractWithGemini(file);
+    }
+
+    private ExtractedInvoiceDto extractWithClaude(InvoiceFileDto file) {
         String mediaType = extractMediaType(file.data());
         String base64Data = stripBase64Prefix(file.data());
 
@@ -61,7 +78,7 @@ public class InvoiceExtractionService {
         );
 
         Map<String, Object> requestBody = Map.of(
-                "model", MODEL,
+                "model", CLAUDE_MODEL,
                 "max_tokens", 1024,
                 "messages", List.of(Map.of(
                         "role", "user",
@@ -73,7 +90,7 @@ public class InvoiceExtractionService {
         );
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("x-api-key", apiKey);
+        headers.set("x-api-key", claudeApiKey);
         headers.set("anthropic-version", "2023-06-01");
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -88,10 +105,51 @@ public class InvoiceExtractionService {
             List<Map<String, Object>> content =
                     (List<Map<String, Object>>) response.getBody().get("content");
             String text = (String) content.get(0).get("text");
-            return parseClaudeResponse(text);
+            return parseAiResponse(text);
         } catch (Exception e) {
             log.warn("Failed to parse Claude extraction response, returning empty result", e);
-            return new ExtractedInvoiceDto(null, null, null, null, null, null, null, List.of());
+            return new ExtractedInvoiceDto(null, null, null, null, null, null, null, null, List.of());
+        }
+    }
+
+    private ExtractedInvoiceDto extractWithGemini(InvoiceFileDto file) {
+        String mediaType = extractMediaType(file.data());
+        String base64Data = stripBase64Prefix(file.data());
+
+        Map<String, Object> requestBody = Map.of(
+                "contents", List.of(Map.of(
+                        "parts", List.of(
+                                Map.of("inline_data", Map.of(
+                                        "mime_type", mediaType,
+                                        "data", base64Data
+                                )),
+                                Map.of("text", PROMPT)
+                        )
+                ))
+        );
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        ResponseEntity<Map> response = restTemplate.postForEntity(
+                GEMINI_API_URL + geminiApiKey,
+                new HttpEntity<>(requestBody, headers),
+                Map.class
+        );
+
+        try {
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> candidates =
+                    (List<Map<String, Object>>) response.getBody().get("candidates");
+            @SuppressWarnings("unchecked")
+            Map<String, Object> content = (Map<String, Object>) candidates.get(0).get("content");
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> parts = (List<Map<String, Object>>) content.get("parts");
+            String text = (String) parts.get(0).get("text");
+            return parseAiResponse(text);
+        } catch (Exception e) {
+            log.warn("Failed to parse Gemini extraction response, returning empty result", e);
+            return new ExtractedInvoiceDto(null, null, null, null, null, null, null, null, List.of());
         }
     }
 
@@ -108,7 +166,7 @@ public class InvoiceExtractionService {
         return "application/pdf".equals(mediaType) ? "document" : "image";
     }
 
-    ExtractedInvoiceDto parseClaudeResponse(String text) throws Exception {
+    ExtractedInvoiceDto parseAiResponse(String text) throws Exception {
         String cleaned = text.trim();
         if (cleaned.startsWith("```")) {
             cleaned = cleaned

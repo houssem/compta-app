@@ -15,7 +15,8 @@ class InvoiceExtractionServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new InvoiceExtractionService(new ObjectMapper(), new RestTemplate(), "test-key");
+        service = new InvoiceExtractionService(
+                new ObjectMapper(), new RestTemplate(), "gemini", "", "test-gemini-key");
     }
 
     @Test
@@ -41,7 +42,7 @@ class InvoiceExtractionServiceTest {
     }
 
     @Test
-    void parseClaudeResponse_shouldMapAllFields() throws Exception {
+    void parseAiResponse_shouldMapAllFields() throws Exception {
         String json = """
                 {
                   "supplierName": "Acme SARL",
@@ -51,20 +52,53 @@ class InvoiceExtractionServiceTest {
                   "currency": "TND",
                   "purchaseCategory": "401000",
                   "paymentMethod": "Virement bancaire",
+                  "timbreFiscal": 1.000,
                   "lineItems": [
                     { "description": "Fournitures", "qty": 2, "priceHT": 150.00, "discPct": 0, "vatPct": 19 }
                   ]
                 }
                 """;
-        ExtractedInvoiceDto result = service.parseClaudeResponse(json);
+        ExtractedInvoiceDto result = service.parseAiResponse(json);
         assertThat(result.supplierName()).isEqualTo("Acme SARL");
         assertThat(result.issueDate()).isEqualTo("2026-05-15");
+        assertThat(result.timbreFiscal()).isEqualByComparingTo(new BigDecimal("1.000"));
         assertThat(result.lineItems()).hasSize(1);
         assertThat(result.lineItems().get(0).qty()).isEqualByComparingTo(new BigDecimal("2"));
     }
 
     @Test
-    void parseClaudeResponse_shouldHandleNullFields() throws Exception {
+    void parseAiResponse_shouldExtractTimbreFiscal() throws Exception {
+        String json = """
+                {
+                  "supplierName": "Test SARL",
+                  "supplierInvoiceRef": null,
+                  "issueDate": null, "dueDate": null, "currency": null,
+                  "purchaseCategory": null, "paymentMethod": null,
+                  "timbreFiscal": 1.000,
+                  "lineItems": []
+                }
+                """;
+        ExtractedInvoiceDto result = service.parseAiResponse(json);
+        assertThat(result.timbreFiscal()).isEqualByComparingTo(new BigDecimal("1.000"));
+    }
+
+    @Test
+    void parseAiResponse_shouldHandleNullTimbreFiscal() throws Exception {
+        String json = """
+                {
+                  "supplierName": null, "supplierInvoiceRef": null,
+                  "issueDate": null, "dueDate": null, "currency": null,
+                  "purchaseCategory": null, "paymentMethod": null,
+                  "timbreFiscal": null,
+                  "lineItems": []
+                }
+                """;
+        ExtractedInvoiceDto result = service.parseAiResponse(json);
+        assertThat(result.timbreFiscal()).isNull();
+    }
+
+    @Test
+    void parseAiResponse_shouldHandleNullFields() throws Exception {
         String json = """
                 {
                   "supplierName": null, "supplierInvoiceRef": null,
@@ -72,13 +106,13 @@ class InvoiceExtractionServiceTest {
                   "purchaseCategory": null, "paymentMethod": null, "lineItems": []
                 }
                 """;
-        ExtractedInvoiceDto result = service.parseClaudeResponse(json);
+        ExtractedInvoiceDto result = service.parseAiResponse(json);
         assertThat(result.supplierName()).isNull();
         assertThat(result.lineItems()).isEmpty();
     }
 
     @Test
-    void parseClaudeResponse_shouldStripMarkdownCodeBlock() throws Exception {
+    void parseAiResponse_shouldStripMarkdownCodeBlock() throws Exception {
         String json = """
                 ```json
                 {
@@ -89,7 +123,7 @@ class InvoiceExtractionServiceTest {
                 }
                 ```
                 """;
-        ExtractedInvoiceDto result = service.parseClaudeResponse(json);
+        ExtractedInvoiceDto result = service.parseAiResponse(json);
         assertThat(result.supplierName()).isEqualTo("Test SARL");
     }
 }
