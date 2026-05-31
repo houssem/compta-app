@@ -50,6 +50,9 @@ public class SalesInvoice extends BaseEntity {
     @Column(name = "total_ttc", nullable = false, precision = 15, scale = 2)
     private BigDecimal totalTtc = BigDecimal.ZERO;
 
+    @Column(name = "timbre_fiscal", nullable = false, precision = 15, scale = 2)
+    private BigDecimal timbreFiscal = BigDecimal.ZERO;
+
     @Column(name = "internal_notes", columnDefinition = "TEXT")
     private String internalNotes;
 
