@@ -69,8 +69,6 @@ export class NewPurchaseInvoiceComponent implements OnInit {
   ]
 
   attachment = signal<InvoiceAttachment | null>(null)
-  dragOver   = signal(false)
-  fileError  = signal('')
 
   extractionState  = signal<ExtractionState>('idle')
   extractionError  = signal('')
@@ -198,37 +196,6 @@ export class NewPurchaseInvoiceComponent implements OnInit {
     this.lineItems.update(items => items.map(i => i.id === id ? { ...i, [field]: value } : i))
   }
 
-  onDragOver(event: DragEvent): void { event.preventDefault(); this.dragOver.set(true) }
-  onDragLeave(): void { this.dragOver.set(false) }
-  onDrop(event: DragEvent): void {
-    event.preventDefault()
-    this.dragOver.set(false)
-    const file = event.dataTransfer?.files?.[0]
-    if (file) this.processFile(file)
-  }
-  onFileSelected(event: Event): void {
-    const file = (event.target as HTMLInputElement).files?.[0]
-    if (file) this.processFile(file)
-    ;(event.target as HTMLInputElement).value = ''
-  }
-
-  private processFile(file: File): void {
-    this.fileError.set('')
-    if (!this.ACCEPTED_TYPES.includes(file.type)) {
-      this.fileError.set('Format non supporté. Utilisez PDF, JPG, PNG ou WEBP.')
-      return
-    }
-    if (file.size > this.MAX_SIZE) {
-      this.fileError.set('Le fichier dépasse la limite de 10 Mo.')
-      return
-    }
-    const reader = new FileReader()
-    reader.onload = () => this.attachment.set({ name: file.name, type: file.type, size: file.size, data: reader.result as string })
-    reader.readAsDataURL(file)
-  }
-
-  removeAttachment(): void { this.attachment.set(null); this.fileError.set('') }
-
   onExtractDragOver(event: DragEvent): void { event.preventDefault(); this.extractDragOver.set(true) }
   onExtractDragLeave(): void { this.extractDragOver.set(false) }
 
@@ -260,18 +227,22 @@ export class NewPurchaseInvoiceComponent implements OnInit {
     reader.onload = () => {
       const data = reader.result as string
       this.attachment.set({ name: file.name, type: file.type, size: file.size, data })
-      this.extractionState.set('loading')
-      this.extractionError.set('')
-      this.service.extract({ name: file.name, type: file.type, data }).subscribe({
-        next: (extracted) => {
-          this.applyExtractedData(extracted)
-          this.extractionState.set('success')
-        },
-        error: () => {
-          this.extractionError.set('L\'analyse a échoué. Vérifiez votre connexion et réessayez.')
-          this.extractionState.set('error')
-        }
-      })
+      if (this.autoExtract()) {
+        this.extractionState.set('loading')
+        this.extractionError.set('')
+        this.service.extract({ name: file.name, type: file.type, data }).subscribe({
+          next: (extracted) => {
+            this.applyExtractedData(extracted)
+            this.extractionState.set('success')
+          },
+          error: () => {
+            this.extractionError.set('L\'analyse a échoué. Vérifiez votre connexion et réessayez.')
+            this.extractionState.set('error')
+          }
+        })
+      } else {
+        this.extractionState.set('attached')
+      }
     }
     reader.readAsDataURL(file)
   }
