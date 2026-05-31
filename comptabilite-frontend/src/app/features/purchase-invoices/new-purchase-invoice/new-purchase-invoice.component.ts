@@ -254,6 +254,7 @@ export class NewPurchaseInvoiceComponent implements OnInit {
     this.extractionError.set('')
     this.extractedCount.set(0)
     this.attachment.set(null)
+    this.timbreFiscal.set(0)
   }
 
   private applyExtractedData(extracted: ExtractedInvoice): void {
