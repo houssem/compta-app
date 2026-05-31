@@ -30,6 +30,7 @@ interface StoredInvoice {
   internalNotes: string
   termsAndConditions: string
   status: string
+  timbreFiscal?: number
 }
 
 @Component({
@@ -116,7 +117,12 @@ export class NewInvoiceComponent implements OnInit {
   })
 
   totalVAT = computed(() => this.vatBreakdown().reduce((s, v) => s + v.amount, 0))
-  totalTTC = computed(() => this.totalHT() + this.totalVAT())
+
+  timbreFiscal = computed(() =>
+    this.selectedClient()?.billingAddress?.country === 'Tunisie' ? 1 : 0
+  )
+
+  totalTTC = computed(() => this.totalHT() + this.totalVAT() + this.timbreFiscal())
 
   // Validation computed signals
   clientError    = computed(() => this.formSubmitted() && !this.selectedClient())
@@ -239,6 +245,7 @@ export class NewInvoiceComponent implements OnInit {
       termsAndConditions: this.termsAndConditions(),
       totalHT:            this.totalHT(),
       totalTTC:           this.totalTTC(),
+      timbreFiscal:       this.timbreFiscal(),
       status:             'pending',
       createdAt:          new Date().toISOString()
     }
