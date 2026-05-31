@@ -122,6 +122,6 @@ public class SalesInvoiceService {
 
         invoice.setTimbreFiscal(req.timbreFiscal() != null ? req.timbreFiscal() : BigDecimal.ZERO);
         invoice.setTotalHt(totalHt);
-        invoice.setTotalTtc(totalHt.add(totalVat).add(invoice.getTimbreFiscal()));
+        invoice.setTotalTtc(totalHt.add(totalVat).add(invoice.getTimbreFiscal()).setScale(2, RoundingMode.HALF_UP));
     }
 }
