@@ -8,7 +8,7 @@ import { Supplier, SupplierContact } from '../../../shared/models/supplier.model
 import { PurchaseInvoiceService } from '../purchase-invoice.service'
 import { LineItem, StoredPurchaseInvoice, PurchaseInvoiceStatus, InvoiceAttachment, ExtractedInvoice } from '../../../shared/models/purchase-invoice.model'
 
-type ExtractionState = 'idle' | 'loading' | 'success' | 'error'
+type ExtractionState = 'idle' | 'loading' | 'success' | 'error' | 'attached'
 
 @Component({
   selector: 'app-new-purchase-invoice',
@@ -76,6 +76,7 @@ export class NewPurchaseInvoiceComponent implements OnInit {
   extractionError  = signal('')
   extractedCount   = signal(0)
   extractDragOver  = signal(false)
+  autoExtract = signal(true)
 
   readonly ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'application/pdf']
   readonly MAX_SIZE = 10 * 1024 * 1024
@@ -147,6 +148,7 @@ export class NewPurchaseInvoiceComponent implements OnInit {
     this.currency.set(inv.currency)
     this.internalNotes.set(inv.internalNotes ?? '')
     this.attachment.set(inv.attachment ?? null)
+    if (inv.attachment) this.extractionState.set('attached')
     this.status.set(inv.status)
     this.supplierInvoiceRef.set(inv.supplierInvoiceRef ?? '')
     this.purchaseCategory.set(inv.purchaseCategory ?? '')
