@@ -1,6 +1,7 @@
 package com.compta.purchaseinvoice.dto;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -34,6 +35,9 @@ public record PurchaseInvoiceRequest(
         String purchaseCategory,
 
         String paymentMethod,
+
+        @DecimalMin(value = "0.00", message = "Le timbre fiscal doit être positif ou nul")
+        BigDecimal timbreFiscal,
 
         @NotEmpty(message = "Au moins une ligne est obligatoire")
         @Valid List<LineDto> lineItems

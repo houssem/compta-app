@@ -45,6 +45,7 @@ class PurchaseInvoiceServiceTest {
                 ref,                           // supplierInvoiceRef
                 null,                          // purchaseCategory
                 null,                          // paymentMethod
+                null,                          // timbreFiscal
                 List.of(new LineDto("Prestation", BigDecimal.ONE, BigDecimal.TEN, null, null, 1))
         );
     }

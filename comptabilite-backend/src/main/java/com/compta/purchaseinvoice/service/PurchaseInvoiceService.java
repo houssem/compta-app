@@ -91,7 +91,7 @@ public class PurchaseInvoiceService {
         }
 
         BigDecimal totalHt  = BigDecimal.ZERO;
-        BigDecimal totalTtc = BigDecimal.ZERO;
+        BigDecimal totalVat = BigDecimal.ZERO;
 
         for (int i = 0; i < req.lineItems().size(); i++) {
             PurchaseInvoiceRequest.LineDto dto = req.lineItems().get(i);
@@ -115,11 +115,12 @@ public class PurchaseInvoiceService {
 
             BigDecimal lineVat = lineHt.multiply(vat).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
             totalHt  = totalHt.add(lineHt);
-            totalTtc = totalTtc.add(lineHt).add(lineVat);
+            totalVat = totalVat.add(lineVat);
             invoice.getLines().add(line);
         }
 
+        invoice.setTimbreFiscal(req.timbreFiscal() != null ? req.timbreFiscal() : BigDecimal.ZERO);
         invoice.setTotalHt(totalHt);
-        invoice.setTotalTtc(totalTtc);
+        invoice.setTotalTtc(totalHt.add(totalVat).add(invoice.getTimbreFiscal()));
     }
 }
