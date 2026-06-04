@@ -14,9 +14,6 @@ public class Company extends BaseEntity {
     @Column(name = "name", nullable = false, length = 255)
     private String name;
 
-    @Column(name = "siret", length = 14)
-    private String siret;
-
     @Column(name = "vat_number", length = 50)
     private String vatNumber;
 

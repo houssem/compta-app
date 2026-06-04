@@ -27,9 +27,6 @@ public class RegisterRequest {
     @NotBlank(message = "La raison sociale est obligatoire")
     private String companyName;
 
-    @Size(max = 14, message = "Le SIRET doit contenir au maximum 14 caractères")
-    private String siret;
-
     @Size(max = 50, message = "Le numéro TVA doit contenir au maximum 50 caractères")
     private String vatNumber;
     private String sector;

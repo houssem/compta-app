@@ -132,7 +132,6 @@ public class AuthService {
     private Company buildCompany(RegisterRequest req) {
         Company c = new Company();
         c.setName(req.getCompanyName());
-        c.setSiret(req.getSiret());
         c.setVatNumber(req.getVatNumber());
         c.setSector(req.getSector());
         c.setStreetNumber(req.getStreetNumber());

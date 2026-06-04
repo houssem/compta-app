@@ -1,7 +1,6 @@
 CREATE TABLE companies (
     id            VARCHAR(36)  NOT NULL,
     name          VARCHAR(255) NOT NULL,
-    siret         VARCHAR(14),
     vat_number    VARCHAR(50),
     sector        VARCHAR(100),
     street_number VARCHAR(20),
@@ -10,7 +9,7 @@ CREATE TABLE companies (
     district      VARCHAR(100),
     city          VARCHAR(100),
     postal_code   VARCHAR(20),
-    country       VARCHAR(100) DEFAULT 'France',
+    country       VARCHAR(100) DEFAULT 'Tunisie',
     email         VARCHAR(255) NOT NULL,
     phone         VARCHAR(50),
     logo_path     VARCHAR(500),
