@@ -1,0 +1,85 @@
+<!-- src/app/features/settings/team-management/user-form-modal/user-form-modal.component.html -->
+<div class="um-backdrop" (click)="close()"></div>
+
+<div class="um-modal" (click)="$event.stopPropagation()">
+
+  <div class="um-modal__head">
+    <h2 class="um-modal__title">
+      {{ (mode === 'create' ? 'SETTINGS.MODAL_TITLE_CREATE' : 'SETTINGS.MODAL_TITLE_EDIT') | translate }}
+    </h2>
+    <button type="button" class="um-modal__close" (click)="close()">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="um-modal__body">
+
+    <div class="um-form-row">
+      <div class="um-field">
+        <label class="um-field__label">{{ 'SETTINGS.FIELD_FIRSTNAME' | translate }} *</label>
+        <input formControlName="firstName" class="um-field__input"
+               [class.um-field__input--error]="form.get('firstName')?.invalid && form.get('firstName')?.touched" />
+      </div>
+      <div class="um-field">
+        <label class="um-field__label">{{ 'SETTINGS.FIELD_LASTNAME' | translate }} *</label>
+        <input formControlName="lastName" class="um-field__input"
+               [class.um-field__input--error]="form.get('lastName')?.invalid && form.get('lastName')?.touched" />
+      </div>
+    </div>
+
+    <div class="um-field">
+      <label class="um-field__label">{{ 'SETTINGS.FIELD_EMAIL' | translate }} *</label>
+      <input formControlName="email" type="email" class="um-field__input"
+             [class.um-field__input--error]="form.get('email')?.invalid && form.get('email')?.touched" />
+      @if (form.get('email')?.hasError('email') && form.get('email')?.touched) {
+        <p class="um-field__error">{{ 'SETTINGS.ERROR_EMAIL_INVALID' | translate }}</p>
+      }
+    </div>
+
+    @if (mode === 'create') {
+      <div class="um-field">
+        <label class="um-field__label">{{ 'SETTINGS.FIELD_PASSWORD' | translate }} *</label>
+        <input formControlName="password" type="password" class="um-field__input"
+               [class.um-field__input--error]="form.get('password')?.invalid && form.get('password')?.touched" />
+        @if (form.get('password')?.hasError('required') && form.get('password')?.touched) {
+          <p class="um-field__error">{{ 'SETTINGS.ERROR_PASSWORD_REQUIRED' | translate }}</p>
+        }
+      </div>
+    }
+
+    <div class="um-field">
+      <label class="um-field__label">{{ 'SETTINGS.FIELD_ROLE' | translate }} *</label>
+      <select formControlName="role" class="um-field__input">
+        @for (role of roles; track role) {
+          <option [value]="role">{{ 'SETTINGS.ROLE_' + role | translate }}</option>
+        }
+      </select>
+    </div>
+
+    @if (mode === 'edit') {
+      <div class="um-field um-field--checkbox">
+        <label class="um-field__check-label">
+          <input type="checkbox" formControlName="active" class="um-field__check" />
+          {{ 'SETTINGS.FIELD_ACTIVE' | translate }}
+        </label>
+      </div>
+    }
+
+    @if (saveError()) {
+      <p class="um-error">{{ saveError() | translate }}</p>
+    }
+
+    <div class="um-modal__foot">
+      <button type="button" class="um-btn-cancel" (click)="close()">
+        {{ 'SETTINGS.BTN_CANCEL' | translate }}
+      </button>
+      <button type="submit" class="um-btn-primary" [disabled]="saving()">
+        @if (saving()) {
+          <span class="material-symbols-outlined um-spin">progress_activity</span>
+        }
+        {{ (mode === 'create' ? 'SETTINGS.BTN_CREATE' : 'SETTINGS.BTN_UPDATE') | translate }}
+      </button>
+    </div>
+
+  </form>
+</div>
