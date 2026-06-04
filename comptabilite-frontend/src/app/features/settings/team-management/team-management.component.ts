@@ -18,7 +18,7 @@ export class TeamManagementComponent implements OnInit {
   private userAdminService = inject(UserAdminService)
   private authService      = inject(AuthService)
 
-  private allMembers = signal<TeamMember[]>([])
+  protected allMembers = signal<TeamMember[]>([])
   loading    = signal(true)
   error      = signal('')
   searchQuery = signal('')
@@ -107,11 +107,6 @@ export class TeamManagementComponent implements OnInit {
       },
       error: () => this.deleting.set(false)
     })
-  }
-
-  memberCount(): string {
-    const n = this.allMembers().length
-    return n === 1 ? '1 membre' : `${n} membres`
   }
 
   initials(m: TeamMember): string {

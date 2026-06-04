@@ -393,6 +393,7 @@
     "ERROR_EMAIL_INVALID": "Email invalide.",
     "ERROR_PASSWORD_REQUIRED": "Le mot de passe est requis.",
     "ERROR_CITY_REQUIRED": "La ville est requise.",
-    "ERROR_EMAIL_TAKEN": "Cet email est déjà utilisé."
+    "ERROR_EMAIL_TAKEN": "Cet email est déjà utilisé.",
+    "TEAM_EMPTY": "Aucun membre trouvé."
   }
 }
