@@ -85,6 +85,13 @@ export const routes: Routes = [
         path: 'purchase-invoice/edit/:id',
         loadComponent: () =>
           import('./features/purchase-invoices/new-purchase-invoice/new-purchase-invoice.component').then(m => m.NewPurchaseInvoiceComponent)
+      },
+      {
+        path: 'settings',
+        loadComponent: () =>
+          import('./features/settings/settings.component').then(m => m.SettingsComponent),
+        loadChildren: () =>
+          import('./features/settings/settings.routes').then(m => m.settingsRoutes)
       }
     ]
   },

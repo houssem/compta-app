@@ -1,0 +1,25 @@
+<div class="set-layout">
+
+  <aside class="set-nav">
+    <p class="set-nav__label">{{ 'SETTINGS.TITLE' | translate }}</p>
+
+    <a routerLink="profile"
+       routerLinkActive="set-nav__item--active"
+       class="set-nav__item">
+      <span class="material-symbols-outlined">business</span>
+      {{ 'SETTINGS.NAV_PROFILE' | translate }}
+    </a>
+
+    <a routerLink="team"
+       routerLinkActive="set-nav__item--active"
+       class="set-nav__item">
+      <span class="material-symbols-outlined">group</span>
+      {{ 'SETTINGS.NAV_TEAM' | translate }}
+    </a>
+  </aside>
+
+  <main class="set-content">
+    <router-outlet />
+  </main>
+
+</div>
