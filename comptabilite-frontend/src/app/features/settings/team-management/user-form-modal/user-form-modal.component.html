@@ -31,7 +31,9 @@
       <label class="um-field__label">{{ 'SETTINGS.FIELD_EMAIL' | translate }} *</label>
       <input formControlName="email" type="email" class="um-field__input"
              [class.um-field__input--error]="form.get('email')?.invalid && form.get('email')?.touched" />
-      @if (form.get('email')?.hasError('email') && form.get('email')?.touched) {
+      @if (form.get('email')?.hasError('required') && form.get('email')?.touched) {
+        <p class="um-field__error">{{ 'SETTINGS.ERROR_EMAIL_REQUIRED' | translate }}</p>
+      } @else if (form.get('email')?.hasError('email') && form.get('email')?.touched) {
         <p class="um-field__error">{{ 'SETTINGS.ERROR_EMAIL_INVALID' | translate }}</p>
       }
     </div>

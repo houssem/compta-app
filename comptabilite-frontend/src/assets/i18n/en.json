@@ -394,6 +394,10 @@
     "ERROR_PASSWORD_REQUIRED": "Password is required.",
     "ERROR_CITY_REQUIRED": "City is required.",
     "ERROR_EMAIL_TAKEN": "This email is already in use.",
+    "LOAD_ERROR": "Failed to load team members.",
+    "ERROR_LOGO_FORMAT": "Unsupported format. Use PNG, JPEG or WebP.",
+    "ERROR_LOGO_SIZE": "Logo must not exceed 2 MB.",
+    "DELETE_ERROR": "Failed to delete this member.",
     "TEAM_EMPTY": "No members found."
   }
 }

@@ -1,9 +1,9 @@
 // src/app/features/settings/company-profile/company-profile.component.ts
 import { Component, inject, OnInit, signal } from '@angular/core'
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms'
-import { TranslateModule } from '@ngx-translate/core'
+import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { CompanyService } from '../company.service'
-import { UpdateCompanyRequest } from '../../../shared/models/company-profile.model'
+import { CompanyProfile, UpdateCompanyRequest } from '../../../shared/models/company-profile.model'
 
 @Component({
   selector: 'app-company-profile',
@@ -13,8 +13,9 @@ import { UpdateCompanyRequest } from '../../../shared/models/company-profile.mod
   styleUrl: './company-profile.component.scss'
 })
 export class CompanyProfileComponent implements OnInit {
-  private fb             = inject(FormBuilder)
-  private companyService = inject(CompanyService)
+  private fb               = inject(FormBuilder)
+  private companyService   = inject(CompanyService)
+  private translateService = inject(TranslateService)
 
   loading     = signal(true)
   saving      = signal(false)
@@ -24,6 +25,8 @@ export class CompanyProfileComponent implements OnInit {
   currentLogoUrl  = signal<string | null>(null)
   newLogoFile     = signal<File | null>(null)
   newLogoPreview  = signal<string | null>(null)
+
+  private lastLoaded: CompanyProfile | null = null
 
   form = this.fb.nonNullable.group({
     name:         ['', Validators.required],
@@ -40,21 +43,26 @@ export class CompanyProfileComponent implements OnInit {
   ngOnInit(): void {
     this.companyService.getMyCompany().subscribe({
       next: (c) => {
-        this.form.patchValue({
-          name:         c.name         ?? '',
-          vatNumber:    c.vatNumber    ?? '',
-          streetNumber: c.streetNumber ?? '',
-          streetName:   c.streetName   ?? '',
-          complement:   c.complement   ?? '',
-          district:     c.district     ?? '',
-          city:         c.city         ?? '',
-          postalCode:   c.postalCode   ?? '',
-          country:      c.country      ?? 'Tunisie'
-        })
+        this.lastLoaded = c
+        this.patchFormFromProfile(c)
         this.currentLogoUrl.set(c.logoPath)
         this.loading.set(false)
       },
       error: () => this.loading.set(false)
+    })
+  }
+
+  private patchFormFromProfile(c: CompanyProfile): void {
+    this.form.patchValue({
+      name:         c.name         ?? '',
+      vatNumber:    c.vatNumber    ?? '',
+      streetNumber: c.streetNumber ?? '',
+      streetName:   c.streetName   ?? '',
+      complement:   c.complement   ?? '',
+      district:     c.district     ?? '',
+      city:         c.city         ?? '',
+      postalCode:   c.postalCode   ?? '',
+      country:      c.country      ?? 'Tunisie'
     })
   }
 
@@ -64,11 +72,11 @@ export class CompanyProfileComponent implements OnInit {
     if (!file) return
 
     if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
-      this.saveError.set('Format non supporté. Utilisez PNG, JPEG ou WebP.')
+      this.saveError.set(this.translateService.instant('SETTINGS.ERROR_LOGO_FORMAT'))
       return
     }
     if (file.size > 2 * 1024 * 1024) {
-      this.saveError.set('Le logo ne doit pas dépasser 2 Mo.')
+      this.saveError.set(this.translateService.instant('SETTINGS.ERROR_LOGO_SIZE'))
       return
     }
 
@@ -109,7 +117,12 @@ export class CompanyProfileComponent implements OnInit {
     this.newLogoFile.set(null)
     this.newLogoPreview.set(null)
     this.saveError.set('')
-    this.ngOnInit()
+    if (this.lastLoaded) {
+      this.patchFormFromProfile(this.lastLoaded)
+      this.currentLogoUrl.set(this.lastLoaded.logoPath)
+    }
+    this.form.markAsPristine()
+    this.form.markAsUntouched()
   }
 
   logoDisplayUrl(): string | null {

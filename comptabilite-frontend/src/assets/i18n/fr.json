@@ -394,6 +394,10 @@
     "ERROR_PASSWORD_REQUIRED": "Le mot de passe est requis.",
     "ERROR_CITY_REQUIRED": "La ville est requise.",
     "ERROR_EMAIL_TAKEN": "Cet email est déjà utilisé.",
+    "LOAD_ERROR": "Impossible de charger les membres.",
+    "ERROR_LOGO_FORMAT": "Format non supporté. Utilisez PNG, JPEG ou WebP.",
+    "ERROR_LOGO_SIZE": "Le logo ne doit pas dépasser 2 Mo.",
+    "DELETE_ERROR": "Impossible de supprimer ce membre.",
     "TEAM_EMPTY": "Aucun membre trouvé."
   }
 }

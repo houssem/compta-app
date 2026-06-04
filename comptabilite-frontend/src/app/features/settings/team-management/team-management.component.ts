@@ -56,7 +56,7 @@ export class TeamManagementComponent implements OnInit {
     this.loading.set(true)
     this.userAdminService.getAll().subscribe({
       next: (members) => { this.allMembers.set(members); this.loading.set(false) },
-      error: () => { this.error.set('Impossible de charger les membres.'); this.loading.set(false) }
+      error: () => { this.error.set('SETTINGS.LOAD_ERROR'); this.loading.set(false) }
     })
   }
 
@@ -105,7 +105,7 @@ export class TeamManagementComponent implements OnInit {
         this.confirmDeleteId.set(null)
         this.deleting.set(false)
       },
-      error: () => this.deleting.set(false)
+      error: () => { this.deleting.set(false); this.error.set('SETTINGS.DELETE_ERROR') }
     })
   }
 
