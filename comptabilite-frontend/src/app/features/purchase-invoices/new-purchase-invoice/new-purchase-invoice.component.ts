@@ -102,7 +102,9 @@ export class NewPurchaseInvoiceComponent implements OnInit {
     return Array.from(map.entries()).map(([rate, amount]) => ({ rate, amount }))
   })
   totalVAT = computed(() => this.vatBreakdown().reduce((s, v) => s + v.amount, 0))
-  timbreFiscal = signal(0)
+  timbreFiscal = computed(() =>
+    this.selectedSupplier()?.address?.country === 'Tunisie' ? 1 : 0
+  )
   totalTTC = computed(() => this.totalHT() + this.totalVAT() + this.timbreFiscal())
 
   supplierError  = computed(() => this.formSubmitted() && !this.selectedSupplier())
@@ -152,7 +154,7 @@ export class NewPurchaseInvoiceComponent implements OnInit {
     this.supplierInvoiceRef.set(inv.supplierInvoiceRef ?? '')
     this.purchaseCategory.set(inv.purchaseCategory ?? '')
     this.paymentMethod.set(inv.paymentMethod ?? '')
-    this.timbreFiscal.set(inv.timbreFiscal ?? 0)
+
     const maxId = Math.max(0, ...inv.lineItems.map(i => i.id))
     this.nextId = maxId + 1
     this.lineItems.set(inv.lineItems)
@@ -254,7 +256,6 @@ export class NewPurchaseInvoiceComponent implements OnInit {
     this.extractionError.set('')
     this.extractedCount.set(0)
     this.attachment.set(null)
-    this.timbreFiscal.set(0)
   }
 
   private applyExtractedData(extracted: ExtractedInvoice): void {
@@ -265,7 +266,7 @@ export class NewPurchaseInvoiceComponent implements OnInit {
     if (extracted.currency)           { this.currency.set(extracted.currency); count++ }
     if (extracted.purchaseCategory)   { this.purchaseCategory.set(extracted.purchaseCategory); count++ }
     if (extracted.paymentMethod)      { this.paymentMethod.set(extracted.paymentMethod); count++ }
-    if (extracted.timbreFiscal != null) { this.timbreFiscal.set(Number(extracted.timbreFiscal)); count++ }
+
 
     if (extracted.lineItems?.length) {
       this.lineItems.set(extracted.lineItems.map(item => ({
