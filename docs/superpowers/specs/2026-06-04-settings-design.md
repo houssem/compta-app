@@ -2,7 +2,7 @@
 
 **Date:** 2026-06-04
 **Status:** Approved
-**Scope:** Profil Entreprise + Gestion de l'équipe
+**Scope:** Profil Entreprise + Gestion de l'équipe — **Frontend only** (backend endpoints to be implemented separately)
 
 ---
 
