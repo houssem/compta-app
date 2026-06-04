@@ -1,0 +1,141 @@
+<!-- src/app/features/settings/team-management/team-management.component.html -->
+<div class="tm-page">
+
+  <div class="tm-header">
+    <div>
+      <h1 class="tm-header__title">{{ 'SETTINGS.TEAM_TITLE' | translate }}</h1>
+      <p class="tm-header__sub">{{ memberCount() }} · {{ 'SETTINGS.TEAM_SUBTITLE_SUB' | translate }}</p>
+    </div>
+    <button class="tm-btn-new" type="button" (click)="openCreate()">
+      <span class="material-symbols-outlined">add</span>
+      {{ 'SETTINGS.BTN_NEW_USER' | translate }}
+    </button>
+  </div>
+
+  @if (error()) {
+    <p class="tm-error">{{ error() }}</p>
+  }
+
+  <div class="tm-card">
+    <!-- Search -->
+    <div class="tm-search-row">
+      <div class="tm-search-wrap">
+        <span class="material-symbols-outlined tm-search-icon">search</span>
+        <input
+          class="tm-search-input"
+          type="text"
+          [placeholder]="'SETTINGS.SEARCH_PLACEHOLDER' | translate"
+          [ngModel]="searchQuery()"
+          (ngModelChange)="searchQuery.set($event)" />
+      </div>
+    </div>
+
+    <!-- Table -->
+    <table class="tm-table">
+      <thead>
+        <tr>
+          <th>{{ 'SETTINGS.COL_MEMBER' | translate }}</th>
+          <th>{{ 'SETTINGS.COL_ROLE' | translate }}</th>
+          <th>{{ 'SETTINGS.COL_STATUS' | translate }}</th>
+          <th>{{ 'SETTINGS.COL_SINCE' | translate }}</th>
+          <th>{{ 'SETTINGS.COL_ACTIONS' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (loading()) {
+          @for (i of [1,2,3]; track i) {
+            <tr class="tm-tr--skeleton">
+              <td><div class="tm-skel tm-skel--member"></div></td>
+              <td><div class="tm-skel tm-skel--badge"></div></td>
+              <td><div class="tm-skel tm-skel--sm"></div></td>
+              <td><div class="tm-skel tm-skel--sm"></div></td>
+              <td><div class="tm-skel tm-skel--actions"></div></td>
+            </tr>
+          }
+        } @else {
+          @for (member of filteredMembers(); track member.id) {
+            <tr>
+              <!-- Member -->
+              <td>
+                <div class="tm-member-cell">
+                  <div class="tm-avatar" [style.background]="avatarColor(member)">
+                    {{ initials(member) }}
+                  </div>
+                  <div>
+                    <p class="tm-member-cell__name">{{ member.firstName }} {{ member.lastName }}</p>
+                    <p class="tm-member-cell__email">{{ member.email }}</p>
+                  </div>
+                </div>
+              </td>
+
+              <!-- Role -->
+              <td>
+                <span class="tm-badge" [class]="roleClass(member.role)">
+                  {{ roleLabelKey(member.role) | translate }}
+                </span>
+              </td>
+
+              <!-- Status -->
+              <td>
+                <div class="tm-status">
+                  <span class="tm-status__dot" [class.tm-status__dot--active]="member.active"></span>
+                  {{ (member.active ? 'SETTINGS.STATUS_ACTIVE' : 'SETTINGS.STATUS_INACTIVE') | translate }}
+                </div>
+              </td>
+
+              <!-- Since -->
+              <td class="tm-date">{{ formatDate(member.createdAt) }}</td>
+
+              <!-- Actions -->
+              <td>
+                @if (confirmDeleteId() === member.id) {
+                  <div class="tm-confirm" (click)="$event.stopPropagation()">
+                    <button class="tm-confirm__btn tm-confirm__btn--yes"
+                            (click)="confirmDelete(member.id, $event)"
+                            [disabled]="deleting()">
+                      {{ 'SETTINGS.DELETE_CONFIRM' | translate }}
+                    </button>
+                    <button class="tm-confirm__btn"
+                            (click)="cancelDelete($event)">
+                      {{ 'SETTINGS.DELETE_CANCEL' | translate }}
+                    </button>
+                  </div>
+                } @else {
+                  <div class="tm-actions-cell">
+                    <button class="tm-icon-btn" type="button"
+                            (click)="openEdit(member, $event)"
+                            title="Modifier">
+                      <span class="material-symbols-outlined">edit</span>
+                    </button>
+                    @if (member.id !== currentUserId()) {
+                      <button class="tm-icon-btn tm-icon-btn--danger" type="button"
+                              (click)="startDelete(member.id, $event)"
+                              title="Supprimer">
+                        <span class="material-symbols-outlined">delete</span>
+                      </button>
+                    }
+                  </div>
+                }
+              </td>
+            </tr>
+          }
+          @empty {
+            <tr>
+              <td colspan="5" class="tm-empty">Aucun membre trouvé.</td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- Modal -->
+@if (showModal()) {
+  <app-user-form-modal
+    [mode]="modalMode()"
+    [member]="editMember()"
+    (saved)="onSaved($event)"
+    (cancelled)="closeModal()" />
+}
