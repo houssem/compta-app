@@ -42,7 +42,7 @@ New services (in `src/app/core/services/`):
 - `UserAdminService` — GET list, POST, PUT, DELETE team members
 
 New models (in `src/app/shared/models/`):
-- `company-profile.model.ts` — `CompanyProfile`, `BankDetails`, `UpdateCompanyRequest`
+- `company-profile.model.ts` — `CompanyProfile`, `UpdateCompanyRequest`
 - `team-member.model.ts` — `TeamMember`, `CreateUserRequest`, `UpdateUserRequest`
 
 ### Backend structure
@@ -77,21 +77,20 @@ Scrollable page with four cards stacked vertically, single "Enregistrer les modi
 | Card | Fields |
 |---|---|
 | Logo | File upload (PNG/JPEG/WebP, max 2 MB). Shows current logo thumbnail. |
-| Informations générales | `name`*, `sector`, `vatNumber`, `siret`, `email`*, `phone` |
+| Informations générales | `name`*, `vatNumber` (N° TVA / Matricule fiscal) |
 | Adresse | `streetNumber`, `streetName`, `complement`, `district`, `city`*, `postalCode`, `country` |
-| Coordonnées bancaires | `accountHolder`*, `bankName`*, `iban`*, `swiftBic` |
 
 `*` = required
 
 ### Backend endpoints
 ```
-GET  /api/companies/me          → CompanyResponse (company + bank details)
+GET  /api/companies/me          → CompanyResponse (name, vatNumber, address, logoPath)
 PUT  /api/companies/me          → multipart/form-data
      - part "data": CompanyUpdateRequest (JSON)
      - part "logo": MultipartFile (optional)
 ```
 
-`CompanyController` extracts `companyId` from `auth.getDetails()` (existing pattern). `CompanyService` updates the `Company` entity and upserts the first `CompanyBankDetails` record. Logo handling reuses the existing `saveLogo()` logic from `AuthService`.
+`CompanyController` extracts `companyId` from `auth.getDetails()` (existing pattern). `CompanyService` updates the `Company` entity (name, vatNumber, address fields, logo). Logo handling reuses the existing `saveLogo()` logic from `AuthService`. Bank details are out of scope for this section.
 
 ### Frontend behaviour
 - On load: calls `GET /api/companies/me`, pre-fills the form.
@@ -185,5 +184,6 @@ UserAdminService
 
 - Password change for current user (future)
 - Email change (requires re-verification, future)
-- Multi-bank accounts (only first bank record updated for now)
+- Bank details (out of scope, planned for a future Facturation settings section)
+- Multi-bank accounts
 - Role-based field restrictions within the form
