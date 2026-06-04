@@ -56,12 +56,6 @@ CREATE TABLE accounting_entry_lines (
     CONSTRAINT fk_entry_lines_entry FOREIGN KEY (entry_id) REFERENCES accounting_entries(id) ON DELETE CASCADE
 );
 
-ALTER TABLE sales_invoices    ADD COLUMN accounting_entry_id VARCHAR(36);
-ALTER TABLE purchase_invoices ADD COLUMN accounting_entry_id VARCHAR(36);
-
-ALTER TABLE sales_invoices    ADD CONSTRAINT fk_sales_accounting    FOREIGN KEY (accounting_entry_id) REFERENCES accounting_entries(id);
-ALTER TABLE purchase_invoices ADD CONSTRAINT fk_purchase_accounting FOREIGN KEY (accounting_entry_id) REFERENCES accounting_entries(id);
-
 CREATE INDEX idx_accounting_entries_company ON accounting_entries(company_id);
 CREATE INDEX idx_accounting_entries_journal ON accounting_entries(journal_id);
 CREATE INDEX idx_accounting_entries_date    ON accounting_entries(company_id, operation_date);

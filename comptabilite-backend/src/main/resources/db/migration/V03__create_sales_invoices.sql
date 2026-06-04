@@ -11,6 +11,8 @@ CREATE TABLE sales_invoices (
     status               VARCHAR(30)   NOT NULL DEFAULT 'draft',
     total_ht             DECIMAL(15,2) NOT NULL DEFAULT 0.00,
     total_ttc            DECIMAL(15,2) NOT NULL DEFAULT 0.00,
+    timbre_fiscal        DECIMAL(15,2) NOT NULL DEFAULT 0.00,
+    accounting_entry_id  VARCHAR(36),
     internal_notes       TEXT,
     terms_and_conditions TEXT,
     created_at           TIMESTAMP     NOT NULL,
