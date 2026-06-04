@@ -1,0 +1,151 @@
+<!-- src/app/features/settings/company-profile/company-profile.component.html -->
+<div class="cp-page">
+
+  <div class="cp-header">
+    <h1 class="cp-header__title">{{ 'SETTINGS.PROFILE_TITLE' | translate }}</h1>
+    <p class="cp-header__sub">{{ 'SETTINGS.PROFILE_SUBTITLE' | translate }}</p>
+  </div>
+
+  @if (loading()) {
+    <div class="cp-skeleton">
+      <div class="cp-skeleton__card"></div>
+      <div class="cp-skeleton__card"></div>
+      <div class="cp-skeleton__card"></div>
+    </div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="save()">
+
+      <!-- Logo card -->
+      <div class="cp-card">
+        <div class="cp-card__head">
+          <div class="cp-card__icon">
+            <span class="material-symbols-outlined">image</span>
+          </div>
+          <div>
+            <p class="cp-card__title">{{ 'SETTINGS.LOGO_CARD_TITLE' | translate }}</p>
+            <p class="cp-card__sub">{{ 'SETTINGS.LOGO_CARD_SUB' | translate }}</p>
+          </div>
+        </div>
+        <div class="cp-logo-area">
+          @if (logoDisplayUrl()) {
+            <img [src]="logoDisplayUrl()" alt="Logo" class="cp-logo-preview" />
+          } @else {
+            <div class="cp-logo-placeholder">
+              <span class="material-symbols-outlined">business</span>
+            </div>
+          }
+          <div class="cp-logo-info">
+            <p class="cp-logo-info__label">{{ 'SETTINGS.LOGO_CURRENT' | translate }}</p>
+            <p class="cp-logo-info__hint">{{ 'SETTINGS.LOGO_HINT' | translate }}</p>
+            <label class="cp-btn-outline cp-logo-info__btn">
+              {{ 'SETTINGS.LOGO_CHANGE' | translate }}
+              <input type="file" accept="image/png,image/jpeg,image/webp"
+                     (change)="onLogoChange($event)" class="cp-logo-input" />
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Informations générales card -->
+      <div class="cp-card">
+        <div class="cp-card__head">
+          <div class="cp-card__icon">
+            <span class="material-symbols-outlined">receipt_long</span>
+          </div>
+          <div>
+            <p class="cp-card__title">{{ 'SETTINGS.INFO_CARD_TITLE' | translate }}</p>
+            <p class="cp-card__sub">{{ 'SETTINGS.INFO_CARD_SUB' | translate }}</p>
+          </div>
+        </div>
+        <div class="cp-form-grid">
+          <div class="cp-field">
+            <label class="cp-field__label">{{ 'SETTINGS.FIELD_NAME' | translate }} *</label>
+            <input formControlName="name" class="cp-field__input"
+                   [class.cp-field__input--error]="form.get('name')?.invalid && form.get('name')?.touched" />
+            @if (form.get('name')?.hasError('required') && form.get('name')?.touched) {
+              <p class="cp-field__error">{{ 'SETTINGS.ERROR_NAME_REQUIRED' | translate }}</p>
+            }
+          </div>
+          <div class="cp-field">
+            <label class="cp-field__label">{{ 'SETTINGS.FIELD_VAT' | translate }}</label>
+            <input formControlName="vatNumber" class="cp-field__input" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Adresse card -->
+      <div class="cp-card">
+        <div class="cp-card__head">
+          <div class="cp-card__icon">
+            <span class="material-symbols-outlined">location_on</span>
+          </div>
+          <div>
+            <p class="cp-card__title">{{ 'SETTINGS.ADDRESS_CARD_TITLE' | translate }}</p>
+            <p class="cp-card__sub">{{ 'SETTINGS.ADDRESS_CARD_SUB' | translate }}</p>
+          </div>
+        </div>
+        <div class="cp-form-grid cp-form-grid--three">
+          <div class="cp-field">
+            <label class="cp-field__label">{{ 'SETTINGS.FIELD_STREET_NUMBER' | translate }}</label>
+            <input formControlName="streetNumber" class="cp-field__input" />
+          </div>
+          <div class="cp-field cp-form-grid--span2">
+            <label class="cp-field__label">{{ 'SETTINGS.FIELD_STREET_NAME' | translate }}</label>
+            <input formControlName="streetName" class="cp-field__input" />
+          </div>
+          <div class="cp-field">
+            <label class="cp-field__label">{{ 'SETTINGS.FIELD_COMPLEMENT' | translate }}</label>
+            <input formControlName="complement" class="cp-field__input" />
+          </div>
+          <div class="cp-field">
+            <label class="cp-field__label">{{ 'SETTINGS.FIELD_DISTRICT' | translate }}</label>
+            <input formControlName="district" class="cp-field__input" />
+          </div>
+          <div class="cp-field">
+            <label class="cp-field__label">{{ 'SETTINGS.FIELD_CITY' | translate }} *</label>
+            <input formControlName="city" class="cp-field__input"
+                   [class.cp-field__input--error]="form.get('city')?.invalid && form.get('city')?.touched" />
+            @if (form.get('city')?.hasError('required') && form.get('city')?.touched) {
+              <p class="cp-field__error">{{ 'SETTINGS.ERROR_CITY_REQUIRED' | translate }}</p>
+            }
+          </div>
+          <div class="cp-field">
+            <label class="cp-field__label">{{ 'SETTINGS.FIELD_POSTAL_CODE' | translate }}</label>
+            <input formControlName="postalCode" class="cp-field__input" />
+          </div>
+          <div class="cp-field">
+            <label class="cp-field__label">{{ 'SETTINGS.FIELD_COUNTRY' | translate }}</label>
+            <input formControlName="country" class="cp-field__input" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer actions -->
+      <div class="cp-actions">
+        @if (saveError()) {
+          <span class="cp-actions__error">
+            <span class="material-symbols-outlined">error</span>
+            {{ saveError() }}
+          </span>
+        }
+        @if (saveSuccess()) {
+          <span class="cp-actions__success">
+            <span class="material-symbols-outlined">check_circle</span>
+            {{ 'SETTINGS.SAVE_SUCCESS' | translate }}
+          </span>
+        }
+        <button type="button" (click)="cancel()" class="cp-btn-outline">
+          {{ 'SETTINGS.BTN_CANCEL' | translate }}
+        </button>
+        <button type="submit" class="cp-btn-primary" [disabled]="saving()">
+          @if (saving()) {
+            <span class="material-symbols-outlined cp-spin">progress_activity</span>
+          }
+          {{ 'SETTINGS.BTN_SAVE' | translate }}
+        </button>
+      </div>
+
+    </form>
+  }
+
+</div>
