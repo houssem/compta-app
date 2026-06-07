@@ -40,6 +40,7 @@ public class SecurityConfig {
                                 "/api/auth/register",
                                 "/api/auth/login",
                                 "/api/auth/refresh",
+                                "/api/settings/countries/master",
                                 "/h2-console/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
