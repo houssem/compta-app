@@ -3,7 +3,8 @@ import { FormsModule } from '@angular/forms'
 import { RouterLink, Router, ActivatedRoute } from '@angular/router'
 import { CommonModule } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
-import { Currency, CURRENCIES } from '../../../shared/models/client.model'
+import { CurrencyItem } from '../../../shared/models/company-profile.model'
+import { CompanyService } from '../../settings/company.service'
 import { Supplier, SupplierContact } from '../../../shared/models/supplier.model'
 import { PurchaseInvoiceService } from '../purchase-invoice.service'
 import { LineItem, StoredPurchaseInvoice, PurchaseInvoiceStatus, InvoiceAttachment, ExtractedInvoice } from '../../../shared/models/purchase-invoice.model'
@@ -23,6 +24,7 @@ export class NewPurchaseInvoiceComponent implements OnInit {
   private router  = inject(Router)
   private route   = inject(ActivatedRoute)
   private service = inject(PurchaseInvoiceService)
+  private companyService = inject(CompanyService)
 
   editMode = signal(false)
   private invoiceDbId: string | null = null
@@ -53,7 +55,7 @@ export class NewPurchaseInvoiceComponent implements OnInit {
     })
   })
 
-  readonly currencies: Currency[] = CURRENCIES
+  currencies = signal<CurrencyItem[]>([])
   configLoading = signal(true)
 
   private nextId = 1
@@ -70,11 +72,12 @@ export class NewPurchaseInvoiceComponent implements OnInit {
 
   attachment = signal<InvoiceAttachment | null>(null)
 
-  extractionState  = signal<ExtractionState>('idle')
-  extractionError  = signal('')
-  extractedCount   = signal(0)
-  extractDragOver  = signal(false)
-  autoExtract = signal(true)
+  extractionState        = signal<ExtractionState>('idle')
+  extractionError        = signal('')
+  extractedCount         = signal(0)
+  extractDragOver        = signal(false)
+  autoExtract            = signal(true)
+  extractedSupplierName  = signal('')
 
   readonly ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'application/pdf']
   readonly MAX_SIZE = 10 * 1024 * 1024
@@ -120,6 +123,16 @@ export class NewPurchaseInvoiceComponent implements OnInit {
   onEscape() { this.supplierModalOpen.set(false) }
 
   ngOnInit(): void {
+    this.companyService.getSupportedCurrencies().subscribe({
+      next: ({ defaultCurrency, currencies }) => {
+        this.currencies.set(currencies)
+        if (!this.editMode()) {
+          this.currency.set(defaultCurrency)
+        }
+      },
+      error: () => {}
+    })
+
     const id = this.route.snapshot.paramMap.get('id')
     if (id) { this.editMode.set(true); this.invoiceDbId = id }
 
@@ -175,6 +188,7 @@ export class NewPurchaseInvoiceComponent implements OnInit {
 
   selectSupplier(supplier: Supplier): void {
     this.selectedSupplier.set(supplier)
+    this.extractedSupplierName.set('')
     this.supplierModalOpen.set(false)
     if (!this.editMode()) {
       if (supplier.financial.currency) this.currency.set(supplier.financial.currency)
@@ -255,6 +269,7 @@ export class NewPurchaseInvoiceComponent implements OnInit {
     this.extractionState.set('idle')
     this.extractionError.set('')
     this.extractedCount.set(0)
+    this.extractedSupplierName.set('')
     this.attachment.set(null)
   }
 
@@ -282,7 +297,8 @@ export class NewPurchaseInvoiceComponent implements OnInit {
 
     if (extracted.supplierName) {
       const match = this.fuzzyMatchSupplier(extracted.supplierName)
-      if (match) { this.selectedSupplier.set(match); count++ }
+      if (match) { this.selectedSupplier.set(match); this.extractedSupplierName.set(''); count++ }
+      else        { this.extractedSupplierName.set(extracted.supplierName) }
     }
 
     this.extractedCount.set(count)
@@ -333,7 +349,7 @@ export class NewPurchaseInvoiceComponent implements OnInit {
   }
 
   formatAmount(value: number): string {
-    const symbol = this.currencies.find(c => c.value === this.currency())?.symbol ?? this.currency()
+    const symbol = this.currencies().find(c => c.isoCode === this.currency())?.symbol ?? this.currency()
     return value.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + symbol
   }
 
