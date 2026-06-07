@@ -7,10 +7,10 @@ import { RouterLink, Router, ActivatedRoute } from '@angular/router'
 import { TranslateModule } from '@ngx-translate/core'
 import { ClientService } from '../client.service'
 import {
-  CreateClientDto, CURRENCIES, PAYMENT_TERMS, CLIENT_STATUSES
+  CreateClientDto, PAYMENT_TERMS, CLIENT_STATUSES
 } from '../../../shared/models/client.model'
 import { CompanyService } from '../../settings/company.service'
-import { CountryItem } from '../../../shared/models/company-profile.model'
+import { CountryItem, CurrencyItem } from '../../../shared/models/company-profile.model'
 
 // ── Custom validators ──────────────────────────────────────────
 function optionalUrl(control: AbstractControl): ValidationErrors | null {
@@ -54,7 +54,7 @@ export class NewClientComponent implements OnInit {
 
   // Config (données stables — hardcodées)
   countries = signal<CountryItem[]>([])
-  currencies          = CURRENCIES
+  currencies = signal<CurrencyItem[]>([])
   paymentTermsOptions = PAYMENT_TERMS
   clientStatuses      = CLIENT_STATUSES
 
@@ -109,6 +109,16 @@ export class NewClientComponent implements OnInit {
 
     this.companyService.getSupportedCountries().subscribe({
       next: ({ countries }) => this.countries.set(countries),
+      error: () => {}
+    })
+
+    this.companyService.getSupportedCurrencies().subscribe({
+      next: ({ defaultCurrency, currencies }) => {
+        this.currencies.set(currencies)
+        if (!this.editMode()) {
+          this.form.patchValue({ currency: defaultCurrency }, { emitEvent: false })
+        }
+      },
       error: () => {}
     })
 
