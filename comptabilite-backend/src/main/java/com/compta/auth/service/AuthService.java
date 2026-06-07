@@ -7,8 +7,12 @@ import com.compta.auth.repository.RefreshTokenRepository;
 import com.compta.common.exception.ApiException;
 import com.compta.company.entity.Company;
 import com.compta.company.entity.CompanyBankDetails;
+import com.compta.company.entity.Country;
+import com.compta.company.entity.Currency;
 import com.compta.company.repository.CompanyBankDetailsRepository;
 import com.compta.company.repository.CompanyRepository;
+import com.compta.company.repository.CountryRepository;
+import com.compta.company.repository.CurrencyRepository;
 import com.compta.user.entity.Role;
 import com.compta.user.entity.User;
 import com.compta.user.repository.UserRepository;
@@ -24,6 +28,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -36,6 +42,8 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
+    private final CountryRepository countryRepository;
+    private final CurrencyRepository currencyRepository;
 
     @Value("${app.jwt.refresh-token-expiration}")
     private long refreshTokenExpirationMs;
@@ -65,7 +73,7 @@ public class AuthService {
                 throw ApiException.badRequest("Le nom de la banque est obligatoire lorsqu'un IBAN est fourni");
             }
             CompanyBankDetails bank = new CompanyBankDetails();
-            bank.setCompany(savedCompany);
+            bank.setCompanyId(savedCompany.getId());
             bank.setAccountHolder(request.getAccountHolder());
             bank.setBankName(request.getBankName());
             bank.setIban(request.getIban());
@@ -127,12 +135,18 @@ public class AuthService {
         refreshTokenRepository.revokeAllByUserId(userId);
     }
 
+    @Transactional
+    public void revokeAllForUser(UUID userId) {
+        refreshTokenRepository.revokeAllByUserId(userId);
+    }
+
     // ---- Private helpers ----
 
     private Company buildCompany(RegisterRequest req) {
         Company c = new Company();
         c.setName(req.getCompanyName());
-        c.setVatNumber(req.getVatNumber());
+        c.setMatriculeFiscal(req.getMatriculeFiscal());
+        c.setRneNumber(req.getRneNumber());
         c.setSector(req.getSector());
         c.setStreetNumber(req.getStreetNumber());
         c.setStreetName(req.getStreetName());
@@ -140,9 +154,27 @@ public class AuthService {
         c.setDistrict(req.getDistrict());
         c.setCity(req.getCity());
         c.setPostalCode(req.getPostalCode());
-        c.setCountry(req.getCountry() != null ? req.getCountry() : "France");
+        c.setCountry(req.getCountry() != null ? req.getCountry() : "Tunisie");
         c.setEmail(req.getEmail());
         c.setPhone(req.getPhone());
+        // Seed the supported country from the registration country
+        // Fall back to TN/TND if the label doesn't match any master entry
+        Country registrationCountry = null;
+        if (req.getCountry() != null && !req.getCountry().isBlank()) {
+            registrationCountry = countryRepository.findByLabel(req.getCountry()).orElse(null);
+        }
+        if (registrationCountry == null) {
+            registrationCountry = countryRepository.findById("TN").orElse(null);
+        }
+        if (registrationCountry != null) {
+            c.getSupportedCountries().add(registrationCountry);
+            Currency defaultCurrency = currencyRepository.findById(registrationCountry.getCurrency()).orElse(null);
+            if (defaultCurrency != null) {
+                c.getSupportedCurrencies().add(defaultCurrency);
+                c.setCurrency(defaultCurrency.getCode());
+            }
+        }
+
         return c;
     }
 

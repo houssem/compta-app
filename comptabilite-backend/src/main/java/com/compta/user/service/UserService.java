@@ -1,5 +1,6 @@
 package com.compta.user.service;
 
+import com.compta.auth.service.AuthService;
 import com.compta.common.exception.ApiException;
 import com.compta.user.dto.UserCreateRequest;
 import com.compta.user.dto.UserPasswordRequest;
@@ -22,6 +23,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthService authService;
 
     @Transactional(readOnly = true)
     public List<UserResponse> findAllByCompany(UUID companyId) {
@@ -71,6 +73,7 @@ public class UserService {
         User user = findOwnedUser(id, companyId);
         user.setPasswordHash(passwordEncoder.encode(req.newPassword()));
         userRepository.save(user);
+        authService.revokeAllForUser(id);
     }
 
     @Transactional
