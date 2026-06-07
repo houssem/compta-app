@@ -5,9 +5,9 @@ import { RouterLink, Router, ActivatedRoute } from '@angular/router'
 import { TranslateModule } from '@ngx-translate/core'
 import { SupplierService } from '../supplier.service'
 import { CreateSupplierDto, SUPPLIER_CATEGORIES, WITHHOLDING_TAX_TYPES } from '../../../shared/models/supplier.model'
-import { CURRENCIES, PAYMENT_TERMS } from '../../../shared/models/client.model'
+import { PAYMENT_TERMS } from '../../../shared/models/client.model'
 import { CompanyService } from '../../settings/company.service'
-import { CountryItem } from '../../../shared/models/company-profile.model'
+import { CountryItem, CurrencyItem } from '../../../shared/models/company-profile.model'
 
 function optionalUrl(control: AbstractControl): ValidationErrors | null {
   const v = (control.value ?? '').trim()
@@ -34,7 +34,7 @@ export class NewSupplierComponent implements OnInit {
   readonly categories        = SUPPLIER_CATEGORIES
 
   countries = signal<CountryItem[]>([])
-  readonly currencies        = CURRENCIES
+  currencies = signal<CurrencyItem[]>([])
   readonly paymentTerms      = PAYMENT_TERMS
   readonly withholdingTypes  = WITHHOLDING_TAX_TYPES
 
@@ -95,6 +95,16 @@ export class NewSupplierComponent implements OnInit {
 
     this.companyService.getSupportedCountries().subscribe({
       next: ({ countries }) => this.countries.set(countries),
+      error: () => {}
+    })
+
+    this.companyService.getSupportedCurrencies().subscribe({
+      next: ({ defaultCurrency, currencies }) => {
+        this.currencies.set(currencies)
+        if (!this.editMode()) {
+          this.form.patchValue({ currency: defaultCurrency }, { emitEvent: false })
+        }
+      },
       error: () => {}
     })
 

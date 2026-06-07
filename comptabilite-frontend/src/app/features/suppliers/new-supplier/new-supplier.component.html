@@ -351,8 +351,8 @@
           <div class="ns-field">
             <label class="ns-label" for="currency">{{ 'NEW_SUPPLIER.CURRENCY' | translate }}</label>
             <select id="currency" class="ns-select" formControlName="currency">
-              @for (c of currencies; track c.value) {
-                <option [value]="c.value">{{ c.label }}</option>
+              @for (c of currencies(); track c.isoCode) {
+                <option [value]="c.isoCode">{{ c.isoCode }} – {{ c.currencyName }}</option>
               }
             </select>
           </div>
