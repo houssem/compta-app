@@ -4,7 +4,9 @@ import { RouterLink, Router, ActivatedRoute } from '@angular/router'
 import { CommonModule } from '@angular/common'
 import { TranslateModule } from '@ngx-translate/core'
 import { HttpClient } from '@angular/common/http'
-import { Currency, Client, CURRENCIES } from '../../../shared/models/client.model'
+import { Client } from '../../../shared/models/client.model'
+import { CurrencyItem } from '../../../shared/models/company-profile.model'
+import { CompanyService } from '../../settings/company.service'
 
 interface Language { id: number; value: string; label: string }
 
@@ -41,9 +43,10 @@ interface StoredInvoice {
 })
 export class NewInvoiceComponent implements OnInit {
 
-  private http   = inject(HttpClient)
-  private router = inject(Router)
-  private route  = inject(ActivatedRoute)
+  private http           = inject(HttpClient)
+  private router         = inject(Router)
+  private route          = inject(ActivatedRoute)
+  private companyService = inject(CompanyService)
 
   // Edit mode
   editMode   = signal(false)
@@ -74,8 +77,8 @@ export class NewInvoiceComponent implements OnInit {
     )
   })
 
-  // Config — hardcoded constants
-  readonly currencies: Currency[] = CURRENCIES
+  // Config — loaded from settings API
+  currencies = signal<CurrencyItem[]>([])
   readonly languages: Language[] = [
     { id: 1, value: 'FR', label: 'Français' },
     { id: 2, value: 'EN', label: 'English'  },
@@ -137,6 +140,16 @@ export class NewInvoiceComponent implements OnInit {
   onEscape() { this.clientModalOpen.set(false) }
 
   ngOnInit(): void {
+    this.companyService.getSupportedCurrencies().subscribe({
+      next: ({ defaultCurrency, currencies }) => {
+        this.currencies.set(currencies)
+        if (!this.editMode()) {
+          this.currency.set(defaultCurrency)
+        }
+      },
+      error: () => {}
+    })
+
     const id = this.route.snapshot.paramMap.get('id')
     if (id) {
       this.editMode.set(true)
@@ -220,7 +233,7 @@ export class NewInvoiceComponent implements OnInit {
   }
 
   formatAmount(value: number): string {
-    const symbol = this.currencies.find(c => c.value === this.currency())?.symbol ?? this.currency()
+    const symbol = this.currencies().find(c => c.isoCode === this.currency())?.symbol ?? this.currency()
     return value.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + symbol
   }
 
