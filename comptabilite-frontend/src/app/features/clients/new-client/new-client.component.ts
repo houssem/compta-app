@@ -7,9 +7,10 @@ import { RouterLink, Router, ActivatedRoute } from '@angular/router'
 import { TranslateModule } from '@ngx-translate/core'
 import { ClientService } from '../client.service'
 import {
-  CreateClientDto, COUNTRIES, CURRENCIES, PAYMENT_TERMS,
-  COUNTRY_CURRENCY_MAP, CLIENT_TYPES, CLIENT_STATUSES
+  CreateClientDto, CURRENCIES, PAYMENT_TERMS, CLIENT_STATUSES
 } from '../../../shared/models/client.model'
+import { CompanyService } from '../../settings/company.service'
+import { CountryItem } from '../../../shared/models/company-profile.model'
 
 // ── Custom validators ──────────────────────────────────────────
 function optionalUrl(control: AbstractControl): ValidationErrors | null {
@@ -52,10 +53,9 @@ export class NewClientComponent implements OnInit {
   isTunisian = computed(() => this.selectedCountry() === 'Tunisie')
 
   // Config (données stables — hardcodées)
-  countries           = COUNTRIES
+  countries = signal<CountryItem[]>([])
   currencies          = CURRENCIES
   paymentTermsOptions = PAYMENT_TERMS
-  clientTypes         = CLIENT_TYPES
   clientStatuses      = CLIENT_STATUSES
 
   get f() { return this.form.controls }
@@ -70,7 +70,8 @@ export class NewClientComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    private clientService: ClientService
+    private clientService: ClientService,
+    private companyService: CompanyService
   ) {}
 
   ngOnInit(): void {
@@ -78,8 +79,7 @@ export class NewClientComponent implements OnInit {
       // Légal
       companyName:     ['', Validators.required],
       legalForm:       [''],
-      clientType:      ['PROFESSIONNEL'],
-      category:        [''],
+      sector:          [''],
       rneNumber:       [''],
       matriculeFiscal: [''],
       regimeFiscal:    ['REEL'],
@@ -93,6 +93,7 @@ export class NewClientComponent implements OnInit {
       streetNumber:    [''],
       streetName:      [''],
       complement:      [''],
+      district:        [''],
       city:            ['', Validators.required],
       postalCode:      ['', Validators.required],
       // Financier
@@ -101,8 +102,14 @@ export class NewClientComponent implements OnInit {
       maxCredit:       [0],
       defaultVatRate:  [19.00],
       discountRate:    [0.00],
+      defaultAccount:  ['411000'],
       // Notes
       notes:           [''],
+    })
+
+    this.companyService.getSupportedCountries().subscribe({
+      next: ({ countries }) => this.countries.set(countries),
+      error: () => {}
     })
 
     // Réagir au changement de pays
@@ -110,7 +117,7 @@ export class NewClientComponent implements OnInit {
       this.selectedCountry.set(country)
 
       // Auto-devise
-      const suggestedCurrency = COUNTRY_CURRENCY_MAP[country] ?? 'TND'
+      const suggestedCurrency = this.countries().find(c => c.countryName === country)?.currency ?? 'TND'
       this.form.patchValue({ currency: suggestedCurrency }, { emitEvent: false })
 
       // TVA par défaut
@@ -144,8 +151,7 @@ export class NewClientComponent implements OnInit {
           this.form.patchValue({
             companyName:     client.companyName,
             legalForm:       client.legalForm,
-            clientType:      client.clientType,
-            category:        client.category,
+            sector:          client.sector,
             rneNumber:       client.rneNumber,
             matriculeFiscal: client.matriculeFiscal,
             regimeFiscal:    client.regimeFiscal,
@@ -156,6 +162,7 @@ export class NewClientComponent implements OnInit {
             streetNumber:    client.billingAddress.streetNumber,
             streetName:      client.billingAddress.streetName,
             complement:      client.billingAddress.complement,
+            district:        client.billingAddress.district,
             city:            client.billingAddress.city,
             postalCode:      client.billingAddress.postalCode,
             currency:        client.financial.currency,
@@ -163,8 +170,9 @@ export class NewClientComponent implements OnInit {
             maxCredit:       client.financial.maxCredit,
             defaultVatRate:  client.financial.defaultVatRate,
             discountRate:    client.financial.discountRate,
+            defaultAccount:  client.financial.defaultAccount ?? '411000',
             notes:           client.notes,
-          })
+          }, { emitEvent: false })
           // Patch contacts FormArray
           if (client.contacts?.length) {
             const groups = client.contacts.map(c => {
@@ -225,9 +233,9 @@ export class NewClientComponent implements OnInit {
     const dto: CreateClientDto = {
       companyName:     v.companyName,
       legalForm:       v.legalForm,
-      clientType:      v.clientType,
-      category:        v.category,
+      sector:          v.sector,
       notes:           v.notes,
+      status:          v.status,
       rneNumber:       this.isTunisian() ? v.rneNumber : '',
       matriculeFiscal: v.matriculeFiscal,
       regimeFiscal:    this.isTunisian() ? v.regimeFiscal : '',
@@ -245,6 +253,7 @@ export class NewClientComponent implements OnInit {
         streetNumber: v.streetNumber,
         streetName:   v.streetName,
         complement:   v.complement,
+        district:     v.district,
         city:         v.city,
         postalCode:   v.postalCode,
       },
@@ -254,6 +263,7 @@ export class NewClientComponent implements OnInit {
         maxCredit:      v.maxCredit,
         defaultVatRate: v.defaultVatRate,
         discountRate:   v.discountRate,
+        defaultAccount: v.defaultAccount,
       },
     }
 
