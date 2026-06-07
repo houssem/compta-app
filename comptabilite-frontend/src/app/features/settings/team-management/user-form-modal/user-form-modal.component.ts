@@ -91,6 +91,7 @@ export class UserFormModalComponent implements OnInit {
       error: (err) => {
         this.saving.set(false)
         if (err.status === 409) this.form.get('email')?.setErrors({ taken: true })
+        else this.saveError.set('SETTINGS.SAVE_ERROR')
       }
     })
   }

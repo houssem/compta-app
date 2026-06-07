@@ -464,19 +464,14 @@
     "BANK_ERR_TOO_LONG": "Value exceeds maximum length.",
     "BANK_ERR_IBAN": "Invalid IBAN format (e.g. TN5904057142007971295652).",
     "BANK_ERR_SWIFT": "Invalid SWIFT/BIC format (e.g. BSTUTNTT or BSTUTNTTTAM).",
-    "BANK_ERR_IBAN_OR_ACCOUNT": "Please provide at least an IBAN or an account number."
-  },
-  "settings": {
-    "team": {
-      "changePassword": "Change Password",
-      "newPassword": "New Password",
-      "newPasswordPlaceholder": "Min. 8 characters",
-      "confirmPassword": "Confirm Password",
-      "confirmPasswordPlaceholder": "Repeat new password"
-    }
-  },
-  "validation": {
-    "minLength8": "Minimum 8 characters",
-    "passwordMismatch": "Passwords do not match"
+    "BANK_ERR_IBAN_OR_ACCOUNT": "Please provide at least an IBAN or an account number.",
+    "TEAM_CHANGE_PASSWORD": "Change Password",
+    "TEAM_NEW_PASSWORD": "New Password",
+    "TEAM_NEW_PASSWORD_PLACEHOLDER": "Min. 8 characters",
+    "TEAM_CONFIRM_PASSWORD": "Confirm Password",
+    "TEAM_CONFIRM_PASSWORD_PLACEHOLDER": "Repeat new password",
+    "TEAM_VALIDATION_MIN_LENGTH_8": "Minimum 8 characters",
+    "TEAM_VALIDATION_PASSWORD_MISMATCH": "Passwords do not match",
+    "SAVE_ERROR": "An error occurred while saving. Please try again."
   }
 }
