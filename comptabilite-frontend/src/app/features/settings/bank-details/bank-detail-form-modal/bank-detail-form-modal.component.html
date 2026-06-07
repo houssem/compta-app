@@ -1,0 +1,113 @@
+<div class="bm-backdrop" (click)="close()"></div>
+
+<div class="bm-modal" (click)="$event.stopPropagation()">
+
+  <div class="bm-modal__head">
+    <h2 class="bm-modal__title">
+      {{ (mode === 'create' ? 'SETTINGS.BANK_MODAL_CREATE' : 'SETTINGS.BANK_MODAL_EDIT') | translate }}
+    </h2>
+    <button type="button" class="bm-modal__close" (click)="close()">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="bm-modal__body">
+
+    <div class="bm-form-row">
+      <div class="bm-field">
+        <label class="bm-field__label">{{ 'SETTINGS.BANK_ACCOUNT_HOLDER' | translate }}</label>
+        <input formControlName="accountHolder" class="bm-field__input" />
+      </div>
+      <div class="bm-field">
+        <label class="bm-field__label">
+          {{ 'SETTINGS.BANK_NAME' | translate }}
+          <span class="bm-required">*</span>
+        </label>
+        <input formControlName="bankName" class="bm-field__input"
+               [class.bm-field__input--error]="fieldError('bankName')" />
+        @if (fieldError('bankName'); as err) {
+          <p class="bm-field__error">{{ err | translate }}</p>
+        }
+      </div>
+    </div>
+
+    <div class="bm-form-row">
+      <div class="bm-field">
+        <label class="bm-field__label">{{ 'SETTINGS.BANK_BRANCH' | translate }}</label>
+        <input formControlName="branch" class="bm-field__input" />
+      </div>
+      <div class="bm-field">
+        <label class="bm-field__label">{{ 'SETTINGS.BANK_ACCOUNT_NUMBER' | translate }}</label>
+        <input formControlName="accountNumber" class="bm-field__input"
+               [class.bm-field__input--error]="crossFieldError()" />
+      </div>
+    </div>
+
+    <div class="bm-field">
+      <label class="bm-field__label">{{ 'SETTINGS.BANK_IBAN' | translate }}</label>
+      <input formControlName="iban" class="bm-field__input bm-field__input--mono"
+             [class.bm-field__input--error]="fieldError('iban') || crossFieldError()"
+             placeholder="TN5900000000000000000000"
+             (input)="normalizeIban($event)" />
+      @if (fieldError('iban'); as err) {
+        <p class="bm-field__error">{{ err | translate }}</p>
+      } @else {
+        <p class="bm-field__hint">{{ 'SETTINGS.BANK_IBAN_HINT' | translate }}</p>
+      }
+    </div>
+
+    @if (crossFieldError()) {
+      <p class="bm-field__error">{{ 'SETTINGS.BANK_ERR_IBAN_OR_ACCOUNT' | translate }}</p>
+    }
+
+    <div class="bm-form-row">
+      <div class="bm-field">
+        <label class="bm-field__label">{{ 'SETTINGS.BANK_SWIFT' | translate }}</label>
+        <input formControlName="swiftBic" class="bm-field__input bm-field__input--mono"
+               [class.bm-field__input--error]="fieldError('swiftBic')"
+               placeholder="BSTUTNTT"
+               (input)="normalizeSwift($event)" />
+        @if (fieldError('swiftBic'); as err) {
+          <p class="bm-field__error">{{ err | translate }}</p>
+        } @else {
+          <p class="bm-field__hint">{{ 'SETTINGS.BANK_SWIFT_HINT' | translate }}</p>
+        }
+      </div>
+      <div class="bm-field">
+        <label class="bm-field__label">
+          {{ 'SETTINGS.BANK_CURRENCY' | translate }}
+          <span class="bm-required">*</span>
+        </label>
+        <select formControlName="currency" class="bm-field__input">
+          @for (c of currencies(); track c.isoCode) {
+            <option [value]="c.isoCode">{{ c.isoCode }} – {{ c.currencyName }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="bm-field bm-field--checkbox">
+      <label class="bm-field__check-label">
+        <input type="checkbox" formControlName="defaultAccount" class="bm-field__check" />
+        {{ 'SETTINGS.BANK_DEFAULT' | translate }}
+      </label>
+    </div>
+
+    @if (saveError()) {
+      <p class="bm-error">{{ saveError() | translate }}</p>
+    }
+
+    <div class="bm-modal__foot">
+      <button type="button" class="bm-btn-cancel" (click)="close()">
+        {{ 'SETTINGS.BTN_CANCEL' | translate }}
+      </button>
+      <button type="submit" class="bm-btn-primary" [disabled]="saving()">
+        @if (saving()) {
+          <span class="material-symbols-outlined bm-spin">progress_activity</span>
+        }
+        {{ (mode === 'create' ? 'SETTINGS.BTN_CREATE' : 'SETTINGS.BTN_UPDATE') | translate }}
+      </button>
+    </div>
+
+  </form>
+</div>
