@@ -27,8 +27,8 @@ public class RegisterRequest {
     @NotBlank(message = "La raison sociale est obligatoire")
     private String companyName;
 
-    @Size(max = 50, message = "Le numéro TVA doit contenir au maximum 50 caractères")
-    private String vatNumber;
+    private String matriculeFiscal;
+    private String rneNumber;
     private String sector;
     private String streetNumber;
     private String streetName;

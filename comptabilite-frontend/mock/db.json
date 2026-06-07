@@ -6,7 +6,6 @@
       "password": "password123",
       "company": {
         "name": "Acme SAS",
-        "vatNumber": "",
         "industry": "Technologie",
         "address": {
           "streetNo": "",
@@ -33,7 +32,6 @@
       "password": "Hklhkl201181$",
       "company": {
         "name": "Supply World Dev",
-        "vatNumber": "17218899W",
         "industry": "Technologie",
         "address": {
           "streetNo": "14",

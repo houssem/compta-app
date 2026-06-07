@@ -16,14 +16,15 @@ public record SupplierRequest(
 
         String website,
 
-        @NotBlank(message = "La catégorie est obligatoire")
-        String category,
+        @NotBlank(message = "Le secteur d'activité est obligatoire")
+        String sector,
 
         String status,
 
         String rneNumber,
         String regimeFiscal,
         Boolean assujettiTva,
+        String notes,
 
         @NotNull(message = "Au moins un contact est obligatoire")
         @Size(min = 1, message = "Au moins un contact est obligatoire")
@@ -47,7 +48,10 @@ public record SupplierRequest(
     ) {}
 
     public record AddressDto(
-            String street,
+            String streetNumber,
+            String streetName,
+            String complement,
+            String district,
             String city,
             String postalCode,
             String country
@@ -58,6 +62,9 @@ public record SupplierRequest(
             String currency,
             String paymentTerms,
             String defaultAccount,
+            BigDecimal maxCredit,
+            BigDecimal defaultVatRate,
+            BigDecimal discountRate,
             String withholdingTaxType,
             BigDecimal withholdingTaxRate
     ) {}

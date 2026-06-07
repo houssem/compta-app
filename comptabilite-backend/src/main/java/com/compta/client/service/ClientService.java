@@ -3,9 +3,9 @@ package com.compta.client.service;
 import com.compta.client.dto.ClientRequest;
 import com.compta.client.dto.ClientResponse;
 import com.compta.client.entity.Client;
-import com.compta.client.entity.ClientContact;
 import com.compta.client.repository.ClientContactRepository;
 import com.compta.client.repository.ClientRepository;
+import com.compta.common.Contact;
 import com.compta.common.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,8 +32,8 @@ public class ClientService {
     public ClientResponse getById(UUID id, UUID companyId) {
         Client client = clientRepository.findByIdAndCompanyId(id, companyId)
                 .orElseThrow(() -> ApiException.notFound("Client introuvable"));
-        List<ClientContact> contacts = contactRepository.findAllByClientIdOrderByPrimaryDesc(client.getId());
-        return ClientResponse.from(client, contacts);
+        return ClientResponse.from(client,
+                contactRepository.findAllByClientIdOrderByPrimaryDesc(client.getId()));
     }
 
     @Transactional
@@ -44,7 +44,8 @@ public class ClientService {
         applyRequest(client, req);
         Client saved = clientRepository.save(client);
         applyContacts(saved, req.contacts());
-        return ClientResponse.from(saved, contactRepository.findAllByClientIdOrderByPrimaryDesc(saved.getId()));
+        return ClientResponse.from(saved,
+                contactRepository.findAllByClientIdOrderByPrimaryDesc(saved.getId()));
     }
 
     @Transactional
@@ -54,14 +55,15 @@ public class ClientService {
         applyRequest(client, req);
         Client saved = clientRepository.save(client);
         applyContacts(saved, req.contacts());
-        return ClientResponse.from(saved, contactRepository.findAllByClientIdOrderByPrimaryDesc(saved.getId()));
+        return ClientResponse.from(saved,
+                contactRepository.findAllByClientIdOrderByPrimaryDesc(saved.getId()));
     }
 
     @Transactional
     public ClientResponse setPrimaryContact(UUID clientId, UUID contactId, UUID companyId) {
         Client client = clientRepository.findByIdAndCompanyId(clientId, companyId)
                 .orElseThrow(() -> ApiException.notFound("Client introuvable"));
-        ClientContact contact = contactRepository.findByIdAndClientId(contactId, clientId)
+        Contact contact = contactRepository.findByIdAndClientId(contactId, clientId)
                 .orElseThrow(() -> ApiException.notFound("Contact introuvable"));
 
         contactRepository.clearPrimaryByClientId(clientId);
@@ -72,7 +74,8 @@ public class ClientService {
         client.setPhone(contact.getPhone());
         clientRepository.save(client);
 
-        return ClientResponse.from(client, contactRepository.findAllByClientIdOrderByPrimaryDesc(clientId));
+        return ClientResponse.from(client,
+                contactRepository.findAllByClientIdOrderByPrimaryDesc(clientId));
     }
 
     @Transactional
@@ -88,8 +91,7 @@ public class ClientService {
     private void applyRequest(Client client, ClientRequest req) {
         client.setName(req.companyName());
         client.setLegalForm(req.legalForm());
-        client.setClientType(req.clientType() != null ? req.clientType() : "PROFESSIONNEL");
-        client.setCategory(req.category());
+        client.setSector(req.sector());
         client.setNotes(req.notes());
         if (req.status() != null) {
             client.setStatus(req.status());
@@ -104,6 +106,7 @@ public class ClientService {
             client.setStreetNumber(req.billingAddress().streetNumber());
             client.setStreetName(req.billingAddress().streetName());
             client.setComplement(req.billingAddress().complement());
+            client.setDistrict(req.billingAddress().district());
             client.setCity(req.billingAddress().city());
             client.setPostalCode(req.billingAddress().postalCode());
             client.setCountry(req.billingAddress().country() != null ? req.billingAddress().country() : "Tunisie");
@@ -115,6 +118,7 @@ public class ClientService {
             client.setMaxCredit(req.financial().maxCredit());
             client.setDefaultVatRate(req.financial().defaultVatRate() != null ? req.financial().defaultVatRate() : new BigDecimal("19.00"));
             client.setDiscountRate(req.financial().discountRate() != null ? req.financial().discountRate() : BigDecimal.ZERO);
+            client.setDefaultAccount(req.financial().defaultAccount() != null ? req.financial().defaultAccount() : "411000");
         }
     }
 
@@ -127,17 +131,16 @@ public class ClientService {
 
         for (int i = 0; i < dtos.size(); i++) {
             ClientRequest.ContactDto dto = dtos.get(i);
-            ClientContact cc = new ClientContact();
-            cc.setClientId(client.getId());
-            cc.setFullName(dto.fullName());
-            cc.setRole(dto.role());
-            cc.setEmail(dto.email());
-            cc.setPhone(dto.phone());
-            cc.setPrimary(!hasPrimary ? i == 0 : dto.isPrimary());
-            contactRepository.save(cc);
+            Contact contact = new Contact();
+            contact.setClientId(client.getId());
+            contact.setFullName(dto.fullName());
+            contact.setRole(dto.role());
+            contact.setEmail(dto.email());
+            contact.setPhone(dto.phone());
+            contact.setPrimary(!hasPrimary ? i == 0 : dto.isPrimary());
+            contactRepository.save(contact);
         }
 
-        // Sync email/phone from primary contact
         ClientRequest.ContactDto primary = hasPrimary
                 ? dtos.stream().filter(ClientRequest.ContactDto::isPrimary).findFirst().orElse(dtos.get(0))
                 : dtos.get(0);

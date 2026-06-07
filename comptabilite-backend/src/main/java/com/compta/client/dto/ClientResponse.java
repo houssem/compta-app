@@ -1,8 +1,8 @@
 package com.compta.client.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.compta.common.Contact;
 import com.compta.client.entity.Client;
-import com.compta.client.entity.ClientContact;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,8 +18,7 @@ public record ClientResponse(
         String matriculeFiscal,
         String regimeFiscal,
         boolean assujettiTva,
-        String clientType,
-        String category,
+        String sector,
         String notes,
         String website,
         String status,
@@ -34,6 +33,7 @@ public record ClientResponse(
             String streetNumber,
             String streetName,
             String complement,
+            String district,
             String city,
             String postalCode,
             String country
@@ -44,10 +44,11 @@ public record ClientResponse(
             String paymentTerms,
             BigDecimal maxCredit,
             BigDecimal defaultVatRate,
-            BigDecimal discountRate
+            BigDecimal discountRate,
+            String defaultAccount
     ) {}
 
-    public static ClientResponse from(Client c, List<ClientContact> contacts) {
+    public static ClientResponse from(Client c, List<Contact> contacts) {
         return new ClientResponse(
                 c.getId(),
                 c.getCode(),
@@ -57,8 +58,7 @@ public record ClientResponse(
                 c.getMatriculeFiscal(),
                 c.getRegimeFiscal(),
                 c.isAssujettiTva(),
-                c.getClientType(),
-                c.getCategory(),
+                c.getSector(),
                 c.getNotes(),
                 c.getWebsite(),
                 c.getStatus(),
@@ -67,9 +67,9 @@ public record ClientResponse(
                         cc.getId(), cc.getFullName(), cc.getRole(), cc.getEmail(), cc.getPhone(), cc.isPrimary()
                 )).toList(),
                 new AddressDto(c.getStreetNumber(), c.getStreetName(), c.getComplement(),
-                        c.getCity(), c.getPostalCode(), c.getCountry()),
+                        c.getDistrict(), c.getCity(), c.getPostalCode(), c.getCountry()),
                 new FinancialDto(c.getCurrency(), c.getPaymentTerms(), c.getMaxCredit(),
-                        c.getDefaultVatRate(), c.getDiscountRate())
+                        c.getDefaultVatRate(), c.getDiscountRate(), c.getDefaultAccount())
         );
     }
 }

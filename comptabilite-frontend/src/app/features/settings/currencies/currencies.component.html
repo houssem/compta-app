@@ -1,0 +1,67 @@
+<div class="sc-page">
+
+  <div class="sc-header">
+    <h1 class="sc-header__title">{{ 'SETTINGS.CURRENCIES_TITLE' | translate }}</h1>
+    <p class="sc-header__sub">{{ 'SETTINGS.CURRENCIES_SUBTITLE' | translate }}</p>
+  </div>
+
+  @if (loading()) {
+    <div class="sc-skeleton"></div>
+  } @else {
+
+    <div class="sc-card">
+      <div class="sc-card__head">
+        <div class="sc-card__icon">
+          <span class="material-symbols-outlined">payments</span>
+        </div>
+        <div>
+          <p class="sc-card__title">{{ 'SETTINGS.CURRENCIES_CARD_TITLE' | translate }}</p>
+          <p class="sc-card__sub">{{ 'SETTINGS.CURRENCIES_CARD_SUB' | translate }}</p>
+        </div>
+      </div>
+
+      <!-- Master list -->
+      <div class="sc-list">
+        @for (c of masterList(); track c.isoCode) {
+          <div class="sc-item" [class.sc-item--on]="isSelected(c.isoCode)"
+               [class.sc-item--locked]="c.isoCode === defaultCurrency()"
+               (click)="toggle(c.isoCode)">
+            <div class="sc-item__symbol">{{ c.symbol }}</div>
+            <div class="sc-item__info">
+              <span class="sc-item__code">{{ c.isoCode }}</span>
+              <span class="sc-item__label">{{ c.currencyName }}</span>
+            </div>
+            @if (c.isoCode === defaultCurrency()) {
+              <span class="sc-badge">{{ 'SETTINGS.CURRENCIES_DEFAULT_BADGE' | translate }}</span>
+            }
+            <span class="sc-check material-symbols-outlined">
+              {{ isSelected(c.isoCode) ? 'check_circle' : 'radio_button_unchecked' }}
+            </span>
+          </div>
+        }
+
+      </div>
+    </div>
+
+    <div class="sc-actions">
+      @if (saveError()) {
+        <span class="sc-actions__msg sc-actions__msg--error">
+          <span class="material-symbols-outlined">error</span>{{ saveError() }}
+        </span>
+      }
+      @if (saveSuccess()) {
+        <span class="sc-actions__msg sc-actions__msg--success">
+          <span class="material-symbols-outlined">check_circle</span>
+          {{ 'SETTINGS.SAVE_SUCCESS' | translate }}
+        </span>
+      }
+      <button class="sc-btn-primary" (click)="save()" [disabled]="saving()">
+        @if (saving()) {
+          <span class="material-symbols-outlined sc-spin">progress_activity</span>
+        }
+        {{ 'SETTINGS.BTN_SAVE' | translate }}
+      </button>
+    </div>
+
+  }
+</div>

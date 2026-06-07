@@ -50,6 +50,9 @@ public class Supplier extends BaseEntity {
     @Column(name = "complement", length = 255)
     private String complement;
 
+    @Column(name = "district", length = 100)
+    private String district;
+
     @Column(name = "city", length = 100)
     private String city;
 
@@ -71,26 +74,29 @@ public class Supplier extends BaseEntity {
     @Column(name = "payment_terms", length = 100)
     private String paymentTerms;
 
-    @Column(name = "category", length = 100)
-    private String category;
+    @Column(name = "sector", length = 100)
+    private String sector;
 
-    @Column(name = "default_account", length = 10)
+    @Column(name = "default_account", nullable = false, length = 10)
     private String defaultAccount = "401000";
 
-    @Column(name = "bank_name", length = 255)
-    private String bankName;
+    @Column(name = "max_credit", nullable = false, precision = 15, scale = 2)
+    private java.math.BigDecimal maxCredit = java.math.BigDecimal.ZERO;
 
-    @Column(name = "iban", length = 34)
-    private String iban;
+    @Column(name = "default_vat_rate", nullable = false, precision = 5, scale = 2)
+    private java.math.BigDecimal defaultVatRate = new java.math.BigDecimal("19.00");
 
-    @Column(name = "swift_bic", length = 11)
-    private String swiftBic;
+    @Column(name = "discount_rate", nullable = false, precision = 5, scale = 2)
+    private java.math.BigDecimal discountRate = java.math.BigDecimal.ZERO;
 
     @Column(name = "withholding_tax_type", length = 50)
     private String withholdingTaxType;
 
     @Column(name = "withholding_tax_rate", precision = 5, scale = 2)
     private BigDecimal withholdingTaxRate;
+
+    @Column(name = "notes", columnDefinition = "TEXT")
+    private String notes;
 
     @Column(name = "status", nullable = false, length = 20)
     private String status = "ACTIVE";

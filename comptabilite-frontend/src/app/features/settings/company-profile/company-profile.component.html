@@ -67,8 +67,38 @@
             }
           </div>
           <div class="cp-field">
-            <label class="cp-field__label">{{ 'SETTINGS.FIELD_VAT' | translate }}</label>
-            <input formControlName="vatNumber" class="cp-field__input" />
+            <label class="cp-field__label">{{ 'SETTINGS.FIELD_LEGAL_FORM' | translate }}</label>
+            <input formControlName="legalForm" class="cp-field__input" placeholder="SARL, SA, SUARL…" />
+          </div>
+          <div class="cp-field">
+            <label class="cp-field__label">{{ 'SETTINGS.FIELD_MATRICULE_FISCAL' | translate }}</label>
+            <input formControlName="matriculeFiscal" class="cp-field__input" />
+          </div>
+          <div class="cp-field">
+            <label class="cp-field__label">{{ 'SETTINGS.FIELD_RNE' | translate }}</label>
+            <input formControlName="rneNumber" class="cp-field__input" />
+          </div>
+          <div class="cp-field">
+            <label class="cp-field__label">{{ 'SETTINGS.FIELD_SECTOR' | translate }}</label>
+            <input formControlName="sector" class="cp-field__input" />
+          </div>
+          <div class="cp-field">
+            <label class="cp-field__label">{{ 'SETTINGS.FIELD_WEBSITE' | translate }}</label>
+            <input formControlName="website" class="cp-field__input" placeholder="https://…" />
+          </div>
+          <div class="cp-field">
+            <label class="cp-field__label">{{ 'SETTINGS.FIELD_REGIME_FISCAL' | translate }}</label>
+            <select formControlName="regimeFiscal" class="cp-field__input">
+              <option value="REEL">Réel</option>
+              <option value="FORFAITAIRE">Forfaitaire</option>
+            </select>
+          </div>
+          <div class="cp-field">
+            <label class="cp-field__label">{{ 'SETTINGS.FIELD_ASSUJETTI_TVA' | translate }}</label>
+            <div class="cp-checkbox">
+              <input type="checkbox" formControlName="assujettiTva" id="assujettiTva" />
+              <label for="assujettiTva">{{ 'SETTINGS.ASSUJETTI_TVA_LABEL' | translate }}</label>
+            </div>
           </div>
         </div>
       </div>
@@ -85,6 +115,10 @@
           </div>
         </div>
         <div class="cp-form-grid cp-form-grid--three">
+          <div class="cp-field cp-form-grid--span3">
+            <label class="cp-field__label">{{ 'SETTINGS.FIELD_COUNTRY' | translate }}</label>
+            <input formControlName="country" class="cp-field__input" />
+          </div>
           <div class="cp-field">
             <label class="cp-field__label">{{ 'SETTINGS.FIELD_STREET_NUMBER' | translate }}</label>
             <input formControlName="streetNumber" class="cp-field__input" />
@@ -113,9 +147,60 @@
             <label class="cp-field__label">{{ 'SETTINGS.FIELD_POSTAL_CODE' | translate }}</label>
             <input formControlName="postalCode" class="cp-field__input" />
           </div>
+        </div>
+      </div>
+
+      <!-- Contact card -->
+      <div class="cp-card">
+        <div class="cp-card__head">
+          <div class="cp-card__icon">
+            <span class="material-symbols-outlined">contacts</span>
+          </div>
+          <div>
+            <p class="cp-card__title">{{ 'SETTINGS.CONTACT_CARD_TITLE' | translate }}</p>
+            <p class="cp-card__sub">{{ 'SETTINGS.CONTACT_CARD_SUB' | translate }}</p>
+          </div>
+        </div>
+        <div class="cp-form-grid">
           <div class="cp-field">
-            <label class="cp-field__label">{{ 'SETTINGS.FIELD_COUNTRY' | translate }}</label>
-            <input formControlName="country" class="cp-field__input" />
+            <label class="cp-field__label">{{ 'SETTINGS.FIELD_CURRENCY' | translate }}</label>
+            <select formControlName="currency" class="cp-field__input">
+              <option value="TND">TND – Dinar tunisien</option>
+              <option value="EUR">EUR – Euro</option>
+              <option value="USD">USD – Dollar américain</option>
+              <option value="GBP">GBP – Livre sterling</option>
+            </select>
+          </div>
+          <div class="cp-field">
+            <label class="cp-field__label">{{ 'SETTINGS.FIELD_PHONE' | translate }}</label>
+            <input formControlName="phone" class="cp-field__input" placeholder="+216 XX XXX XXX" />
+          </div>
+          <div class="cp-field">
+            <label class="cp-field__label">{{ 'SETTINGS.FIELD_EMAIL' | translate }}</label>
+            <input formControlName="email" class="cp-field__input"
+                   [class.cp-field__input--error]="form.get('email')?.invalid && form.get('email')?.touched" />
+            @if (form.get('email')?.hasError('email') && form.get('email')?.touched) {
+              <p class="cp-field__error">{{ 'SETTINGS.ERROR_EMAIL_INVALID' | translate }}</p>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Notes card -->
+      <div class="cp-card">
+        <div class="cp-card__head">
+          <div class="cp-card__icon">
+            <span class="material-symbols-outlined">notes</span>
+          </div>
+          <div>
+            <p class="cp-card__title">{{ 'SETTINGS.NOTES_CARD_TITLE' | translate }}</p>
+            <p class="cp-card__sub">{{ 'SETTINGS.NOTES_CARD_SUB' | translate }}</p>
+          </div>
+        </div>
+        <div class="cp-form-grid cp-form-grid--one">
+          <div class="cp-field">
+            <textarea formControlName="notes" class="cp-field__input cp-field__input--textarea"
+              rows="4" [placeholder]="'SETTINGS.NOTES_PLACEHOLDER' | translate"></textarea>
           </div>
         </div>
       </div>

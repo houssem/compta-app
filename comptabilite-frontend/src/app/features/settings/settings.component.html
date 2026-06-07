@@ -16,6 +16,28 @@
       <span class="material-symbols-outlined">group</span>
       {{ 'SETTINGS.NAV_TEAM' | translate }}
     </a>
+
+    <a routerLink="bank-details"
+       routerLinkActive="set-nav__item--active"
+       class="set-nav__item">
+      <span class="material-symbols-outlined">account_balance</span>
+      {{ 'SETTINGS.NAV_BANK_DETAILS' | translate }}
+    </a>
+
+    <a routerLink="currencies"
+       routerLinkActive="set-nav__item--active"
+       class="set-nav__item">
+      <span class="material-symbols-outlined">payments</span>
+      {{ 'SETTINGS.NAV_CURRENCIES' | translate }}
+    </a>
+
+    <a routerLink="countries"
+       routerLinkActive="set-nav__item--active"
+       class="set-nav__item">
+      <span class="material-symbols-outlined">public</span>
+      {{ 'SETTINGS.NAV_COUNTRIES' | translate }}
+    </a>
+
   </aside>
 
   <main class="set-content">

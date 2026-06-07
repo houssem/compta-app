@@ -10,7 +10,10 @@ export interface SupplierContact {
 }
 
 export interface SupplierAddress {
-  street: string
+  streetNumber: string
+  streetName: string
+  complement: string
+  district: string
   city: string
   postalCode: string
   country: string
@@ -21,6 +24,9 @@ export interface SupplierFinancial {
   currency: string
   paymentTerms: string
   defaultAccount: string
+  maxCredit: number
+  defaultVatRate: number
+  discountRate: number
   withholdingTaxType: string
   withholdingTaxRate: number | null
 }
@@ -34,7 +40,11 @@ export interface SupplierBank {
 export interface CreateSupplierDto {
   companyName: string
   website: string
-  category: string
+  sector: string
+  notes: string
+  rneNumber: string
+  regimeFiscal: string
+  assujettiTva: boolean
   contacts: SupplierContact[]
   address: SupplierAddress
   financial: SupplierFinancial
@@ -46,10 +56,11 @@ export interface Supplier {
   reference: string
   companyName: string
   website: string
-  category: string
+  sector: string
   rneNumber: string
   regimeFiscal: string
   assujettiTva: boolean
+  notes: string | null
   status: string
   createdAt: string
   contacts: SupplierContact[]

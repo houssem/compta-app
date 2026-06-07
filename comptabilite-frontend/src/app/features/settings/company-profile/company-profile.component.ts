@@ -29,15 +29,25 @@ export class CompanyProfileComponent implements OnInit {
   private lastLoaded: CompanyProfile | null = null
 
   form = this.fb.nonNullable.group({
-    name:         ['', Validators.required],
-    vatNumber:    [''],
-    streetNumber: [''],
-    streetName:   [''],
-    complement:   [''],
-    district:     [''],
-    city:         ['', Validators.required],
-    postalCode:   [''],
-    country:      ['Tunisie']
+    name:             ['', Validators.required],
+    legalForm:        [''],
+    regimeFiscal:     ['REEL'],
+    assujettiTva:     [true],
+    website:          [''],
+    matriculeFiscal:  [''],
+    rneNumber:        [''],
+    sector:           [''],
+    streetNumber:     [''],
+    streetName:       [''],
+    complement:       [''],
+    district:         [''],
+    city:             ['', Validators.required],
+    postalCode:       [''],
+    country:          ['Tunisie'],
+    phone:            [''],
+    email:            ['', Validators.email],
+    currency:         ['TND'],
+    notes:            ['']
   })
 
   ngOnInit(): void {
@@ -54,15 +64,25 @@ export class CompanyProfileComponent implements OnInit {
 
   private patchFormFromProfile(c: CompanyProfile): void {
     this.form.patchValue({
-      name:         c.name         ?? '',
-      vatNumber:    c.vatNumber    ?? '',
-      streetNumber: c.streetNumber ?? '',
-      streetName:   c.streetName   ?? '',
-      complement:   c.complement   ?? '',
-      district:     c.district     ?? '',
-      city:         c.city         ?? '',
-      postalCode:   c.postalCode   ?? '',
-      country:      c.country      ?? 'Tunisie'
+      name:            c.name            ?? '',
+      legalForm:       c.legalForm       ?? '',
+      regimeFiscal:    c.regimeFiscal    ?? 'REEL',
+      assujettiTva:    c.assujettiTva    ?? true,
+      website:         c.website         ?? '',
+      matriculeFiscal: c.matriculeFiscal ?? '',
+      rneNumber:       c.rneNumber       ?? '',
+      sector:          c.sector          ?? '',
+      streetNumber:    c.streetNumber    ?? '',
+      streetName:      c.streetName      ?? '',
+      complement:      c.complement      ?? '',
+      district:        c.district        ?? '',
+      city:            c.city            ?? '',
+      postalCode:      c.postalCode      ?? '',
+      country:         c.country         ?? 'Tunisie',
+      phone:           c.phone           ?? '',
+      email:           c.email           ?? '',
+      currency:        c.currency        ?? 'TND',
+      notes:           c.notes           ?? ''
     })
   }
 

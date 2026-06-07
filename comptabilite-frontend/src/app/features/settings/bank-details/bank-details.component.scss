@@ -1,0 +1,273 @@
+:host {
+  display: block;
+}
+
+.bd-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 32px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  @media (max-width: 768px) {
+    padding: 20px 16px 48px;
+  }
+}
+
+/* ── Header ───────────────────────────────────── */
+
+.bd-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.bd-header__title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-on-surface);
+}
+
+.bd-header__sub {
+  font-size: 14px;
+  color: var(--color-on-surface-variant);
+  margin-top: 4px;
+}
+
+.bd-btn-new {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: var(--color-primary);
+  color: var(--color-on-primary, #fff);
+  border: none;
+  border-radius: var(--radius-md, 8px);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+
+  .material-symbols-outlined { font-size: 18px; }
+}
+
+/* ── Error ────────────────────────────────────── */
+
+.bd-error {
+  padding: 12px 16px;
+  background: rgba(239, 68, 68, 0.08);
+  color: #ef4444;
+  border-radius: var(--radius-md, 8px);
+  font-size: 14px;
+}
+
+/* ── List ─────────────────────────────────────── */
+
+.bd-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ── Card ─────────────────────────────────────── */
+
+.bd-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg, 12px);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  &--skeleton {
+    gap: 12px;
+    padding: 20px 24px;
+  }
+}
+
+.bd-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.bd-card__name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-on-surface);
+}
+
+.bd-card__branch {
+  font-weight: 400;
+  color: var(--color-on-surface-variant);
+}
+
+.bd-card__holder {
+  font-size: 13px;
+  color: var(--color-on-surface-variant);
+  margin-top: 3px;
+}
+
+.bd-card__badges {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* ── Badges ───────────────────────────────────── */
+
+.bd-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+
+  &--currency {
+    background: var(--color-surface-container, #f1f5f9);
+    color: var(--color-on-surface-variant);
+    border: 1px solid var(--color-border-subtle);
+  }
+
+  &--default {
+    background: #eff6ff;
+    color: #2563eb;
+  }
+}
+
+/* ── Fields row ───────────────────────────────── */
+
+.bd-card__fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 32px;
+}
+
+.bd-card__field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bd-card__label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-on-surface-variant);
+}
+
+.bd-card__value {
+  font-size: 14px;
+  color: var(--color-on-surface);
+
+  &--mono {
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.5px;
+  }
+}
+
+/* ── Actions ──────────────────────────────────── */
+
+.bd-card__actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.bd-icon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md, 6px);
+  border: 1.5px solid var(--color-border-subtle);
+  background: var(--color-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-on-surface-variant);
+  transition: background 0.15s;
+
+  &:hover { background: var(--color-surface-container); }
+
+  .material-symbols-outlined { font-size: 16px; }
+
+  &--danger {
+    border-color: #fecaca;
+    color: #ef4444;
+
+    &:hover { background: #fef2f2; }
+  }
+}
+
+/* ── Inline delete confirm ────────────────────── */
+
+.bd-confirm {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.bd-confirm__btn {
+  padding: 6px 12px;
+  border-radius: var(--radius-md, 6px);
+  border: 1.5px solid var(--color-border-subtle);
+  background: var(--color-surface);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--color-on-surface-variant);
+
+  &:hover { background: var(--color-surface-container); }
+
+  &--yes {
+    background: #ef4444;
+    color: #fff;
+    border-color: #ef4444;
+
+    &:hover { background: #dc2626; }
+    &:disabled { opacity: 0.6; cursor: not-allowed; }
+  }
+}
+
+/* ── Empty state ──────────────────────────────── */
+
+.bd-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 60px 24px;
+  color: var(--color-on-surface-variant);
+  font-size: 14px;
+  text-align: center;
+}
+
+.bd-empty__icon {
+  font-size: 48px;
+  opacity: 0.35;
+}
+
+/* ── Skeleton ─────────────────────────────────── */
+
+@keyframes bd-shimmer {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
+.bd-skel {
+  border-radius: var(--radius-md, 6px);
+  background: var(--color-surface-container, #f1f5f9);
+  animation: bd-shimmer 1.4s ease-in-out infinite;
+  height: 14px;
+
+  &--title { width: 200px; height: 20px; }
+  &--line  { width: 100%; height: 14px; }
+  &--short { width: 60%; }
+}

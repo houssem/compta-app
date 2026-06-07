@@ -2,13 +2,15 @@
 
 export interface Country {
   id: number
-  value: string
+  code: string   // ISO 3166-1 alpha-2
+  value: string  // full name used in forms and stored in DB address fields
   label: string
 }
 
 export interface Currency {
   id: number
-  value: string
+  isoCode: string // ISO 4217 (e.g. 'TND', 'EUR')
+  value: string   // same as isoCode — used as form/DB value
   label: string
   symbol: string
 }
@@ -21,26 +23,26 @@ export interface PaymentTerm {
 }
 
 export const COUNTRIES: Country[] = [
-  { id:  1, value: 'Tunisie',         label: 'Tunisie'          },
-  { id:  2, value: 'Algérie',         label: 'Algérie'          },
-  { id:  3, value: 'Maroc',           label: 'Maroc'            },
-  { id:  4, value: 'Libye',           label: 'Libye'            },
-  { id:  5, value: 'France',          label: 'France'           },
-  { id:  6, value: 'Allemagne',       label: 'Allemagne'        },
-  { id:  7, value: 'Italie',          label: 'Italie'           },
-  { id:  8, value: 'Espagne',         label: 'Espagne'          },
-  { id:  9, value: 'Royaume-Uni',     label: 'Royaume-Uni'      },
-  { id: 10, value: 'États-Unis',      label: 'États-Unis'       },
-  { id: 11, value: 'Émirats arabes',  label: 'Émirats arabes'   },
-  { id: 12, value: 'Arabie Saoudite', label: 'Arabie Saoudite'  },
-  { id: 13, value: 'Autre',           label: 'Autre'            },
+  { id:  1, code: 'TN', value: 'Tunisie',         label: 'Tunisie'          },
+  { id:  2, code: 'DZ', value: 'Algérie',         label: 'Algérie'          },
+  { id:  3, code: 'MA', value: 'Maroc',           label: 'Maroc'            },
+  { id:  4, code: 'LY', value: 'Libye',           label: 'Libye'            },
+  { id:  5, code: 'FR', value: 'France',          label: 'France'           },
+  { id:  6, code: 'DE', value: 'Allemagne',       label: 'Allemagne'        },
+  { id:  7, code: 'IT', value: 'Italie',          label: 'Italie'           },
+  { id:  8, code: 'ES', value: 'Espagne',         label: 'Espagne'          },
+  { id:  9, code: 'GB', value: 'Royaume-Uni',     label: 'Royaume-Uni'      },
+  { id: 10, code: 'US', value: 'États-Unis',      label: 'États-Unis'       },
+  { id: 11, code: 'AE', value: 'Émirats arabes',  label: 'Émirats arabes'   },
+  { id: 12, code: 'SA', value: 'Arabie Saoudite', label: 'Arabie Saoudite'  },
+  { id: 13, code: 'XX', value: 'Autre',           label: 'Autre'            },
 ]
 
 export const CURRENCIES: Currency[] = [
-  { id: 1, value: 'TND', label: 'TND', symbol: 'DT' },
-  { id: 2, value: 'EUR', label: 'EUR – Euro', symbol: '€' },
-  { id: 3, value: 'USD', label: 'USD – Dollar américain', symbol: '$' },
-  { id: 4, value: 'GBP', label: 'GBP – Livre sterling', symbol: '£' },
+  { id: 1, isoCode: 'TND', value: 'TND', label: 'TND – Dinar tunisien',    symbol: 'DT' },
+  { id: 2, isoCode: 'EUR', value: 'EUR', label: 'EUR – Euro',              symbol: '€'  },
+  { id: 3, isoCode: 'USD', value: 'USD', label: 'USD – Dollar américain',  symbol: '$'  },
+  { id: 4, isoCode: 'GBP', value: 'GBP', label: 'GBP – Livre sterling',   symbol: '£'  },
 ]
 
 export const PAYMENT_TERMS: PaymentTerm[] = [
@@ -69,11 +71,6 @@ export const COUNTRY_CURRENCY_MAP: Record<string, string> = {
   'Autre':           'TND',
 }
 
-export const CLIENT_TYPES = [
-  { value: 'PROFESSIONNEL', label: 'Professionnel (B2B)' },
-  { value: 'PARTICULIER',   label: 'Particulier (B2C)'   },
-]
-
 export const CLIENT_STATUSES = [
   { value: 'ACTIVE',    label: 'Actif'     },
   { value: 'INACTIVE',  label: 'Inactif'   },
@@ -92,6 +89,7 @@ export interface ClientAddress {
   streetNumber: string
   streetName: string
   complement: string
+  district: string
   city: string
   postalCode: string
   country: string
@@ -103,14 +101,15 @@ export interface ClientFinancial {
   maxCredit: number
   defaultVatRate: number
   discountRate: number
+  defaultAccount: string
 }
 
 export interface CreateClientDto {
   companyName: string
   legalForm: string
-  clientType: string
-  category: string
+  sector: string
   notes: string
+  status: string
   rneNumber: string
   matriculeFiscal: string
   regimeFiscal: string
@@ -124,6 +123,5 @@ export interface CreateClientDto {
 export interface Client extends CreateClientDto {
   id: string
   reference: string
-  status: string
   createdAt: string
 }

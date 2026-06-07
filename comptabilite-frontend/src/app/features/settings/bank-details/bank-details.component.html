@@ -1,0 +1,112 @@
+<div class="bd-page">
+
+  <div class="bd-header">
+    <div>
+      <h1 class="bd-header__title">{{ 'SETTINGS.BANK_TITLE' | translate }}</h1>
+      <p class="bd-header__sub">{{ 'SETTINGS.BANK_SUBTITLE' | translate }}</p>
+    </div>
+    <button class="bd-btn-new" type="button" (click)="openCreate()">
+      <span class="material-symbols-outlined">add</span>
+      {{ 'SETTINGS.BANK_ADD' | translate }}
+    </button>
+  </div>
+
+  @if (error()) {
+    <p class="bd-error">{{ error() | translate }}</p>
+  }
+
+  @if (loading()) {
+    <div class="bd-list">
+      @for (i of [1,2]; track i) {
+        <div class="bd-card bd-card--skeleton">
+          <div class="bd-skel bd-skel--title"></div>
+          <div class="bd-skel bd-skel--line"></div>
+          <div class="bd-skel bd-skel--line bd-skel--short"></div>
+        </div>
+      }
+    </div>
+  } @else if (items().length === 0) {
+    <div class="bd-empty">
+      <span class="material-symbols-outlined bd-empty__icon">account_balance</span>
+      <p>{{ 'SETTINGS.BANK_EMPTY' | translate }}</p>
+    </div>
+  } @else {
+    <div class="bd-list">
+      @for (item of items(); track item.id) {
+        <div class="bd-card">
+          <div class="bd-card__top">
+            <div class="bd-card__info">
+              <div class="bd-card__name">
+                {{ item.bankName || '—' }}
+                @if (item.branch) { <span class="bd-card__branch">· {{ item.branch }}</span> }
+              </div>
+              @if (item.accountHolder) {
+                <div class="bd-card__holder">{{ item.accountHolder }}</div>
+              }
+            </div>
+            <div class="bd-card__badges">
+              <span class="bd-badge bd-badge--currency">{{ item.currency }}</span>
+              @if (item.defaultAccount) {
+                <span class="bd-badge bd-badge--default">{{ 'SETTINGS.BANK_DEFAULT_BADGE' | translate }}</span>
+              }
+            </div>
+          </div>
+
+          <div class="bd-card__fields">
+            @if (item.accountNumber) {
+              <div class="bd-card__field">
+                <span class="bd-card__label">{{ 'SETTINGS.BANK_ACCOUNT_NUMBER' | translate }}</span>
+                <span class="bd-card__value">{{ item.accountNumber }}</span>
+              </div>
+            }
+            @if (item.iban) {
+              <div class="bd-card__field">
+                <span class="bd-card__label">{{ 'SETTINGS.BANK_IBAN' | translate }}</span>
+                <span class="bd-card__value bd-card__value--mono">{{ maskedIban(item.iban) }}</span>
+              </div>
+            }
+            @if (item.swiftBic) {
+              <div class="bd-card__field">
+                <span class="bd-card__label">{{ 'SETTINGS.BANK_SWIFT' | translate }}</span>
+                <span class="bd-card__value bd-card__value--mono">{{ item.swiftBic }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="bd-card__actions">
+            @if (confirmDeleteId() === item.id) {
+              <div class="bd-confirm" (click)="$event.stopPropagation()">
+                <button class="bd-confirm__btn bd-confirm__btn--yes"
+                        (click)="confirmDelete(item.id, $event)"
+                        [disabled]="deleting()">
+                  {{ 'SETTINGS.DELETE_CONFIRM' | translate }}
+                </button>
+                <button class="bd-confirm__btn"
+                        (click)="cancelDelete($event)">
+                  {{ 'SETTINGS.DELETE_CANCEL' | translate }}
+                </button>
+              </div>
+            } @else {
+              <button class="bd-icon-btn" type="button" (click)="openEdit(item, $event)">
+                <span class="material-symbols-outlined">edit</span>
+              </button>
+              <button class="bd-icon-btn bd-icon-btn--danger" type="button"
+                      (click)="startDelete(item.id, $event)">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+</div>
+
+@if (showModal()) {
+  <app-bank-detail-form-modal
+    [mode]="modalMode()"
+    [item]="editItem()"
+    (saved)="onSaved($event)"
+    (cancelled)="closeModal()" />
+}

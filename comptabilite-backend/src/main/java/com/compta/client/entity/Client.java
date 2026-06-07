@@ -38,11 +38,8 @@ public class Client extends BaseEntity {
     @Column(name = "assujetti_tva", nullable = false)
     private boolean assujettiTva = true;
 
-    @Column(name = "client_type", nullable = false, length = 20)
-    private String clientType = "PROFESSIONNEL";
-
-    @Column(name = "category", length = 100)
-    private String category;
+    @Column(name = "sector", length = 100)
+    private String sector;
 
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
@@ -58,6 +55,9 @@ public class Client extends BaseEntity {
 
     @Column(name = "complement", length = 255)
     private String complement;
+
+    @Column(name = "district", length = 100)
+    private String district;
 
     @Column(name = "city", length = 100)
     private String city;
@@ -88,6 +88,9 @@ public class Client extends BaseEntity {
 
     @Column(name = "discount_rate", nullable = false, precision = 5, scale = 2)
     private BigDecimal discountRate = BigDecimal.ZERO;
+
+    @Column(name = "default_account", nullable = false, length = 10)
+    private String defaultAccount = "411000";
 
     @Column(name = "status", nullable = false, length = 20)
     private String status = "ACTIVE";

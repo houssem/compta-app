@@ -9,6 +9,8 @@ import com.compta.common.exception.ApiException;
 import com.compta.company.entity.Company;
 import com.compta.company.repository.CompanyBankDetailsRepository;
 import com.compta.company.repository.CompanyRepository;
+import com.compta.company.repository.CountryRepository;
+import com.compta.company.repository.CurrencyRepository;
 import com.compta.user.entity.Role;
 import com.compta.user.entity.User;
 import com.compta.user.repository.UserRepository;
@@ -39,6 +41,8 @@ class AuthServiceTest {
     @Mock private RefreshTokenRepository refreshTokenRepository;
     @Mock private JwtService jwtService;
     @Mock private PasswordEncoder passwordEncoder;
+    @Mock private CountryRepository countryRepository;
+    @Mock private CurrencyRepository currencyRepository;
 
     @InjectMocks
     private AuthService authService;
@@ -82,6 +86,7 @@ class AuthServiceTest {
         when(userRepository.save(any())).thenReturn(savedUser);
         when(jwtService.generateAccessToken(any(), any(), any())).thenReturn("access-token");
         when(refreshTokenRepository.save(any())).thenReturn(new RefreshToken());
+        when(countryRepository.findById(anyString())).thenReturn(Optional.empty());
 
         AuthResponse response = authService.register(registerRequest, null);
 

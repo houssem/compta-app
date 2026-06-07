@@ -12,7 +12,7 @@ CREATE TABLE bank_transactions (
     created_at           TIMESTAMP     NOT NULL,
     CONSTRAINT pk_bank_transactions PRIMARY KEY (id),
     CONSTRAINT fk_bank_transactions_company  FOREIGN KEY (company_id)          REFERENCES companies(id)          ON DELETE CASCADE,
-    CONSTRAINT fk_bank_transactions_detail   FOREIGN KEY (bank_detail_id)      REFERENCES company_bank_details(id),
+    CONSTRAINT fk_bank_transactions_detail   FOREIGN KEY (bank_detail_id)      REFERENCES bank_details(id),
     CONSTRAINT fk_bank_transactions_entry    FOREIGN KEY (accounting_entry_id) REFERENCES accounting_entries(id)
 );
 

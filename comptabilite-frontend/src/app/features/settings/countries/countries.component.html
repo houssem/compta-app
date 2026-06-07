@@ -1,0 +1,65 @@
+<div class="sc-page">
+
+  <div class="sc-header">
+    <h1 class="sc-header__title">{{ 'SETTINGS.COUNTRIES_TITLE' | translate }}</h1>
+    <p class="sc-header__sub">{{ 'SETTINGS.COUNTRIES_SUBTITLE' | translate }}</p>
+  </div>
+
+  @if (loading()) {
+    <div class="sc-skeleton"></div>
+  } @else {
+
+    <div class="sc-card">
+      <div class="sc-card__head">
+        <div class="sc-card__icon">
+          <span class="material-symbols-outlined">public</span>
+        </div>
+        <div>
+          <p class="sc-card__title">{{ 'SETTINGS.COUNTRIES_CARD_TITLE' | translate }}</p>
+          <p class="sc-card__sub">{{ 'SETTINGS.COUNTRIES_CARD_SUB' | translate }}</p>
+        </div>
+      </div>
+
+      <!-- Master list -->
+      <div class="sc-list">
+        @for (country of allCountries(); track country.isoCode) {
+          <div class="sc-item" [class.sc-item--on]="isSelected(country.isoCode)"
+               (click)="toggle(country.isoCode)">
+            <div class="sc-item__flag">{{ country.isoCode }}</div>
+            <div class="sc-item__info">
+              <span class="sc-item__label">{{ country.countryName }}</span>
+              <span class="sc-item__code">{{ country.isoCode }}</span>
+            </div>
+            @if (isSelected(country.isoCode)) {
+              <span class="sc-item__currency">{{ country.currency }}</span>
+            }
+            <span class="sc-check material-symbols-outlined">
+              {{ isSelected(country.isoCode) ? 'check_circle' : 'radio_button_unchecked' }}
+            </span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="sc-actions">
+      @if (saveError()) {
+        <span class="sc-actions__msg sc-actions__msg--error">
+          <span class="material-symbols-outlined">error</span>{{ saveError() }}
+        </span>
+      }
+      @if (saveSuccess()) {
+        <span class="sc-actions__msg sc-actions__msg--success">
+          <span class="material-symbols-outlined">check_circle</span>
+          {{ 'SETTINGS.SAVE_SUCCESS' | translate }}
+        </span>
+      }
+      <button class="sc-btn-primary" (click)="save()" [disabled]="saving()">
+        @if (saving()) {
+          <span class="material-symbols-outlined sc-spin">progress_activity</span>
+        }
+        {{ 'SETTINGS.BTN_SAVE' | translate }}
+      </button>
+    </div>
+
+  }
+</div>

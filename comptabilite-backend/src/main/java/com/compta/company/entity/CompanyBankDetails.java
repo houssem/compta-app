@@ -1,48 +1,51 @@
 package com.compta.company.entity;
 
+import com.compta.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.UuidGenerator;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "company_bank_details")
-public class CompanyBankDetails {
+@Table(name = "bank_details")
+public class CompanyBankDetails extends BaseEntity {
 
-    @Id
-    @UuidGenerator
-    @Column(name = "id", length = 36, updatable = false, nullable = false)
-    private UUID id;
+    /** Set when this record belongs to a company; null for supplier/client-owned records. */
+    @Column(name = "company_id", length = 36)
+    private UUID companyId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_id", nullable = false)
-    private Company company;
+    /** Set when this record belongs to a supplier; null for company/client-owned records. */
+    @Column(name = "supplier_id", length = 36)
+    private UUID supplierId;
 
-    @Column(name = "account_holder", nullable = false, length = 255)
+    /** Set when this record belongs to a client; null for company/supplier-owned records. */
+    @Column(name = "client_id", length = 36)
+    private UUID clientId;
+
+    @Column(name = "account_holder", length = 255)
     private String accountHolder;
 
-    @Column(name = "bank_name", nullable = false, length = 255)
+    @Column(name = "bank_name", length = 255)
     private String bankName;
 
-    @Column(name = "iban", nullable = false, length = 34)
+    @Column(name = "branch", length = 100)
+    private String branch;
+
+    @Column(name = "account_number", length = 50)
+    private String accountNumber;
+
+    @Column(name = "iban", length = 34)
     private String iban;
 
     @Column(name = "swift_bic", length = 11)
     private String swiftBic;
 
+    @Column(name = "currency", length = 3, nullable = false)
+    private String currency = "TND";
+
     @Column(name = "is_default", nullable = false)
     private boolean defaultAccount = true;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
 }

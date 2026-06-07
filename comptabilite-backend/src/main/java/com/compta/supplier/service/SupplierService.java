@@ -1,10 +1,12 @@
 package com.compta.supplier.service;
 
+import com.compta.common.Contact;
 import com.compta.common.exception.ApiException;
+import com.compta.company.entity.CompanyBankDetails;
+import com.compta.company.repository.CompanyBankDetailsRepository;
 import com.compta.supplier.dto.SupplierRequest;
 import com.compta.supplier.dto.SupplierResponse;
 import com.compta.supplier.entity.Supplier;
-import com.compta.supplier.entity.SupplierContact;
 import com.compta.supplier.repository.SupplierContactRepository;
 import com.compta.supplier.repository.SupplierRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,13 +22,15 @@ public class SupplierService {
 
     private final SupplierRepository supplierRepository;
     private final SupplierContactRepository contactRepository;
+    private final CompanyBankDetailsRepository bankDetailsRepository;
 
     @Transactional(readOnly = true)
     public List<SupplierResponse> getAll(UUID companyId) {
         return supplierRepository.findAllByCompanyIdOrderByCreatedAtDesc(companyId)
                 .stream()
                 .map(s -> SupplierResponse.from(s,
-                        contactRepository.findAllBySupplierIdOrderByPrimaryDesc(s.getId())))
+                        contactRepository.findAllBySupplierIdOrderByPrimaryDesc(s.getId()),
+                        bankDetailsRepository.findBySupplierId(s.getId()).orElse(null)))
                 .toList();
     }
 
@@ -34,9 +38,9 @@ public class SupplierService {
     public SupplierResponse getById(UUID id, UUID companyId) {
         Supplier supplier = supplierRepository.findByIdAndCompanyId(id, companyId)
                 .orElseThrow(() -> ApiException.notFound("Fournisseur introuvable"));
-        List<SupplierContact> contacts =
-                contactRepository.findAllBySupplierIdOrderByPrimaryDesc(supplier.getId());
-        return SupplierResponse.from(supplier, contacts);
+        return SupplierResponse.from(supplier,
+                contactRepository.findAllBySupplierIdOrderByPrimaryDesc(supplier.getId()),
+                bankDetailsRepository.findBySupplierId(supplier.getId()).orElse(null));
     }
 
     @Transactional
@@ -47,8 +51,10 @@ public class SupplierService {
         applyRequest(supplier, req);
         Supplier saved = supplierRepository.save(supplier);
         applyContacts(saved, req.contacts());
+        CompanyBankDetails bank = applyBank(saved.getId(), saved.getName(), null, req.bank());
         return SupplierResponse.from(saved,
-                contactRepository.findAllBySupplierIdOrderByPrimaryDesc(saved.getId()));
+                contactRepository.findAllBySupplierIdOrderByPrimaryDesc(saved.getId()),
+                bank);
     }
 
     @Transactional
@@ -58,8 +64,11 @@ public class SupplierService {
         applyRequest(supplier, req);
         Supplier saved = supplierRepository.save(supplier);
         applyContacts(saved, req.contacts());
+        CompanyBankDetails existing = bankDetailsRepository.findBySupplierId(id).orElse(null);
+        CompanyBankDetails bank = applyBank(saved.getId(), saved.getName(), existing, req.bank());
         return SupplierResponse.from(saved,
-                contactRepository.findAllBySupplierIdOrderByPrimaryDesc(saved.getId()));
+                contactRepository.findAllBySupplierIdOrderByPrimaryDesc(saved.getId()),
+                bank);
     }
 
     @Transactional
@@ -75,16 +84,20 @@ public class SupplierService {
     private void applyRequest(Supplier supplier, SupplierRequest req) {
         supplier.setName(req.companyName());
         supplier.setWebsite(req.website());
-        supplier.setCategory(req.category());
+        supplier.setSector(req.sector());
         supplier.setRneNumber(req.rneNumber());
         supplier.setRegimeFiscal(req.regimeFiscal() != null ? req.regimeFiscal() : "REEL");
         supplier.setAssujettiTva(req.assujettiTva() != null ? req.assujettiTva() : true);
+        supplier.setNotes(req.notes());
         if (req.status() != null) {
             supplier.setStatus(req.status());
         }
 
         if (req.address() != null) {
-            supplier.setStreetName(req.address().street());
+            supplier.setStreetNumber(req.address().streetNumber());
+            supplier.setStreetName(req.address().streetName());
+            supplier.setComplement(req.address().complement());
+            supplier.setDistrict(req.address().district());
             supplier.setCity(req.address().city());
             supplier.setPostalCode(req.address().postalCode());
             supplier.setCountry(req.address().country() != null ? req.address().country() : "Tunisie");
@@ -95,15 +108,35 @@ public class SupplierService {
             supplier.setCurrency(req.financial().currency() != null ? req.financial().currency() : "TND");
             supplier.setPaymentTerms(req.financial().paymentTerms());
             supplier.setDefaultAccount(req.financial().defaultAccount() != null ? req.financial().defaultAccount() : "401000");
+            supplier.setMaxCredit(req.financial().maxCredit() != null ? req.financial().maxCredit() : java.math.BigDecimal.ZERO);
+            supplier.setDefaultVatRate(req.financial().defaultVatRate() != null ? req.financial().defaultVatRate() : new java.math.BigDecimal("19.00"));
+            supplier.setDiscountRate(req.financial().discountRate() != null ? req.financial().discountRate() : java.math.BigDecimal.ZERO);
             supplier.setWithholdingTaxType(req.financial().withholdingTaxType());
             supplier.setWithholdingTaxRate(req.financial().withholdingTaxRate());
         }
+    }
 
-        if (req.bank() != null) {
-            supplier.setBankName(req.bank().bankName());
-            supplier.setIban(req.bank().iban());
-            supplier.setSwiftBic(req.bank().swiftBic());
+    /**
+     * Creates or updates the bank_details record for a supplier.
+     * If the request has no IBAN, any existing bank record is deleted and null is returned.
+     */
+    private CompanyBankDetails applyBank(UUID supplierId, String supplierName,
+                                         CompanyBankDetails existing, SupplierRequest.BankDto dto) {
+        if (dto == null || dto.iban() == null || dto.iban().isBlank()) {
+            if (existing != null) {
+                bankDetailsRepository.delete(existing);
+            }
+            return null;
         }
+
+        CompanyBankDetails bank = existing != null ? existing : new CompanyBankDetails();
+        bank.setSupplierId(supplierId);
+        bank.setAccountHolder(supplierName);
+        bank.setBankName(dto.bankName() != null ? dto.bankName() : "");
+        bank.setIban(dto.iban());
+        bank.setSwiftBic(dto.swiftBic());
+        bank.setDefaultAccount(true);
+        return bankDetailsRepository.save(bank);
     }
 
     private void applyContacts(Supplier supplier, List<SupplierRequest.ContactDto> dtos) {
@@ -114,7 +147,7 @@ public class SupplierService {
 
         for (int i = 0; i < dtos.size(); i++) {
             SupplierRequest.ContactDto dto = dtos.get(i);
-            SupplierContact sc = new SupplierContact();
+            Contact sc = new Contact();
             sc.setSupplierId(supplier.getId());
             sc.setFullName(dto.fullName());
             sc.setRole(dto.role());

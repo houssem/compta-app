@@ -15,8 +15,7 @@ public record ClientRequest(
         String companyName,
 
         String legalForm,
-        String clientType,
-        String category,
+        String sector,
         String notes,
         String status,
         String rneNumber,
@@ -48,6 +47,7 @@ public record ClientRequest(
             String streetNumber,
             String streetName,
             String complement,
+            String district,
             String city,
             String postalCode,
             String country
@@ -58,6 +58,7 @@ public record ClientRequest(
             String paymentTerms,
             BigDecimal maxCredit,
             BigDecimal defaultVatRate,
-            BigDecimal discountRate
+            BigDecimal discountRate,
+            String defaultAccount
     ) {}
 }
