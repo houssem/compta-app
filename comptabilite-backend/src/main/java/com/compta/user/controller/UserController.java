@@ -1,6 +1,7 @@
 package com.compta.user.controller;
 
 import com.compta.user.dto.UserCreateRequest;
+import com.compta.user.dto.UserPasswordRequest;
 import com.compta.user.dto.UserResponse;
 import com.compta.user.dto.UserUpdateRequest;
 import com.compta.user.service.UserService;
@@ -42,6 +43,16 @@ public class UserController {
                                @Valid @RequestBody UserUpdateRequest req,
                                Authentication auth) {
         return userService.update(id, companyId(auth), req);
+    }
+
+    @PatchMapping("/{id}/password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Changer le mot de passe d'un membre")
+    public void changePassword(
+            @PathVariable UUID id,
+            @Valid @RequestBody UserPasswordRequest req,
+            Authentication auth) {
+        userService.changePassword(id, companyId(auth), req);
     }
 
     @DeleteMapping("/{id}")

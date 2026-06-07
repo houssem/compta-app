@@ -2,6 +2,7 @@ package com.compta.user.service;
 
 import com.compta.common.exception.ApiException;
 import com.compta.user.dto.UserCreateRequest;
+import com.compta.user.dto.UserPasswordRequest;
 import com.compta.user.dto.UserResponse;
 import com.compta.user.dto.UserUpdateRequest;
 import com.compta.user.entity.Role;
@@ -63,6 +64,13 @@ public class UserService {
         user.setActive(req.active());
 
         return UserResponse.from(userRepository.save(user));
+    }
+
+    @Transactional
+    public void changePassword(UUID id, UUID companyId, UserPasswordRequest req) {
+        User user = findOwnedUser(id, companyId);
+        user.setPasswordHash(passwordEncoder.encode(req.newPassword()));
+        userRepository.save(user);
     }
 
     @Transactional
