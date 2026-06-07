@@ -26,17 +26,6 @@
           {{ 'REGISTER.STEP_COMPANY' | translate }}
         </span>
       </div>
-      <div class="rg-stepper__line" [class.rg-stepper__line--done]="currentStep() > 2"></div>
-      <div class="rg-stepper__step">
-        <div class="rg-stepper__circle"
-          [class.rg-stepper__circle--active]="currentStep() === 3"
-          [class.rg-stepper__circle--done]="false">
-          @if (currentStep() === 3) { <span class="material-symbols-outlined">check</span> } @else { 3 }
-        </div>
-        <span class="rg-stepper__label" [class.rg-stepper__label--active]="currentStep() === 3">
-          {{ 'REGISTER.STEP_BANK' | translate }}
-        </span>
-      </div>
     </div>
 
     <!-- ══ STEP 1 — Personnel ═══════════════════════════════ -->
@@ -144,8 +133,8 @@
 
           <div class="rg-field">
             <label class="rg-label">{{ 'REGISTER.VAT_NUMBER' | translate }}</label>
-            <input class="rg-input" type="text" placeholder="FR 12 345 678 901"
-              [ngModel]="vatNumber()" (ngModelChange)="vatNumber.set($event)" />
+            <input class="rg-input" type="text" placeholder="1234567/A/B/000"
+              [ngModel]="matriculeFiscal()" (ngModelChange)="matriculeFiscal.set($event)" />
           </div>
 
           <div class="rg-field rg-field--span2">
@@ -153,6 +142,19 @@
             <input class="rg-input" type="text"
               placeholder="Ex: Commerce, Informatique, BTP…"
               [ngModel]="sector()" (ngModelChange)="sector.set($event)" />
+          </div>
+
+          <div class="rg-field rg-field--span2">
+            <label class="rg-label">{{ 'REGISTER.COUNTRY' | translate }} <span class="rg-req">*</span></label>
+            <select class="rg-select" [class.rg-select--error]="err.country()"
+              [ngModel]="country()" (ngModelChange)="country.set($event)">
+              @for (c of countries(); track c.isoCode) {
+                <option [value]="c.countryName">{{ c.countryName }}</option>
+              }
+            </select>
+            @if (err.country()) {
+              <p class="rg-field-error"><span class="material-symbols-outlined">error</span>{{ 'REGISTER.ERR_REQUIRED' | translate }}</p>
+            }
           </div>
 
           <div class="rg-field">
@@ -164,7 +166,7 @@
           <div class="rg-field">
             <label class="rg-label">{{ 'REGISTER.STREET_NAME' | translate }} <span class="rg-req">*</span></label>
             <input class="rg-input" [class.rg-input--error]="err.streetName()" type="text"
-              placeholder="Rue de la Paix"
+              placeholder="Avenue Habib Bourguiba"
               [ngModel]="streetName()" (ngModelChange)="streetName.set($event)" />
             @if (err.streetName()) {
               <p class="rg-field-error"><span class="material-symbols-outlined">error</span>{{ 'REGISTER.ERR_REQUIRED' | translate }}</p>
@@ -174,14 +176,21 @@
           <div class="rg-field rg-field--span2">
             <label class="rg-label">{{ 'REGISTER.COMPLEMENT' | translate }}</label>
             <input class="rg-input" type="text"
-              placeholder="Bâtiment A, Appartement 3…"
+              placeholder="Cité, Résidence, Immeuble, Étage…"
               [ngModel]="complement()" (ngModelChange)="complement.set($event)" />
+          </div>
+
+          <div class="rg-field">
+            <label class="rg-label">{{ 'REGISTER.DISTRICT' | translate }}</label>
+            <input class="rg-input" type="text"
+              placeholder="Menzah, Manar, Centre-ville…"
+              [ngModel]="district()" (ngModelChange)="district.set($event)" />
           </div>
 
           <div class="rg-field">
             <label class="rg-label">{{ 'REGISTER.CITY' | translate }} <span class="rg-req">*</span></label>
             <input class="rg-input" [class.rg-input--error]="err.city()" type="text"
-              placeholder="Paris"
+              placeholder="Tunis"
               [ngModel]="city()" (ngModelChange)="city.set($event)" />
             @if (err.city()) {
               <p class="rg-field-error"><span class="material-symbols-outlined">error</span>{{ 'REGISTER.ERR_REQUIRED' | translate }}</p>
@@ -191,23 +200,9 @@
           <div class="rg-field">
             <label class="rg-label">{{ 'REGISTER.POSTAL_CODE' | translate }} <span class="rg-req">*</span></label>
             <input class="rg-input" [class.rg-input--error]="err.postalCode()" type="text"
-              placeholder="75001"
+              placeholder="1000"
               [ngModel]="postalCode()" (ngModelChange)="postalCode.set($event)" />
             @if (err.postalCode()) {
-              <p class="rg-field-error"><span class="material-symbols-outlined">error</span>{{ 'REGISTER.ERR_REQUIRED' | translate }}</p>
-            }
-          </div>
-
-          <div class="rg-field rg-field--span2">
-            <label class="rg-label">{{ 'REGISTER.COUNTRY' | translate }} <span class="rg-req">*</span></label>
-            <select class="rg-select" [class.rg-select--error]="err.country()"
-              [ngModel]="country()" (ngModelChange)="country.set($event)">
-              <option value="">{{ 'REGISTER.COUNTRY' | translate }}</option>
-              @for (c of countries; track c) {
-                <option [value]="c">{{ c }}</option>
-              }
-            </select>
-            @if (err.country()) {
               <p class="rg-field-error"><span class="material-symbols-outlined">error</span>{{ 'REGISTER.ERR_REQUIRED' | translate }}</p>
             }
           </div>
@@ -225,69 +220,6 @@
             </label>
             <input id="logoInput" type="file" accept="image/png,image/jpeg,image/svg+xml"
               class="rg-upload-input" (change)="onLogoChange($event)" />
-          </div>
-
-        </div>
-
-        <div class="rg-nav">
-          <button type="button" class="rg-btn rg-btn--ghost" (click)="prev()">
-            <span class="material-symbols-outlined">arrow_back</span>
-            {{ 'REGISTER.PREV' | translate }}
-          </button>
-          <button type="button" class="rg-btn rg-btn--primary" (click)="next()">
-            {{ 'REGISTER.NEXT' | translate }}
-            <span class="material-symbols-outlined">arrow_forward</span>
-          </button>
-        </div>
-      </div>
-    }
-
-    <!-- ══ STEP 3 — Banque ══════════════════════════════════ -->
-    @if (currentStep() === 3) {
-      <div class="rg-card rg-anim">
-        <h2 class="rg-card__title">{{ 'REGISTER.BANK_TITLE' | translate }}</h2>
-        <p class="rg-card__sub">{{ 'REGISTER.BANK_SUB' | translate }}</p>
-
-        <div class="rg-grid rg-grid--2">
-
-          <div class="rg-field">
-            <label class="rg-label">{{ 'REGISTER.ACCOUNT_HOLDER' | translate }} <span class="rg-req">*</span></label>
-            <input class="rg-input" [class.rg-input--error]="err.accountHolder()" type="text"
-              placeholder="Jean Dupont"
-              [ngModel]="accountHolder()" (ngModelChange)="accountHolder.set($event)" />
-            @if (err.accountHolder()) {
-              <p class="rg-field-error"><span class="material-symbols-outlined">error</span>{{ 'REGISTER.ERR_REQUIRED' | translate }}</p>
-            }
-          </div>
-
-          <div class="rg-field">
-            <label class="rg-label">{{ 'REGISTER.BANK_NAME' | translate }} <span class="rg-req">*</span></label>
-            <input class="rg-input" [class.rg-input--error]="err.bankName()" type="text"
-              placeholder="BNP Paribas"
-              [ngModel]="bankName()" (ngModelChange)="bankName.set($event)" />
-            @if (err.bankName()) {
-              <p class="rg-field-error"><span class="material-symbols-outlined">error</span>{{ 'REGISTER.ERR_REQUIRED' | translate }}</p>
-            }
-          </div>
-
-          <div class="rg-field rg-field--span2">
-            <label class="rg-label">{{ 'REGISTER.IBAN' | translate }} <span class="rg-req">*</span></label>
-            <input class="rg-input" [class.rg-input--error]="err.iban()" type="text"
-              placeholder="FR76 3000 6000 0112 3456 7890 189"
-              [ngModel]="iban()" (ngModelChange)="iban.set($event)" />
-            @if (err.iban()) {
-              <p class="rg-field-error"><span class="material-symbols-outlined">error</span>{{ 'REGISTER.ERR_REQUIRED' | translate }}</p>
-            }
-          </div>
-
-          <div class="rg-field">
-            <label class="rg-label">{{ 'REGISTER.SWIFT_BIC' | translate }} <span class="rg-req">*</span></label>
-            <input class="rg-input" [class.rg-input--error]="err.swiftBic()" type="text"
-              placeholder="BNPAFRPPXXX"
-              [ngModel]="swiftBic()" (ngModelChange)="swiftBic.set($event)" />
-            @if (err.swiftBic()) {
-              <p class="rg-field-error"><span class="material-symbols-outlined">error</span>{{ 'REGISTER.ERR_REQUIRED' | translate }}</p>
-            }
           </div>
 
         </div>

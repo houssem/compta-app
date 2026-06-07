@@ -1,10 +1,12 @@
-import { Component, signal, computed, inject } from '@angular/core'
+import { Component, signal, computed, inject, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { Router, RouterLink } from '@angular/router'
 import { HttpClient } from '@angular/common/http'
 import { TranslateModule } from '@ngx-translate/core'
 import { AuthService } from '../../core/auth/auth.service'
 import type { AuthResponse } from '../../core/auth/auth.service'
+import { CountryItem } from '../../shared/models/company-profile.model'
+import { CompanyService } from '../settings/company.service'
 
 @Component({
   selector: 'app-register',
@@ -13,12 +15,13 @@ import type { AuthResponse } from '../../core/auth/auth.service'
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'
 })
-export class RegisterComponent {
-  private http   = inject(HttpClient)
-  private router = inject(Router)
-  private auth   = inject(AuthService)
+export class RegisterComponent implements OnInit {
+  private http       = inject(HttpClient)
+  private router     = inject(Router)
+  private auth       = inject(AuthService)
+  private companySvc = inject(CompanyService)
 
-  currentStep   = signal<1 | 2 | 3>(1)
+  currentStep   = signal<1 | 2>(1)
   formSubmitted = signal(false)
 
   // Step 1
@@ -31,32 +34,31 @@ export class RegisterComponent {
   showConfirm     = signal(false)
 
   // Step 2
-  companyName  = signal('')
-  vatNumber    = signal('')
-  sector       = signal('')
+  companyName       = signal('')
+  matriculeFiscal   = signal('')
+  sector            = signal('')
+  country      = signal('Tunisie')
   streetNumber = signal('')
   streetName   = signal('')
   complement   = signal('')
+  district     = signal('')
   city         = signal('')
   postalCode   = signal('')
-  country      = signal('')
   logoFile     = signal<File | null>(null)
   logoFileName = signal('')
-
-  // Step 3
-  accountHolder = signal('')
-  bankName      = signal('')
-  iban          = signal('')
-  swiftBic      = signal('')
 
   // Submission
   submitting   = signal(false)
   submitError  = signal('')
 
-  readonly countries = [
-    'France', 'Tunisie', 'United Kingdom', 'Germany', 'Spain', 'Italy',
-    'Belgium', 'Switzerland', 'Netherlands', 'United States', 'Other'
-  ]
+  countries = signal<CountryItem[]>([])
+
+  ngOnInit(): void {
+    this.companySvc.getMasterCountries().subscribe({
+      next: (list) => this.countries.set(list),
+      error: () => {}
+    })
+  }
 
   step1Valid = computed(() =>
     this.firstName().trim().length > 0 &&
@@ -74,13 +76,6 @@ export class RegisterComponent {
     this.country().trim().length > 0
   )
 
-  step3Valid = computed(() =>
-    this.accountHolder().trim().length > 0 &&
-    this.bankName().trim().length > 0 &&
-    this.iban().trim().length > 0 &&
-    this.swiftBic().trim().length > 0
-  )
-
   err = {
     firstName:       computed(() => this.formSubmitted() && !this.firstName().trim()),
     lastName:        computed(() => this.formSubmitted() && !this.lastName().trim()),
@@ -92,28 +87,23 @@ export class RegisterComponent {
     city:            computed(() => this.formSubmitted() && !this.city().trim()),
     postalCode:      computed(() => this.formSubmitted() && !this.postalCode().trim()),
     country:         computed(() => this.formSubmitted() && !this.country().trim()),
-    accountHolder:   computed(() => this.formSubmitted() && !this.accountHolder().trim()),
-    bankName:        computed(() => this.formSubmitted() && !this.bankName().trim()),
-    iban:            computed(() => this.formSubmitted() && !this.iban().trim()),
-    swiftBic:        computed(() => this.formSubmitted() && !this.swiftBic().trim()),
   }
 
   next(): void {
     this.formSubmitted.set(true)
     const step = this.currentStep()
-    const valid = step === 1 ? this.step1Valid() : step === 2 ? this.step2Valid() : this.step3Valid()
+    const valid = step === 1 ? this.step1Valid() : this.step2Valid()
     if (!valid) return
     this.formSubmitted.set(false)
-    if (step < 3) {
-      this.currentStep.set((step + 1) as 2 | 3)
+    if (step === 1) {
+      this.currentStep.set(2)
     } else {
       this.submit()
     }
   }
 
   prev(): void {
-    const step = this.currentStep()
-    if (step > 1) this.currentStep.set((step - 1) as 1 | 2)
+    if (this.currentStep() === 2) this.currentStep.set(1)
   }
 
   onLogoChange(event: Event): void {
@@ -121,11 +111,6 @@ export class RegisterComponent {
     if (!file || file.size > 2 * 1024 * 1024) return
     this.logoFile.set(file)
     this.logoFileName.set(file.name)
-  }
-
-  maskedIban(): string {
-    const v = this.iban().replace(/\s/g, '')
-    return v.length < 8 ? v : v.slice(0, 4) + ' •••• •••• ' + v.slice(-3)
   }
 
   private submit(): void {
@@ -138,18 +123,15 @@ export class RegisterComponent {
     fd.append('email',       this.email())
     fd.append('password',    this.password())
     fd.append('companyName', this.companyName())
-    if (this.vatNumber())    fd.append('vatNumber',    this.vatNumber())
-    if (this.sector())       fd.append('sector',       this.sector())
+    if (this.matriculeFiscal()) fd.append('matriculeFiscal', this.matriculeFiscal())
+    if (this.sector())          fd.append('sector',          this.sector())
+    fd.append('country', this.country())
     if (this.streetNumber()) fd.append('streetNumber', this.streetNumber())
     if (this.streetName())   fd.append('streetName',   this.streetName())
     if (this.complement())   fd.append('complement',   this.complement())
+    if (this.district())     fd.append('district',     this.district())
     if (this.city())         fd.append('city',         this.city())
     if (this.postalCode())   fd.append('postalCode',   this.postalCode())
-    if (this.country())      fd.append('country',      this.country())
-    if (this.accountHolder()) fd.append('accountHolder', this.accountHolder())
-    if (this.bankName())      fd.append('bankName',      this.bankName())
-    if (this.iban())          fd.append('iban',          this.iban())
-    if (this.swiftBic())      fd.append('swiftBic',      this.swiftBic())
     const logo = this.logoFile()
     if (logo) fd.append('logo', logo)
 
