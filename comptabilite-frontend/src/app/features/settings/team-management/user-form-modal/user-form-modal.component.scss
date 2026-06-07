@@ -91,6 +91,11 @@
   background: var(--color-surface-container, #f8fafc);
   width: 100%;
 
+  &::placeholder {
+    color: #94a3b8;
+    opacity: 1;
+  }
+
   &:focus {
     outline: none;
     border-color: var(--color-primary);
@@ -170,4 +175,23 @@
 .um-spin {
   animation: um-spin 0.8s linear infinite;
   font-size: 16px;
+}
+
+.change-pw-toggle {
+  margin: 8px 0 4px;
+  label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+  input[type="checkbox"] { cursor: pointer; }
+}
+
+.change-pw-section {
+  border-top: 1px solid var(--border-color, #e5e7eb);
+  padding-top: 12px;
+  margin-top: 4px;
 }
