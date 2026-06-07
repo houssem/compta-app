@@ -83,19 +83,10 @@
 
         <div class="nc-grid nc-grid--2">
           <div class="nc-field">
-            <label class="nc-label" for="clientType">Type de client</label>
-            <select id="clientType" class="nc-select" formControlName="clientType">
-              @for (t of clientTypes; track t.value) {
-                <option [value]="t.value">{{ t.label }}</option>
-              }
-            </select>
-          </div>
-
-          <div class="nc-field">
-            <label class="nc-label" for="category">Catégorie</label>
-            <input id="category" class="nc-input" type="text"
-              placeholder="VIP, Grossiste, Standard…"
-              formControlName="category" />
+            <label class="nc-label" for="sector">Secteur d'activité</label>
+            <input id="sector" class="nc-input" type="text"
+              placeholder="Commerce, Informatique, BTP…"
+              formControlName="sector" />
           </div>
         </div>
 
@@ -306,8 +297,8 @@
           <div class="nc-field">
             <label class="nc-label" for="country">{{ 'NEW_CLIENT.COUNTRY' | translate }}</label>
             <select id="country" class="nc-select" formControlName="country">
-              @for (c of countries; track c.value) {
-                <option [value]="c.value">{{ c.label }}</option>
+              @for (c of countries(); track c.isoCode) {
+                <option [value]="c.countryName">{{ c.countryName }}</option>
               }
             </select>
           </div>
@@ -329,12 +320,18 @@
           </div>
         </div>
 
-        <div class="nc-grid nc-grid--1">
+        <div class="nc-grid nc-grid--2">
           <div class="nc-field">
             <label class="nc-label" for="complement">Complément d'adresse</label>
             <input id="complement" class="nc-input" type="text"
               placeholder="Cité, Résidence, Immeuble, Étage…"
               formControlName="complement" />
+          </div>
+          <div class="nc-field">
+            <label class="nc-label" for="district">Quartier / Délégation</label>
+            <input id="district" class="nc-input" type="text"
+              placeholder="Menzah, Manar, Centre-ville…"
+              formControlName="district" />
           </div>
         </div>
 
@@ -395,8 +392,8 @@
           <div class="nc-field">
             <label class="nc-label" for="currency">{{ 'NEW_CLIENT.CURRENCY' | translate }}</label>
             <select id="currency" class="nc-select" formControlName="currency">
-              @for (c of currencies; track c.value) {
-                <option [value]="c.value">{{ c.label }}</option>
+              @for (c of currencies(); track c.isoCode) {
+                <option [value]="c.isoCode">{{ c.isoCode }} – {{ c.currencyName }}</option>
               }
             </select>
           </div>
@@ -409,6 +406,16 @@
               }
             </select>
           </div>
+        </div>
+
+        <div class="nc-grid nc-grid--2">
+          <div class="nc-field">
+            <label class="nc-label" for="defaultAccount">Code comptable client</label>
+            <input id="defaultAccount" class="nc-input" type="text"
+              placeholder="411000"
+              formControlName="defaultAccount" />
+          </div>
+          <div></div>
         </div>
 
         <div class="nc-grid nc-grid--3">

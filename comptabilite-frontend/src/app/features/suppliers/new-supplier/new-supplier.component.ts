@@ -5,7 +5,9 @@ import { RouterLink, Router, ActivatedRoute } from '@angular/router'
 import { TranslateModule } from '@ngx-translate/core'
 import { SupplierService } from '../supplier.service'
 import { CreateSupplierDto, SUPPLIER_CATEGORIES, WITHHOLDING_TAX_TYPES } from '../../../shared/models/supplier.model'
-import { COUNTRIES, CURRENCIES, PAYMENT_TERMS, COUNTRY_CURRENCY_MAP } from '../../../shared/models/client.model'
+import { PAYMENT_TERMS } from '../../../shared/models/client.model'
+import { CompanyService } from '../../settings/company.service'
+import { CountryItem, CurrencyItem } from '../../../shared/models/company-profile.model'
 
 function optionalUrl(control: AbstractControl): ValidationErrors | null {
   const v = (control.value ?? '').trim()
@@ -30,8 +32,9 @@ export class NewSupplierComponent implements OnInit {
 
   form!: FormGroup
   readonly categories        = SUPPLIER_CATEGORIES
-  readonly countries         = COUNTRIES
-  readonly currencies        = CURRENCIES
+
+  countries = signal<CountryItem[]>([])
+  currencies = signal<CurrencyItem[]>([])
   readonly paymentTerms      = PAYMENT_TERMS
   readonly withholdingTypes  = WITHHOLDING_TAX_TYPES
 
@@ -55,26 +58,34 @@ export class NewSupplierComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    private supplierService: SupplierService
+    private supplierService: SupplierService,
+    private companyService: CompanyService
   ) {}
 
   ngOnInit(): void {
     this.form = this.fb.nonNullable.group({
       companyName:         ['', Validators.required],
       website:             ['', optionalUrl],
-      category:            ['', Validators.required],
+      sector:              ['', Validators.required],
+      notes:               [''],
       rneNumber:           [''],
       taxId:               [''],
       regimeFiscal:        ['REEL'],
       assujettiTva:        [true],
       contacts:            this.fb.array([this.newContactGroup(true)]),
-      street:              [''],
+      streetNumber:        [''],
+      streetName:          [''],
+      complement:          [''],
+      district:            [''],
       city:                [''],
       postalCode:          [''],
       country:             ['Tunisie'],
       currency:            ['TND'],
       paymentTerms:        ['Net 30'],
       defaultAccount:      ['401000'],
+      maxCredit:           [0],
+      defaultVatRate:      [19.00],
+      discountRate:        [0.00],
       withholdingTaxType:  [''],
       withholdingTaxRate:  [{ value: null, disabled: true }],
       bankName:            [''],
@@ -82,9 +93,24 @@ export class NewSupplierComponent implements OnInit {
       swiftBic:            [''],
     })
 
+    this.companyService.getSupportedCountries().subscribe({
+      next: ({ countries }) => this.countries.set(countries),
+      error: () => {}
+    })
+
+    this.companyService.getSupportedCurrencies().subscribe({
+      next: ({ defaultCurrency, currencies }) => {
+        this.currencies.set(currencies)
+        if (!this.editMode()) {
+          this.form.patchValue({ currency: defaultCurrency }, { emitEvent: false })
+        }
+      },
+      error: () => {}
+    })
+
     this.form.get('country')!.valueChanges.subscribe((country: string) => {
       this.selectedCountry.set(country)
-      const suggestedCurrency = COUNTRY_CURRENCY_MAP[country] ?? 'TND'
+      const suggestedCurrency = this.countries().find(c => c.countryName === country)?.currency ?? 'TND'
       this.form.patchValue({ currency: suggestedCurrency }, { emitEvent: false })
       if (country !== 'Tunisie') {
         this.form.patchValue({ regimeFiscal: '' }, { emitEvent: false })
@@ -108,6 +134,12 @@ export class NewSupplierComponent implements OnInit {
       }
     })
 
+    // Pre-fill name from query param (e.g. coming from purchase invoice extraction)
+    const nameFromQuery = this.route.snapshot.queryParamMap.get('name')
+    if (nameFromQuery) {
+      this.form.patchValue({ companyName: nameFromQuery })
+    }
+
     this.supplierId = this.route.snapshot.paramMap.get('id')
     if (this.supplierId) {
       this.editMode.set(true)
@@ -117,24 +149,31 @@ export class NewSupplierComponent implements OnInit {
           this.form.patchValue({
             companyName:        supplier.companyName,
             website:            supplier.website,
-            category:           supplier.category,
+            sector:             supplier.sector,
+            notes:              supplier.notes ?? '',
             rneNumber:          supplier.rneNumber ?? '',
             taxId:              supplier.financial.taxId,
             regimeFiscal:       supplier.regimeFiscal ?? 'REEL',
             assujettiTva:       supplier.assujettiTva ?? true,
-            street:             supplier.address.street,
+            streetNumber:       supplier.address.streetNumber,
+            streetName:         supplier.address.streetName,
+            complement:         supplier.address.complement,
+            district:           supplier.address.district,
             city:               supplier.address.city,
             postalCode:         supplier.address.postalCode,
             country:            supplier.address.country,
             currency:           supplier.financial.currency,
             paymentTerms:       supplier.financial.paymentTerms,
             defaultAccount:     supplier.financial.defaultAccount ?? '401000',
+            maxCredit:          supplier.financial.maxCredit ?? 0,
+            defaultVatRate:     supplier.financial.defaultVatRate ?? 19,
+            discountRate:       supplier.financial.discountRate ?? 0,
             withholdingTaxType: supplier.financial.withholdingTaxType ?? '',
             withholdingTaxRate: supplier.financial.withholdingTaxRate ?? null,
             bankName:           supplier.bank?.bankName ?? '',
             iban:               supplier.bank?.iban ?? '',
             swiftBic:           supplier.bank?.swiftBic ?? '',
-          })
+          }, { emitEvent: false })
           if (supplier.financial.withholdingTaxType) {
             this.form.get('withholdingTaxRate')!.enable({ emitEvent: false })
           }
@@ -199,9 +238,13 @@ export class NewSupplierComponent implements OnInit {
 
     const v = this.form.getRawValue()
     const dto: CreateSupplierDto = {
-      companyName: v.companyName,
-      website:     v.website,
-      category:    v.category,
+      companyName:  v.companyName,
+      website:      v.website,
+      sector:       v.sector,
+      notes:        v.notes,
+      rneNumber:    this.isTunisian() ? v.rneNumber : '',
+      regimeFiscal: this.isTunisian() ? v.regimeFiscal : '',
+      assujettiTva: v.assujettiTva,
       contacts:    this.contactsArray.getRawValue().map((c: any) => ({
         fullName:  c.fullName,
         role:      c.role,
@@ -210,16 +253,22 @@ export class NewSupplierComponent implements OnInit {
         isPrimary: c.isPrimary,
       })),
       address: {
-        street:     v.street,
-        city:       v.city,
-        postalCode: v.postalCode,
-        country:    v.country,
+        streetNumber: v.streetNumber,
+        streetName:   v.streetName,
+        complement:   v.complement,
+        district:     v.district,
+        city:         v.city,
+        postalCode:   v.postalCode,
+        country:      v.country,
       },
       financial: {
         taxId:              v.taxId,
         currency:           v.currency,
         paymentTerms:       v.paymentTerms,
         defaultAccount:     v.defaultAccount,
+        maxCredit:          v.maxCredit,
+        defaultVatRate:     v.defaultVatRate,
+        discountRate:       v.discountRate,
         withholdingTaxType: v.withholdingTaxType,
         withholdingTaxRate: v.withholdingTaxRate,
       },

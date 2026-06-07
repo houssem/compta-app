@@ -74,22 +74,22 @@
           </div>
 
           <div class="ns-field">
-            <label class="ns-label" for="category">
-              {{ 'NEW_SUPPLIER.CATEGORY' | translate }}
+            <label class="ns-label" for="sector">
+              {{ 'NEW_SUPPLIER.SECTOR' | translate }}
               <span class="ns-required">*</span>
             </label>
-            <select id="category" class="ns-select"
-              [class.ns-select--error]="f['category'].invalid && f['category'].touched"
-              formControlName="category">
-              <option value="">{{ 'NEW_SUPPLIER.CATEGORY_PLACEHOLDER' | translate }}</option>
+            <select id="sector" class="ns-select"
+              [class.ns-select--error]="f['sector'].invalid && f['sector'].touched"
+              formControlName="sector">
+              <option value="">{{ 'NEW_SUPPLIER.SECTOR_PLACEHOLDER' | translate }}</option>
               @for (cat of categories; track cat) {
                 <option [value]="cat">{{ cat }}</option>
               }
             </select>
-            @if (f['category'].invalid && f['category'].touched) {
+            @if (f['sector'].invalid && f['sector'].touched) {
               <p class="ns-field-error">
                 <span class="material-symbols-outlined">error</span>
-                La catégorie est requise.
+                {{ 'NEW_SUPPLIER.ERROR_SECTOR_REQUIRED' | translate }}
               </p>
             }
           </div>
@@ -151,6 +151,11 @@
               <span class="ns-toggle__track"></span>
               <span class="ns-toggle__label">{{ f['assujettiTva'].value ? 'Oui' : 'Non' }}</span>
             </label>
+          </div>
+          <div class="ns-field ns-field--span2">
+            <label class="ns-label">{{ 'NEW_SUPPLIER.FIELD_NOTES' | translate }}</label>
+            <textarea formControlName="notes" class="ns-input ns-input--textarea"
+              rows="3" [placeholder]="'NEW_SUPPLIER.NOTES_PLACEHOLDER' | translate"></textarea>
           </div>
         </div>
 
@@ -271,20 +276,41 @@
           <div class="ns-field">
             <label class="ns-label" for="country">{{ 'NEW_SUPPLIER.COUNTRY' | translate }}</label>
             <select id="country" class="ns-select" formControlName="country">
-              @for (c of countries; track c.value) {
-                <option [value]="c.value">{{ c.label }}</option>
+              @for (c of countries(); track c.isoCode) {
+                <option [value]="c.countryName">{{ c.countryName }}</option>
               }
             </select>
           </div>
           <div></div>
         </div>
 
-        <div class="ns-grid ns-grid--1">
+        <div class="ns-grid ns-grid--2">
           <div class="ns-field">
-            <label class="ns-label" for="street">{{ 'NEW_SUPPLIER.STREET' | translate }}</label>
-            <textarea id="street" class="ns-textarea" rows="2"
-              [placeholder]="isTunisian() ? 'Zone Industrielle, Rue de la Manufacture' : 'Rue de la Paix, Industrial District'"
-              formControlName="street"></textarea>
+            <label class="ns-label" for="streetNumber">{{ 'NEW_SUPPLIER.STREET_NUMBER' | translate }}</label>
+            <input id="streetNumber" class="ns-input" type="text"
+              placeholder="12"
+              formControlName="streetNumber" />
+          </div>
+          <div class="ns-field">
+            <label class="ns-label" for="streetName">{{ 'NEW_SUPPLIER.STREET_NAME' | translate }}</label>
+            <input id="streetName" class="ns-input" type="text"
+              [placeholder]="isTunisian() ? 'Zone Industrielle, Rue de la Manufacture' : 'Rue de la Paix'"
+              formControlName="streetName" />
+          </div>
+        </div>
+
+        <div class="ns-grid ns-grid--2">
+          <div class="ns-field">
+            <label class="ns-label" for="complement">{{ 'NEW_SUPPLIER.COMPLEMENT' | translate }}</label>
+            <input id="complement" class="ns-input" type="text"
+              placeholder="Cité, Résidence, Immeuble, Étage…"
+              formControlName="complement" />
+          </div>
+          <div class="ns-field">
+            <label class="ns-label" for="district">{{ 'NEW_SUPPLIER.DISTRICT' | translate }}</label>
+            <input id="district" class="ns-input" type="text"
+              placeholder="Menzah, Manar, Centre-ville…"
+              formControlName="district" />
           </div>
         </div>
 
@@ -325,8 +351,8 @@
           <div class="ns-field">
             <label class="ns-label" for="currency">{{ 'NEW_SUPPLIER.CURRENCY' | translate }}</label>
             <select id="currency" class="ns-select" formControlName="currency">
-              @for (c of currencies; track c.value) {
-                <option [value]="c.value">{{ c.label }}</option>
+              @for (c of currencies(); track c.isoCode) {
+                <option [value]="c.isoCode">{{ c.isoCode }} – {{ c.currencyName }}</option>
               }
             </select>
           </div>
@@ -338,6 +364,29 @@
                 <option [value]="t.value">{{ t.label }}</option>
               }
             </select>
+          </div>
+        </div>
+
+        <div class="ns-grid ns-grid--3">
+          <div class="ns-field">
+            <label class="ns-label" for="maxCredit">Plafond de crédit ({{ f['currency'].value }})</label>
+            <input id="maxCredit" class="ns-input" type="number" min="0" step="100"
+              placeholder="0"
+              formControlName="maxCredit" />
+          </div>
+
+          <div class="ns-field">
+            <label class="ns-label" for="defaultVatRate">Taux TVA déductible (%)</label>
+            <input id="defaultVatRate" class="ns-input" type="number" min="0" max="100" step="0.5"
+              [placeholder]="isTunisian() ? '19' : '0'"
+              formControlName="defaultVatRate" />
+          </div>
+
+          <div class="ns-field">
+            <label class="ns-label" for="discountRate">Remise (%)</label>
+            <input id="discountRate" class="ns-input" type="number" min="0" max="100" step="0.5"
+              placeholder="0"
+              formControlName="discountRate" />
           </div>
         </div>
 
