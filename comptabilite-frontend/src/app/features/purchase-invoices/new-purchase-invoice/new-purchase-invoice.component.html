@@ -94,6 +94,18 @@
                 <button type="button" class="ni-btn ni-btn--ghost ni-extract-result__reset"
                         (click)="resetExtraction()">Recommencer</button>
               </div>
+              @if (extractedSupplierName()) {
+                <div class="ni-extract-supplier-missing">
+                  <span class="material-symbols-outlined">person_search</span>
+                  <span>Fournisseur <strong>« {{ extractedSupplierName() }} »</strong> introuvable dans votre liste.</span>
+                  <a class="ni-extract-supplier-missing__link"
+                     [routerLink]="['/supplier/create']"
+                     [queryParams]="{ name: extractedSupplierName() }">
+                    Créer ce fournisseur
+                    <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle">open_in_new</span>
+                  </a>
+                </div>
+              }
               @if (attachment(); as att) {
                 <div class="ni-attachment" style="margin-top: 12px;">
                   @if (isImage(att.type)) {
@@ -228,8 +240,8 @@
                 @if (configLoading()) {
                   <option value="">Chargement…</option>
                 } @else {
-                  @for (c of currencies; track c.value) {
-                    <option [value]="c.value">{{ c.label }}</option>
+                  @for (c of currencies(); track c.isoCode) {
+                    <option [value]="c.isoCode">{{ c.isoCode }} – {{ c.currencyName }}</option>
                   }
                 }
               </select>

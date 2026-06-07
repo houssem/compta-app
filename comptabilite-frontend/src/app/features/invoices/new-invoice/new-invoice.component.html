@@ -156,8 +156,8 @@
                 @if (configLoading()) {
                   <option value="">Chargement…</option>
                 } @else {
-                  @for (c of currencies; track c.value) {
-                    <option [value]="c.value">{{ c.label }}</option>
+                  @for (c of currencies(); track c.isoCode) {
+                    <option [value]="c.isoCode">{{ c.isoCode }} – {{ c.currencyName }}</option>
                   }
                 }
               </select>
