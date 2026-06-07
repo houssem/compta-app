@@ -25,3 +25,7 @@ export interface UpdateUserRequest {
   role: UserRole
   active: boolean
 }
+
+export interface ChangePasswordRequest {
+  newPassword: string
+}

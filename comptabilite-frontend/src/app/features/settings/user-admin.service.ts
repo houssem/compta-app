@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { Observable } from 'rxjs'
-import { TeamMember, CreateUserRequest, UpdateUserRequest } from '../../shared/models/team-member.model'
+import { TeamMember, CreateUserRequest, UpdateUserRequest, ChangePasswordRequest } from '../../shared/models/team-member.model'
 
 @Injectable({ providedIn: 'root' })
 export class UserAdminService {
@@ -21,5 +21,9 @@ export class UserAdminService {
 
   delete(id: string): Observable<void> {
     return this.http.delete<void>(`/api/users/${id}`)
+  }
+
+  changePassword(id: string, req: ChangePasswordRequest): Observable<void> {
+    return this.http.patch<void>(`/api/users/${id}/password`, req)
   }
 }
